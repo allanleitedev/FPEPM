@@ -58,19 +58,21 @@ export default function Index() {
 
           {/* Desktop Layout */}
           <div className="hidden lg:grid lg:grid-cols-2 gap-12 items-center">
-            <div className="relative">
+            <div className="relative animate-in slide-in-from-left duration-1000">
               <div className="relative mx-auto w-96 h-96">
-                <img
-                  src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2Fbb91c0eedcf347ef94d319f58f5bc083?format=webp&width=800"
-                  alt="Federação Pernambucana de Pentatlo Moderno"
-                  className="w-full h-full object-contain drop-shadow-2xl"
-                />
-                <div className="absolute -top-4 -right-4 w-24 h-24 bg-pentathlon-gold/20 rounded-full blur-xl"></div>
-                <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-pentathlon-green/20 rounded-full blur-xl"></div>
+                <div className="animate-bounce-slow">
+                  <img
+                    src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2Fbb91c0eedcf347ef94d319f58f5bc083?format=webp&width=800"
+                    alt="Federação Pernambucana de Pentatlo Moderno"
+                    className="w-full h-full object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300 cursor-pointer"
+                  />
+                </div>
+                <div className="absolute -top-4 -right-4 w-24 h-24 bg-pentathlon-gold/30 rounded-full blur-xl animate-pulse"></div>
+                <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-pentathlon-green/30 rounded-full blur-xl animate-pulse delay-700"></div>
               </div>
             </div>
 
-            <div className="space-y-8">
+            <div className="space-y-8 animate-in slide-in-from-right duration-1000 delay-300">
               <div className="space-y-6">
                 <p className="text-xl md:text-2xl text-gray-600 leading-relaxed">
                   Promovendo a excelência esportiva e desenvolvimento do pentatlo moderno em Pernambuco através de
@@ -79,17 +81,17 @@ export default function Index() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-pentathlon-green hover:bg-pentathlon-green-dark text-white">
+                <Button size="lg" className="bg-pentathlon-green hover:bg-pentathlon-green-dark text-white transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl group">
                   <Link to="/transparencia" className="flex items-center gap-2">
                     <FileText size={20} />
                     Transparência
-                    <ChevronRight size={20} />
+                    <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="border-pentathlon-blue text-pentathlon-blue hover:bg-pentathlon-blue hover:text-white">
+                <Button size="lg" variant="outline" className="border-pentathlon-blue text-pentathlon-blue hover:bg-pentathlon-blue hover:text-white transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg group">
                   <Link to="/modalidades" className="flex items-center gap-2">
                     Conheça o Esporte
-                    <ChevronRight size={20} />
+                    <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </Button>
               </div>
