@@ -25,7 +25,7 @@ export default function Header() {
                 className="h-10 w-auto object-contain"
               />
             </div>
-            <div className="hidden sm:block">
+            <div>
               <div className="text-lg font-bold text-gray-900">FPPM</div>
             </div>
           </Link>
