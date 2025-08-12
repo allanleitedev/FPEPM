@@ -22,14 +22,14 @@ export default function Header() {
           <Link to="/" className="flex items-center gap-3 group">
             <div className="w-10 h-10 flex items-center justify-center">
               <img
-                src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F9877a5eeea194603a0ff9e03da33732a?format=webp&width=800"
-                alt="CBPMPE"
+                src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2Fbb91c0eedcf347ef94d319f58f5bc083?format=webp&width=800"
+                alt="FPPM"
                 className="w-10 h-10 object-contain"
               />
             </div>
             <div className="hidden sm:block">
-              <div className="text-sm font-bold text-gray-900">CBPMPE</div>
-              <div className="text-xs text-gray-600">Confederação de PE</div>
+              <div className="text-sm font-bold text-gray-900">FPPM</div>
+              <div className="text-xs text-gray-600">Federação PE</div>
             </div>
           </Link>
 
