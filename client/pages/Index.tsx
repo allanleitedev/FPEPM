@@ -59,9 +59,9 @@ export default function Index() {
 
             <div className="relative">
               <div className="relative mx-auto w-80 h-80 lg:w-96 lg:h-96">
-                <img 
-                  src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F64c4550af4cc44819ea4276fee6fe144?format=webp&width=800" 
-                  alt="Confederação Brasileira de Pentatlo Moderno" 
+                <img
+                  src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F9877a5eeea194603a0ff9e03da33732a?format=webp&width=800"
+                  alt="Confederação Brasileira de Pentatlo Moderno"
                   className="w-full h-full object-contain drop-shadow-2xl"
                 />
                 <div className="absolute -top-4 -right-4 w-24 h-24 bg-pentathlon-gold/20 rounded-full blur-xl"></div>
