@@ -7,7 +7,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navigation = [
-    { name: 'Início', href: '/', icon: null },
+    { name: 'Início', href: '/', icon: Home },
     { name: 'Modalidades', href: '/modalidades', icon: Trophy },
     { name: 'Transparência', href: '/transparencia', icon: FileText },
   ];
