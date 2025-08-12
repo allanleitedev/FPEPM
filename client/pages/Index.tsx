@@ -146,9 +146,9 @@ export default function Index() {
       </section>
 
       {/* Transparência e Governança */}
-      <section className="py-16 px-4">
+      <section className="py-16 px-4 bg-gradient-to-br from-white via-green-50/10 to-blue-50/20">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-12 animate-in slide-in-from-top duration-1000">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Transparência e Governança</h2>
             <p className="text-xl text-gray-600">Acesso completo às informações institucionais e de gestão</p>
           </div>
@@ -160,52 +160,58 @@ export default function Index() {
                 title: "Gestão",
                 description: "Estrutura organizacional e relatórios",
                 link: "/transparencia",
-                tab: "gestao"
+                tab: "gestao",
+                color: "hover:bg-blue-50"
               },
               {
                 icon: FileText,
                 title: "Processos Eleitorais",
                 description: "Editais e documentos eleitorais",
                 link: "/transparencia",
-                tab: "processos"
+                tab: "processos",
+                color: "hover:bg-purple-50"
               },
               {
                 icon: FileText,
                 title: "Estatuto",
                 description: "Estatuto social e alterações",
                 link: "/transparencia",
-                tab: "estatuto"
+                tab: "estatuto",
+                color: "hover:bg-green-50"
               },
               {
                 icon: FileText,
                 title: "Manual de Compras",
-                description: "Procedimentos e relatórios",
+                description: "Procedimentos e relat��rios",
                 link: "/transparencia",
-                tab: "compras"
+                tab: "compras",
+                color: "hover:bg-yellow-50"
               },
               {
                 icon: FileText,
                 title: "Documentos",
                 description: "Certidões e documentos legais",
                 link: "/transparencia",
-                tab: "documentos"
+                tab: "documentos",
+                color: "hover:bg-gray-50"
               },
               {
                 icon: FileText,
                 title: "Ouvidoria",
                 description: "Canal de comunicação oficial",
                 link: "/transparencia",
-                tab: "ouvidoria"
+                tab: "ouvidoria",
+                color: "hover:bg-red-50"
               }
             ].map((item, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow border-0 bg-white">
+              <Card key={index} className={`hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm group cursor-pointer ${item.color} animate-in slide-in-from-bottom duration-700`} style={{animationDelay: `${index * 100}ms`}}>
                 <CardHeader className="text-center">
-                  <item.icon size={32} className="text-pentathlon-green mb-2 mx-auto" />
-                  <CardTitle className="text-base">{item.title}</CardTitle>
-                  <CardDescription className="text-sm">{item.description}</CardDescription>
+                  <item.icon size={32} className="text-pentathlon-green mb-2 mx-auto group-hover:scale-110 group-hover:text-pentathlon-green-dark transition-all duration-300" />
+                  <CardTitle className="text-base group-hover:text-gray-800">{item.title}</CardTitle>
+                  <CardDescription className="text-sm group-hover:text-gray-700">{item.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button variant="outline" size="sm" className="w-full">
+                  <Button variant="outline" size="sm" className="w-full group-hover:border-pentathlon-green group-hover:text-pentathlon-green transition-colors">
                     <Link to={item.link}>Acessar</Link>
                   </Button>
                 </CardContent>
