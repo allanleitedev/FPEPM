@@ -483,18 +483,18 @@ export default function AdminEventos() {
                             <DialogDescription>Detalhes completos do evento para aprovação</DialogDescription>
                           </DialogHeader>
                           
-                          <div className="space-y-6">
+                          <div className="space-y-6 max-h-96 overflow-y-auto">
                             {event.image?.data && (
                               <div>
                                 <h4 className="font-semibold mb-2">Imagem do Evento</h4>
-                                <img 
-                                  src={getStrapiMediaUrl(event.image.data.attributes.url)} 
+                                <img
+                                  src={getStrapiMediaUrl(event.image.data.attributes.url)}
                                   alt={event.image.data.attributes.alternativeText || event.title}
                                   className="w-full h-48 object-cover rounded-lg"
                                 />
                               </div>
                             )}
-                            
+
                             <div>
                               <h4 className="font-semibold mb-2">Informações Gerais</h4>
                               <div className="grid grid-cols-2 gap-4 text-sm">
@@ -514,8 +514,77 @@ export default function AdminEventos() {
 
                             {event.budget && (
                               <div>
-                                <h4 className="font-semibold mb-2">Orçamento</h4>
-                                <p className="text-sm">R$ {event.budget.toLocaleString('pt-BR')}</p>
+                                <h4 className="font-semibold mb-2">Orçamento Total</h4>
+                                <p className="text-sm font-medium">R$ {event.budget.toLocaleString('pt-BR')}</p>
+
+                                {(event as any).additionalInfo?.financialBreakdown && (
+                                  <div className="mt-3">
+                                    <h5 className="font-medium text-sm mb-2">Detalhamento:</h5>
+                                    <div className="grid grid-cols-2 gap-2 text-xs">
+                                      {Object.entries((event as any).additionalInfo.financialBreakdown).map(([key, value]) => (
+                                        <div key={key} className="flex justify-between">
+                                          <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
+                                          <span>R$ {(value as number).toLocaleString('pt-BR')}</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {(event as any).additionalInfo?.technicalDetails && (
+                              <div>
+                                <h4 className="font-semibold mb-2">Dados Técnicos</h4>
+                                <div className="grid grid-cols-1 gap-2 text-sm">
+                                  {Object.entries((event as any).additionalInfo.technicalDetails).map(([key, value]) => (
+                                    <div key={key}>
+                                      <span className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span> {value as string}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {(event as any).additionalInfo?.requestedSupport && (
+                              <div>
+                                <h4 className="font-semibold mb-2">Apoios Solicitados</h4>
+                                <ul className="list-disc list-inside text-sm space-y-1">
+                                  {(event as any).additionalInfo.requestedSupport.map((support: string, index: number) => (
+                                    <li key={index}>{support}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {(event as any).additionalInfo?.documents && (
+                              <div>
+                                <h4 className="font-semibold mb-2">Documentação Necessária</h4>
+                                <ul className="list-disc list-inside text-sm space-y-1">
+                                  {(event as any).additionalInfo.documents.map((doc: string, index: number) => (
+                                    <li key={index}>{doc}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {(event as any).additionalInfo?.expectedImpact && (
+                              <div>
+                                <h4 className="font-semibold mb-2">Impacto Esperado</h4>
+                                <div className="text-sm space-y-1">
+                                  <div><span className="font-medium">Participantes:</span> {(event as any).additionalInfo.expectedImpact.participants}</div>
+                                  <div><span className="font-medium">Espectadores:</span> {(event as any).additionalInfo.expectedImpact.spectators}</div>
+                                  <div><span className="font-medium">Mídia:</span> {(event as any).additionalInfo.expectedImpact.media} veículos</div>
+                                  <div><span className="font-medium">Impacto Econômico:</span> {(event as any).additionalInfo.expectedImpact.economicImpact}</div>
+                                  <div><span className="font-medium">Desenvolvimento:</span> {(event as any).additionalInfo.expectedImpact.sportsDevelopment}</div>
+                                </div>
+                              </div>
+                            )}
+
+                            {(event as any).additionalInfo?.justification && (
+                              <div>
+                                <h4 className="font-semibold mb-2">Justificativa Técnica</h4>
+                                <p className="text-sm text-gray-600">{(event as any).additionalInfo.justification}</p>
                               </div>
                             )}
 
