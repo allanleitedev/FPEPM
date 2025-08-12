@@ -117,43 +117,17 @@ export default function Index() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Featured Event */}
-            <Card className="md:col-span-2 lg:col-span-1 border-pentathlon-green border-2 bg-gradient-to-br from-pentathlon-green/5 to-pentathlon-blue/5">
-              <CardHeader>
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge className="bg-pentathlon-green text-white">Destaque</Badge>
-                  <Badge variant="outline">12-14 Dez</Badge>
-                </div>
-                <CardTitle className="text-xl">CBPM 2025</CardTitle>
-                <CardDescription>Campeonato Brasileiro de Pentatlo Moderno</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <img 
-                    src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F1603e7867f2f49d0a8d6b834b79c9789?format=webp&width=800" 
-                    alt="CBPM 2025" 
-                    className="w-full h-32 object-cover rounded-lg"
-                  />
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Calendar size={16} />
-                    Recife, Pernambuco
-                  </div>
-                  <Button className="w-full bg-pentathlon-green hover:bg-pentathlon-green-dark">
-                    Saiba Mais
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Other Events */}
+            {/* Approved Events */}
             {[
-              { title: "Copa Regional Nordeste", date: "15-16 Mar", location: "Salvador, BA" },
-              { title: "Campeonato Estadual SP", date: "22-23 Mar", location: "São Paulo, SP" }
+              { title: "Copa Regional Nordeste", date: "15-16 Mar", location: "Salvador, BA", status: "Confirmado" },
+              { title: "Campeonato Estadual SP", date: "22-23 Mar", location: "São Paulo, SP", status: "Confirmado" },
+              { title: "Torneio Regional Sul", date: "05-06 Abr", location: "Porto Alegre, RS", status: "Confirmado" }
             ].map((evento, index) => (
               <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-center gap-2 mb-2">
                     <Badge variant="outline">{evento.date}</Badge>
+                    <Badge className="bg-pentathlon-green text-white text-xs">{evento.status}</Badge>
                   </div>
                   <CardTitle className="text-lg">{evento.title}</CardTitle>
                 </CardHeader>
