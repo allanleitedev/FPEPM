@@ -19,34 +19,36 @@ export default function Index() {
           {/* Mobile Layout */}
           <div className="block lg:hidden">
             <div className="text-center mb-12">
-              <div className="relative mx-auto w-64 h-64 mb-8">
-                <img
-                  src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2Fbb91c0eedcf347ef94d319f58f5bc083?format=webp&width=800"
-                  alt="Federação Pernambucana de Pentatlo Moderno"
-                  className="w-full h-full object-contain drop-shadow-2xl"
-                />
-                <div className="absolute -top-4 -right-4 w-20 h-20 bg-pentathlon-gold/20 rounded-full blur-xl"></div>
-                <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-pentathlon-green/20 rounded-full blur-xl"></div>
+              <div className="relative mx-auto w-64 h-64 mb-8 animate-in slide-in-from-top duration-1000">
+                <div className="animate-bounce-slow">
+                  <img
+                    src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2Fbb91c0eedcf347ef94d319f58f5bc083?format=webp&width=800"
+                    alt="Federação Pernambucana de Pentatlo Moderno"
+                    className="w-full h-full object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <div className="absolute -top-4 -right-4 w-20 h-20 bg-pentathlon-gold/30 rounded-full blur-xl animate-pulse"></div>
+                <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-pentathlon-green/30 rounded-full blur-xl animate-pulse delay-500"></div>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-6 animate-in slide-in-from-bottom duration-1000 delay-300">
                 <p className="text-lg text-gray-600 leading-relaxed px-4">
                   Promovendo a excelência esportiva e desenvolvimento do pentatlo moderno em Pernambuco através de
                   transparência, governança e apoio aos atletas.
                 </p>
 
                 <div className="flex flex-col gap-4 px-4">
-                  <Button size="lg" className="bg-pentathlon-green hover:bg-pentathlon-green-dark text-white">
+                  <Button size="lg" className="bg-pentathlon-green hover:bg-pentathlon-green-dark text-white transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl">
                     <Link to="/transparencia" className="flex items-center gap-2">
                       <FileText size={20} />
                       Transparência
-                      <ChevronRight size={20} />
+                      <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </Button>
-                  <Button size="lg" variant="outline" className="border-pentathlon-blue text-pentathlon-blue hover:bg-pentathlon-blue hover:text-white">
+                  <Button size="lg" variant="outline" className="border-pentathlon-blue text-pentathlon-blue hover:bg-pentathlon-blue hover:text-white transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg">
                     <Link to="/modalidades" className="flex items-center gap-2">
                       Conheça o Esporte
-                      <ChevronRight size={20} />
+                      <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </Button>
                 </div>
