@@ -28,18 +28,17 @@ export default function Footer() {
 
           {/* Links Rápidos */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">Links Rápidos</h3>
+            <h3 className="font-semibold text-lg mb-4">Navegação</h3>
             <ul className="space-y-2">
               {[
                 { name: 'Início', href: '/' },
-                { name: 'Eventos', href: '/eventos' },
+                { name: 'Modalidades', href: '/modalidades' },
                 { name: 'Transparência', href: '/transparencia' },
-                { name: 'Atletas', href: '/atletas' },
-                { name: 'Sobre', href: '/sobre' },
+                { name: 'Administração', href: '/admin/eventos' },
               ].map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    to={link.href} 
+                  <Link
+                    to={link.href}
                     className="text-gray-400 hover:text-pentathlon-green transition-colors text-sm"
                   >
                     {link.name}
