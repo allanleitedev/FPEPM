@@ -22,11 +22,11 @@ export default function Header() {
               <img
                 src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F4c6593141cce41149696bda6e0c6120a?format=webp&width=800"
                 alt="FPPM"
-                className="h-10 w-auto object-contain"
+                className="h-10 w-auto object-contain group-hover:scale-110 transition-transform duration-300"
               />
             </div>
             <div>
-              <div className="text-lg font-bold text-gray-900">FPPM</div>
+              <div className="text-lg font-bold text-gray-900 group-hover:text-pentathlon-green transition-colors duration-300">FPPM</div>
             </div>
           </Link>
 
