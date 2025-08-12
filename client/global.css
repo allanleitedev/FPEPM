@@ -18,14 +18,14 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 142 85% 45%;
+    --primary: 142 60% 35%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --pentathlon-green: 142 85% 45%;
-    --pentathlon-green-dark: 142 85% 35%;
+    --pentathlon-green: 142 60% 35%;
+    --pentathlon-green-dark: 142 60% 25%;
     --pentathlon-blue: 210 100% 50%;
     --pentathlon-blue-dark: 210 100% 40%;
     --pentathlon-gold: 50 100% 60%;
