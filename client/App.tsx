@@ -46,6 +46,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/admin/eventos" element={<AdminEventos />} />
               <Route path="/eventos" element={<PlaceholderPage title="Eventos" />} />
+              <Route path="/noticias" element={<PlaceholderPage title="Notícias" />} />
               <Route path="/transparencia" element={<PlaceholderPage title="Transparência" />} />
               <Route path="/transparencia/financeiro" element={<PlaceholderPage title="Relatórios Financeiros" />} />
               <Route path="/transparencia/gestao" element={<PlaceholderPage title="Gestão" />} />
