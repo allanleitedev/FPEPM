@@ -65,34 +65,43 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation Overlay */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
-            <nav className="flex flex-col space-y-4">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className="flex items-center gap-3 text-gray-700 hover:text-pentathlon-green font-medium text-sm transition-colors py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.icon && <item.icon size={18} />}
-                  {item.name}
-                </Link>
-              ))}
-              <div className="pt-4 border-t border-gray-200 space-y-2">
-                <Link to="/admin/eventos" onClick={() => setIsMenuOpen(false)}>
-                  <Button size="sm" variant="outline" className="w-full border-gray-300 text-gray-700 hover:bg-gray-50">
-                    <Settings size={16} className="mr-2" />
-                    Admin Eventos
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 md:hidden"
+              onClick={() => setIsMenuOpen(false)}
+            />
+
+            {/* Mobile Menu */}
+            <div className="absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 z-50 md:hidden">
+              <nav className="flex flex-col p-4 space-y-3">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className="flex items-center gap-3 text-gray-700 hover:text-pentathlon-green hover:bg-gray-50 font-medium text-base transition-colors py-3 px-3 rounded-lg"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.icon && <item.icon size={20} />}
+                    {item.name}
+                  </Link>
+                ))}
+                <div className="pt-3 border-t border-gray-200 space-y-3">
+                  <Link to="/admin/eventos" onClick={() => setIsMenuOpen(false)}>
+                    <Button size="sm" variant="outline" className="w-full border-gray-300 text-gray-700 hover:bg-gray-50">
+                      <Settings size={16} className="mr-2" />
+                      Admin Eventos
+                    </Button>
+                  </Link>
+                  <Button size="sm" className="w-full bg-pentathlon-green hover:bg-pentathlon-green-dark text-white">
+                    Fale Conosco
                   </Button>
-                </Link>
-                <Button size="sm" className="w-full bg-pentathlon-green hover:bg-pentathlon-green-dark text-white">
-                  Fale Conosco
-                </Button>
-              </div>
-            </nav>
-          </div>
+                </div>
+              </nav>
+            </div>
+          </>
         )}
       </div>
     </header>
