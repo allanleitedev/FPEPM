@@ -53,15 +53,16 @@ export default function Footer() {
             <h3 className="font-semibold text-lg mb-4">Transparência</h3>
             <ul className="space-y-2">
               {[
-                { name: 'Relatórios Financeiros', href: '/transparencia/financeiro' },
-                { name: 'Gestão', href: '/transparencia/gestao' },
-                { name: 'Resultados', href: '/transparencia/resultados' },
-                { name: 'Estatuto', href: '/transparencia/estatuto' },
-                { name: 'Atas', href: '/transparencia/atas' },
+                { name: 'Gestão', href: '/transparencia' },
+                { name: 'Processos Eleitorais', href: '/transparencia' },
+                { name: 'Estatuto', href: '/transparencia' },
+                { name: 'Manual de Compras', href: '/transparencia' },
+                { name: 'Documentos', href: '/transparencia' },
+                { name: 'Ouvidoria', href: '/transparencia' },
               ].map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    to={link.href} 
+                  <Link
+                    to={link.href}
                     className="text-gray-400 hover:text-pentathlon-green transition-colors text-sm"
                   >
                     {link.name}
