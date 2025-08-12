@@ -9,11 +9,11 @@ export default function Footer() {
           {/* Logo e Descrição */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 flex items-center justify-center">
+              <div className="h-14 flex items-center justify-center">
                 <img
                   src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F4c6593141cce41149696bda6e0c6120a?format=webp&width=800"
                   alt="FPPM"
-                  className="w-12 h-12 object-contain"
+                  className="h-14 w-auto object-contain"
                 />
               </div>
               <div>
