@@ -27,6 +27,13 @@ export default {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
+        pentathlon: {
+          green: "hsl(var(--pentathlon-green))",
+          "green-dark": "hsl(var(--pentathlon-green-dark))",
+          blue: "hsl(var(--pentathlon-blue))",
+          "blue-dark": "hsl(var(--pentathlon-blue-dark))",
+          gold: "hsl(var(--pentathlon-gold))",
+        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
