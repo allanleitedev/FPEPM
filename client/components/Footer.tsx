@@ -11,14 +11,14 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 flex items-center justify-center">
                 <img
-                  src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F9877a5eeea194603a0ff9e03da33732a?format=webp&width=800"
-                  alt="CBPMPE"
+                  src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2Fbb91c0eedcf347ef94d319f58f5bc083?format=webp&width=800"
+                  alt="FPPM"
                   className="w-12 h-12 object-contain"
                 />
               </div>
               <div>
-                <div className="font-bold text-lg">CBPMPE</div>
-                <div className="text-sm text-gray-400">Confederação de PE</div>
+                <div className="font-bold text-lg">FPPM</div>
+                <div className="text-sm text-gray-400">Federação Pernambucana</div>
               </div>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
@@ -78,7 +78,7 @@ export default function Footer() {
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-sm">
                 <Mail size={16} className="text-pentathlon-green" />
-                <span className="text-gray-400">contato@cbpmpe.org.br</span>
+                <span className="text-gray-400">contato@fppm.org.br</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <Phone size={16} className="text-pentathlon-green" />
@@ -118,7 +118,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © 2025 Confederação Brasileira de Pentatlo em Pernambuco. Todos os direitos reservados.
+            © 2025 Federação Pernambucana de Pentatlo Moderno. Todos os direitos reservados.
           </p>
           <div className="flex gap-6 mt-4 md:mt-0">
             <Link to="/privacidade" className="text-gray-400 hover:text-pentathlon-green text-sm transition-colors">
