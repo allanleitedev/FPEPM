@@ -182,7 +182,7 @@ export default function Index() {
               {
                 icon: FileText,
                 title: "Manual de Compras",
-                description: "Procedimentos e relat��rios",
+                description: "Procedimentos e relatórios",
                 link: "/transparencia",
                 tab: "compras",
                 color: "hover:bg-yellow-50"
@@ -222,19 +222,23 @@ export default function Index() {
       </section>
 
       {/* Contato e Informações */}
-      <section className="py-16 px-4 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
+      <section className="py-16 px-4 bg-gradient-to-br from-gray-50 via-green-50/20 to-blue-50/30 relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-pentathlon-green/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-pentathlon-blue/5 rounded-full blur-3xl"></div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-12 animate-in slide-in-from-top duration-1000">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Informações de Contato</h2>
             <p className="text-xl text-gray-600">Entre em contato conosco</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center border-0 bg-white">
+            <Card className="text-center border-0 bg-white/80 backdrop-blur-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group animate-in slide-in-from-left duration-700">
               <CardContent className="pt-6">
-                <Building size={32} className="text-pentathlon-green mb-4 mx-auto" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Endereço</h3>
-                <p className="text-gray-600">
+                <Building size={32} className="text-pentathlon-green mb-4 mx-auto group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-pentathlon-green">Endereço</h3>
+                <p className="text-gray-600 group-hover:text-gray-700">
                   Rua do Esporte, 123<br />
                   Boa Viagem, Recife/PE<br />
                   CEP: 51020-030
@@ -242,11 +246,11 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            <Card className="text-center border-0 bg-white">
+            <Card className="text-center border-0 bg-white/80 backdrop-blur-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group animate-in slide-in-from-bottom duration-700 delay-200">
               <CardContent className="pt-6">
-                <Phone size={32} className="text-pentathlon-blue mb-4 mx-auto" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Telefone</h3>
-                <p className="text-gray-600">
+                <Phone size={32} className="text-pentathlon-blue mb-4 mx-auto group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-pentathlon-blue">Telefone</h3>
+                <p className="text-gray-600 group-hover:text-gray-700">
                   (81) 3234-5678<br />
                   Segunda a Sexta<br />
                   8h às 17h
@@ -254,11 +258,11 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            <Card className="text-center border-0 bg-white">
+            <Card className="text-center border-0 bg-white/80 backdrop-blur-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group animate-in slide-in-from-right duration-700 delay-400">
               <CardContent className="pt-6">
-                <FileText size={32} className="text-pentathlon-red mb-4 mx-auto" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">E-mail</h3>
-                <p className="text-gray-600">
+                <FileText size={32} className="text-pentathlon-red mb-4 mx-auto group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-pentathlon-red">E-mail</h3>
+                <p className="text-gray-600 group-hover:text-gray-700">
                   contato@fppm.org.br<br />
                   ouvidoria@fppm.org.br<br />
                   presidencia@fppm.org.br
