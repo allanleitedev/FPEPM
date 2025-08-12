@@ -8,6 +8,7 @@ export default function Header() {
 
   const navigation = [
     { name: 'Início', href: '/', icon: null },
+    { name: 'Modalidades', href: '/modalidades', icon: Trophy },
     { name: 'Transparência', href: '/transparencia', icon: FileText },
   ];
 
