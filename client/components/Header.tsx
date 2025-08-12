@@ -20,11 +20,11 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-pentathlon-green rounded-full flex items-center justify-center group-hover:bg-pentathlon-green-dark transition-colors">
-              <img 
-                src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F64c4550af4cc44819ea4276fee6fe144?format=webp&width=800" 
-                alt="CBPM" 
-                className="w-8 h-8 object-contain"
+            <div className="w-10 h-10 flex items-center justify-center">
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F9877a5eeea194603a0ff9e03da33732a?format=webp&width=800"
+                alt="CBPM"
+                className="w-10 h-10 object-contain"
               />
             </div>
             <div className="hidden sm:block">
