@@ -7,9 +7,14 @@ import { Badge } from '@/components/ui/badge';
 
 export default function Index() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-green-50/20 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-gradient-to-r from-pentathlon-green/5 via-transparent to-pentathlon-blue/5 animate-pulse"></div>
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-pentathlon-gold/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-pentathlon-red/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
+
       {/* Hero Section */}
-      <section className="relative py-20 px-4 md:py-32">
+      <section className="relative py-20 px-4 md:py-32 z-10">
         <div className="max-w-7xl mx-auto">
           {/* Mobile Layout */}
           <div className="block lg:hidden">
