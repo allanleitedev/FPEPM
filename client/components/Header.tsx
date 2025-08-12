@@ -46,8 +46,14 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* CTA Button */}
-          <div className="hidden md:block">
+          {/* Admin & CTA Buttons */}
+          <div className="hidden md:flex items-center gap-3">
+            <Link to="/admin/eventos">
+              <Button size="sm" variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50">
+                <Settings size={16} className="mr-2" />
+                Admin
+              </Button>
+            </Link>
             <Button size="sm" className="bg-pentathlon-green hover:bg-pentathlon-green-dark text-white">
               Fale Conosco
             </Button>
