@@ -33,6 +33,8 @@ export default {
           blue: "hsl(var(--pentathlon-blue))",
           "blue-dark": "hsl(var(--pentathlon-blue-dark))",
           gold: "hsl(var(--pentathlon-gold))",
+          red: "hsl(var(--pentathlon-red))",
+          yellow: "hsl(var(--pentathlon-yellow))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
