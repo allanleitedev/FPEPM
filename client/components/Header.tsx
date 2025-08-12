@@ -17,19 +17,18 @@ export default function Header() {
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="h-16 flex items-center justify-center">
+            <div className="h-10 flex items-center justify-center">
               <img
                 src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F4c6593141cce41149696bda6e0c6120a?format=webp&width=800"
                 alt="FPPM"
-                className="h-16 w-auto object-contain"
+                className="h-10 w-auto object-contain"
               />
             </div>
             <div className="hidden sm:block">
-              <div className="text-sm font-bold text-gray-900">FPPM</div>
-              <div className="text-xs text-gray-600">Federação PE</div>
+              <div className="text-lg font-bold text-gray-900">FPPM</div>
             </div>
           </Link>
 
