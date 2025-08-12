@@ -8,10 +8,7 @@ export default function Header() {
 
   const navigation = [
     { name: 'Início', href: '/', icon: null },
-    { name: 'Eventos', href: '/eventos', icon: Calendar },
     { name: 'Transparência', href: '/transparencia', icon: FileText },
-    { name: 'Atletas', href: '/atletas', icon: Users },
-    { name: 'Sobre', href: '/sobre', icon: Trophy },
   ];
 
   return (
