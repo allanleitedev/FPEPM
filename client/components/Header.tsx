@@ -83,7 +83,13 @@ export default function Header() {
                   {item.name}
                 </Link>
               ))}
-              <div className="pt-4 border-t border-gray-200">
+              <div className="pt-4 border-t border-gray-200 space-y-2">
+                <Link to="/admin/eventos" onClick={() => setIsMenuOpen(false)}>
+                  <Button size="sm" variant="outline" className="w-full border-gray-300 text-gray-700 hover:bg-gray-50">
+                    <Settings size={16} className="mr-2" />
+                    Admin Eventos
+                  </Button>
+                </Link>
                 <Button size="sm" className="w-full bg-pentathlon-green hover:bg-pentathlon-green-dark text-white">
                   Fale Conosco
                 </Button>
