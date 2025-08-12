@@ -12,13 +12,13 @@ export default function Footer() {
               <div className="w-12 h-12 flex items-center justify-center">
                 <img
                   src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F9877a5eeea194603a0ff9e03da33732a?format=webp&width=800"
-                  alt="CBPM"
+                  alt="CBPMPE"
                   className="w-12 h-12 object-contain"
                 />
               </div>
               <div>
-                <div className="font-bold text-lg">CBPM</div>
-                <div className="text-sm text-gray-400">Confederação Brasileira</div>
+                <div className="font-bold text-lg">CBPMPE</div>
+                <div className="text-sm text-gray-400">Confederação de PE</div>
               </div>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
@@ -78,7 +78,7 @@ export default function Footer() {
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-sm">
                 <Mail size={16} className="text-pentathlon-green" />
-                <span className="text-gray-400">contato@cbpm.org.br</span>
+                <span className="text-gray-400">contato@cbpmpe.org.br</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <Phone size={16} className="text-pentathlon-green" />
@@ -118,7 +118,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © 2025 Confederação Brasileira de Pentatlo Moderno. Todos os direitos reservados.
+            © 2025 Confederação Brasileira de Pentatlo em Pernambuco. Todos os direitos reservados.
           </p>
           <div className="flex gap-6 mt-4 md:mt-0">
             <Link to="/privacidade" className="text-gray-400 hover:text-pentathlon-green text-sm transition-colors">
