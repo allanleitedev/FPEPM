@@ -146,13 +146,13 @@ export default function Index() {
 
           <div className="grid md:grid-cols-5 gap-6">
             {[
-              { icon: "🏃", name: "Corrida", description: "800m cross-country" },
-              { icon: "🏊", name: "Natação", description: "200m livre" },
-              { icon: "🐎", name: "Hipismo", description: "Salto em obstáculos" },
-              { icon: "🤺", name: "Esgrima", description: "Espada" },
-              { icon: "🎯", name: "Tiro", description: "Pistola laser" }
+              { icon: "🏃", name: "Corrida", description: "800m cross-country", color: "border-t-pentathlon-green" },
+              { icon: "🏊", name: "Natação", description: "200m livre", color: "border-t-pentathlon-blue" },
+              { icon: "🐎", name: "Hipismo", description: "Salto em obstáculos", color: "border-t-pentathlon-red" },
+              { icon: "🤺", name: "Esgrima", description: "Espada", color: "border-t-gray-600" },
+              { icon: "🎯", name: "Tiro", description: "Pistola laser", color: "border-t-pentathlon-yellow" }
             ].map((modalidade, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow border-0 bg-white">
+              <Card key={index} className={`text-center hover:shadow-lg transition-shadow border-0 bg-white border-t-4 ${modalidade.color}`}>
                 <CardContent className="pt-6">
                   <div className="text-4xl mb-3">{modalidade.icon}</div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">{modalidade.name}</h3>
