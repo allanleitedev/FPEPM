@@ -44,6 +44,7 @@ const App = () => (
           <main className="flex-1">
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/admin/eventos" element={<AdminEventos />} />
               <Route path="/eventos" element={<PlaceholderPage title="Eventos" />} />
               <Route path="/transparencia" element={<PlaceholderPage title="Transparência" />} />
               <Route path="/transparencia/financeiro" element={<PlaceholderPage title="Relatórios Financeiros" />} />
