@@ -46,18 +46,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/admin/eventos" element={<AdminEventos />} />
-              <Route path="/eventos" element={<PlaceholderPage title="Eventos" />} />
-              <Route path="/noticias" element={<PlaceholderPage title="Notícias" />} />
-              <Route path="/transparencia" element={<PlaceholderPage title="Transparência" />} />
-              <Route path="/transparencia/financeiro" element={<PlaceholderPage title="Relatórios Financeiros" />} />
-              <Route path="/transparencia/gestao" element={<PlaceholderPage title="Gestão" />} />
-              <Route path="/transparencia/resultados" element={<PlaceholderPage title="Resultados" />} />
-              <Route path="/transparencia/estatuto" element={<PlaceholderPage title="Estatuto" />} />
-              <Route path="/transparencia/atas" element={<PlaceholderPage title="Atas" />} />
-              <Route path="/atletas" element={<PlaceholderPage title="Atletas" />} />
-              <Route path="/sobre" element={<PlaceholderPage title="Sobre" />} />
-              <Route path="/privacidade" element={<PlaceholderPage title="Política de Privacidade" />} />
-              <Route path="/termos" element={<PlaceholderPage title="Termos de Uso" />} />
+              <Route path="/transparencia" element={<Transparencia />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
