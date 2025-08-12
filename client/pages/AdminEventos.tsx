@@ -46,12 +46,12 @@ export default function AdminEventos() {
         setEvents(response.data);
       } catch (strapiError) {
         console.warn('Strapi not available, using mock data with pending events');
-        // Add CBPMPE 2025 as pending event to mock data
+        // Add FPPM 2025 as pending event to mock data
         const mockEvents = [
           {
             id: 999,
-            title: 'CBPMPE 2025 - Campeonato Brasileiro de Pentatlo em Pernambuco',
-            description: 'Campeonato nacional com atletas de todo o Brasil, incluindo as cinco modalidades do pentatlo moderno.',
+            title: 'FPPM 2025 - Campeonato Pernambucano de Pentatlo Moderno',
+            description: 'Campeonato estadual com atletas de todo Pernambuco, incluindo as cinco modalidades do pentatlo moderno.',
             startDate: '2025-12-12',
             endDate: '2025-12-14',
             location: 'Recife, Pernambuco',
@@ -66,7 +66,7 @@ export default function AdminEventos() {
               data: {
                 attributes: {
                   url: 'https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2Fbebb60a7c54c4f80825b035fafd59ea6?format=webp&width=800',
-                  alternativeText: 'CBPMPE 2025'
+                  alternativeText: 'FPPM 2025'
                 }
               }
             }
