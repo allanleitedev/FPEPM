@@ -101,41 +101,44 @@ export default function Index() {
       </section>
 
       {/* Modalidades Resumo */}
-      <section className="py-16 px-4 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
+      <section className="py-16 px-4 bg-gradient-to-br from-gray-50 via-blue-50/20 to-green-50/30 relative">
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-gradient-to-r from-pentathlon-green/5 via-transparent to-pentathlon-blue/5"></div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-12 animate-in slide-in-from-top duration-1000">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">As Cinco Modalidades</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               O pentatlo moderno é um esporte olímpico que combina cinco disciplinas diferentes.
-              O vencedor é considerado <strong className="text-pentathlon-green">o atleta mais completo</strong>.
+              O vencedor é considerado <strong className="text-pentathlon-green animate-pulse">o atleta mais completo</strong>.
             </p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-8">
             {[
-              { icon: "🏊", name: "Natação", detail: "200m livre", color: "border-t-pentathlon-blue" },
-              { icon: "🤺", name: "Esgrima", detail: "Espada", color: "border-t-gray-600" },
-              { icon: "🏃‍♂️", name: "Obstáculos", detail: "70m/8 obstáculos", color: "border-t-pentathlon-red" },
-              { icon: "🎯", name: "Tiro Laser", detail: "4 séries/5 tiros", color: "border-t-pentathlon-yellow" },
-              { icon: "🏃", name: "Corrida", detail: "3.200m", color: "border-t-pentathlon-green" }
+              { icon: "🏊", name: "Natação", detail: "200m livre", color: "border-t-pentathlon-blue", bg: "hover:bg-blue-50" },
+              { icon: "🤺", name: "Esgrima", detail: "Espada", color: "border-t-gray-600", bg: "hover:bg-gray-50" },
+              { icon: "🏃‍♂️", name: "Obstáculos", detail: "70m/8 obstáculos", color: "border-t-pentathlon-red", bg: "hover:bg-red-50" },
+              { icon: "🎯", name: "Tiro Laser", detail: "4 séries/5 tiros", color: "border-t-pentathlon-yellow", bg: "hover:bg-yellow-50" },
+              { icon: "🏃", name: "Corrida", detail: "3.200m", color: "border-t-pentathlon-green", bg: "hover:bg-green-50" }
             ].map((modalidade, index) => (
-              <Card key={index} className={`text-center hover:shadow-lg transition-shadow border-0 bg-white border-t-4 ${modalidade.color} cursor-pointer`}>
+              <Card key={index} className={`text-center hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm border-t-4 ${modalidade.color} ${modalidade.bg} cursor-pointer group animate-in slide-in-from-bottom duration-700`} style={{animationDelay: `${index * 100}ms`}}>
                 <Link to="/modalidades">
                   <CardContent className="pt-6">
-                    <div className="text-4xl mb-3">{modalidade.icon}</div>
-                    <h3 className="font-semibold text-gray-900 mb-1">{modalidade.name}</h3>
-                    <p className="text-sm text-gray-600">{modalidade.detail}</p>
+                    <div className="text-4xl mb-3 group-hover:scale-125 transition-transform duration-300">{modalidade.icon}</div>
+                    <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-gray-800">{modalidade.name}</h3>
+                    <p className="text-sm text-gray-600 group-hover:text-gray-700">{modalidade.detail}</p>
                   </CardContent>
                 </Link>
               </Card>
             ))}
           </div>
 
-          <div className="text-center">
+          <div className="text-center animate-in slide-in-from-bottom duration-1000 delay-700">
             <Link to="/modalidades">
-              <Button size="lg" variant="outline" className="border-pentathlon-green text-pentathlon-green hover:bg-pentathlon-green hover:text-white">
+              <Button size="lg" variant="outline" className="border-pentathlon-green text-pentathlon-green hover:bg-pentathlon-green hover:text-white transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg group">
                 Saiba Mais Sobre as Modalidades
-                <ChevronRight size={20} className="ml-2" />
+                <ChevronRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
           </div>
