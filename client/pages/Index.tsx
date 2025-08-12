@@ -107,15 +107,15 @@ export default function Index() {
 
               <div className="flex items-center gap-8 pt-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-pentathlon-green">150+</div>
+                  <div className="text-2xl font-bold text-pentathlon-green">80+</div>
                   <div className="text-sm text-gray-600">Atletas</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-pentathlon-blue">25</div>
-                  <div className="text-sm text-gray-600">Estados</div>
+                  <div className="text-2xl font-bold text-pentathlon-blue">12</div>
+                  <div className="text-sm text-gray-600">Cidades</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-pentathlon-gold">50+</div>
+                  <div className="text-2xl font-bold text-pentathlon-gold">25+</div>
                   <div className="text-sm text-gray-600">Eventos/Ano</div>
                 </div>
               </div>
