@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AdminEventos from "./pages/AdminEventos";
+import Transparencia from "./pages/Transparencia";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
