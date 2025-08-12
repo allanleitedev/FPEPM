@@ -212,23 +212,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 px-4 bg-pentathlon-green text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Transparência em Primeiro Lugar</h2>
-          <p className="text-xl mb-8 opacity-90">
-            Acesse todas as informações sobre nossa gestão e governança
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="bg-white text-pentathlon-green hover:bg-gray-100">
-              <Link to="/transparencia">Ver Transparência</Link>
-            </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-pentathlon-green">
-              Fale com a Ouvidoria
-            </Button>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
