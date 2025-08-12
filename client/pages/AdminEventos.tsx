@@ -233,7 +233,7 @@ export default function AdminEventos() {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Administração de Eventos</h1>
-            <p className="text-gray-600">Gerencie e aprove eventos da confederação</p>
+            <p className="text-gray-600">Gerencie e aprove eventos da federação</p>
           </div>
           
           <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
