@@ -1,10 +1,74 @@
-import { Calendar, Trophy, Users, FileText, ChevronRight, Star, Medal, Target } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Calendar, Trophy, Users, FileText, ChevronRight, Star, Medal, Target, Newspaper } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { eventsApi, newsApi, mockData, Event, News, getStrapiMediaUrl, handleStrapiError } from '@/lib/strapi';
 
 export default function Index() {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [news, setNews] = useState<News[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Try to fetch from Strapi, fallback to mock data
+        try {
+          const [eventsResponse, newsResponse] = await Promise.all([
+            eventsApi.getApprovedEvents(),
+            newsApi.getFeaturedNews()
+          ]);
+          setEvents(eventsResponse);
+          setNews(newsResponse);
+        } catch (strapiError) {
+          console.warn('Strapi not available, using mock data:', handleStrapiError(strapiError));
+          setEvents(mockData.events);
+          setNews(mockData.news);
+        }
+      } catch (err) {
+        setError('Erro ao carregar dados');
+        console.error('Error fetching data:', err);
+        // Use mock data as final fallback
+        setEvents(mockData.events);
+        setNews(mockData.news);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  const formatEventDate = (startDate: string, endDate?: string) => {
+    const start = new Date(startDate);
+    const startFormatted = start.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' });
+    
+    if (endDate && endDate !== startDate) {
+      const end = new Date(endDate);
+      const endFormatted = end.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' });
+      return `${startFormatted} - ${endFormatted}`;
+    }
+    
+    return startFormatted;
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pentathlon-green mx-auto mb-4"></div>
+          <p className="text-gray-600">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       {/* Hero Section */}
@@ -59,9 +123,9 @@ export default function Index() {
 
             <div className="relative">
               <div className="relative mx-auto w-80 h-80 lg:w-96 lg:h-96">
-                <img
-                  src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F9877a5eeea194603a0ff9e03da33732a?format=webp&width=800"
-                  alt="Confederação Brasileira de Pentatlo Moderno"
+                <img 
+                  src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F9877a5eeea194603a0ff9e03da33732a?format=webp&width=800" 
+                  alt="Confederação Brasileira de Pentatlo Moderno" 
                   className="w-full h-full object-contain drop-shadow-2xl"
                 />
                 <div className="absolute -top-4 -right-4 w-24 h-24 bg-pentathlon-gold/20 rounded-full blur-xl"></div>
@@ -117,39 +181,113 @@ export default function Index() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Approved Events */}
-            {[
-              { title: "Copa Regional Nordeste", date: "15-16 Mar", location: "Salvador, BA", status: "Confirmado" },
-              { title: "Campeonato Estadual SP", date: "22-23 Mar", location: "São Paulo, SP", status: "Confirmado" },
-              { title: "Torneio Regional Sul", date: "05-06 Abr", location: "Porto Alegre, RS", status: "Confirmado" }
-            ].map((evento, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="outline">{evento.date}</Badge>
-                    <Badge className="bg-pentathlon-green text-white text-xs">{evento.status}</Badge>
-                  </div>
-                  <CardTitle className="text-lg">{evento.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Calendar size={16} />
-                      {evento.location}
+            {events.length > 0 ? (
+              events.slice(0, 3).map((event) => (
+                <Card key={event.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge variant="outline">{formatEventDate(event.startDate, event.endDate)}</Badge>
+                      <Badge className="bg-pentathlon-green text-white text-xs">Confirmado</Badge>
                     </div>
-                    <Button variant="outline" className="w-full">
-                      Ver Detalhes
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    <CardTitle className="text-lg">{event.title}</CardTitle>
+                    <CardDescription>{event.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {event.image?.data && (
+                        <img 
+                          src={getStrapiMediaUrl(event.image.data.attributes.url)} 
+                          alt={event.image.data.attributes.alternativeText || event.title}
+                          className="w-full h-32 object-cover rounded-lg"
+                        />
+                      )}
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Calendar size={16} />
+                        {event.location}
+                      </div>
+                      {event.expectedParticipants && (
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <Users size={16} />
+                          {event.expectedParticipants} atletas esperados
+                        </div>
+                      )}
+                      <Button variant="outline" className="w-full">
+                        Ver Detalhes
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-8">
+                <p className="text-gray-500">Nenhum evento confirmado no momento.</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Transparência */}
+      {/* Notícias */}
       <section className="py-16 px-4 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-12">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Últimas Notícias</h2>
+              <p className="text-xl text-gray-600">Fique por dentro das novidades do pentatlo moderno</p>
+            </div>
+            <Button variant="outline" className="hidden md:flex">
+              <Link to="/noticias" className="flex items-center gap-2">
+                Ver Todas
+                <ChevronRight size={16} />
+              </Link>
+            </Button>
+          </div>
+
+          {news.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {news.slice(0, 3).map((article) => (
+                <Card key={article.id} className="hover:shadow-lg transition-shadow border-0 bg-white">
+                  <CardHeader>
+                    {article.image?.data && (
+                      <img 
+                        src={getStrapiMediaUrl(article.image.data.attributes.url)} 
+                        alt={article.image.data.attributes.alternativeText || article.title}
+                        className="w-full h-40 object-cover rounded-lg mb-4"
+                      />
+                    )}
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge variant="outline">
+                        {new Date(article.publishedAt).toLocaleDateString('pt-BR')}
+                      </Badge>
+                      {article.featured && (
+                        <Badge className="bg-pentathlon-blue text-white text-xs">Destaque</Badge>
+                      )}
+                      {article.category && (
+                        <Badge variant="secondary" className="text-xs">{article.category}</Badge>
+                      )}
+                    </div>
+                    <CardTitle className="text-lg">{article.title}</CardTitle>
+                    <CardDescription>{article.excerpt}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button variant="outline" className="w-full">
+                      <Newspaper size={16} className="mr-2" />
+                      Ler Mais
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">Nenhuma notícia disponível no momento.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Transparência */}
+      <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Transparência</h2>
