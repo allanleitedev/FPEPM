@@ -36,9 +36,10 @@ export default function Header() {
               <Link
                 key={item.name}
                 to={item.href}
-                className="text-gray-700 hover:text-pentathlon-green font-medium text-sm transition-colors"
+                className="text-gray-700 hover:text-pentathlon-green font-medium text-sm transition-all duration-200 hover:scale-105 relative group"
               >
-                {item.name}
+                <span className="relative z-10">{item.name}</span>
+                <div className="absolute inset-0 bg-pentathlon-green/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-200 -z-0"></div>
               </Link>
             ))}
           </nav>
