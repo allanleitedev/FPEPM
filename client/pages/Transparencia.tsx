@@ -237,14 +237,41 @@ export default function Transparencia() {
         </div>
 
         <Tabs defaultValue="gestao" className="w-full">
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="gestao">Gestão</TabsTrigger>
-            <TabsTrigger value="processos">Processos Eleitorais</TabsTrigger>
-            <TabsTrigger value="estatuto">Estatuto</TabsTrigger>
-            <TabsTrigger value="compras">Manual de Compras</TabsTrigger>
-            <TabsTrigger value="documentos">Documentos</TabsTrigger>
-            <TabsTrigger value="ouvidoria">Ouvidoria</TabsTrigger>
-          </TabsList>
+          {/* Mobile Tabs */}
+          <div className="block md:hidden">
+            <TabsList className="grid w-full grid-cols-2 gap-1 h-auto p-1">
+              <TabsTrigger value="gestao" className="text-xs py-2">Gestão</TabsTrigger>
+              <TabsTrigger value="processos" className="text-xs py-2">Processos</TabsTrigger>
+              <TabsTrigger value="estatuto" className="text-xs py-2">Estatuto</TabsTrigger>
+              <TabsTrigger value="compras" className="text-xs py-2">Compras</TabsTrigger>
+              <TabsTrigger value="documentos" className="text-xs py-2">Documentos</TabsTrigger>
+              <TabsTrigger value="ouvidoria" className="text-xs py-2">Ouvidoria</TabsTrigger>
+            </TabsList>
+          </div>
+
+          {/* Tablet Tabs */}
+          <div className="hidden md:block lg:hidden">
+            <TabsList className="grid w-full grid-cols-3 gap-1 h-auto p-1">
+              <TabsTrigger value="gestao" className="text-sm py-2">Gestão</TabsTrigger>
+              <TabsTrigger value="processos" className="text-sm py-2">Processos</TabsTrigger>
+              <TabsTrigger value="estatuto" className="text-sm py-2">Estatuto</TabsTrigger>
+              <TabsTrigger value="compras" className="text-sm py-2">Compras</TabsTrigger>
+              <TabsTrigger value="documentos" className="text-sm py-2">Documentos</TabsTrigger>
+              <TabsTrigger value="ouvidoria" className="text-sm py-2">Ouvidoria</TabsTrigger>
+            </TabsList>
+          </div>
+
+          {/* Desktop Tabs */}
+          <div className="hidden lg:block">
+            <TabsList className="grid w-full grid-cols-6">
+              <TabsTrigger value="gestao">Gestão</TabsTrigger>
+              <TabsTrigger value="processos">Processos Eleitorais</TabsTrigger>
+              <TabsTrigger value="estatuto">Estatuto</TabsTrigger>
+              <TabsTrigger value="compras">Manual de Compras</TabsTrigger>
+              <TabsTrigger value="documentos">Documentos</TabsTrigger>
+              <TabsTrigger value="ouvidoria">Ouvidoria</TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Gestão */}
           <TabsContent value="gestao" className="mt-8">
