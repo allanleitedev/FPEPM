@@ -12,21 +12,26 @@ export default function Index() {
       <section className="relative py-20 px-4 md:py-32">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <Badge variant="outline" className="bg-pentathlon-green/10 text-pentathlon-green border-pentathlon-green">
-                  Federação Pernambucana
-                </Badge>
-                <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
-                  Pentatlo
-                  <span className="text-pentathlon-green"> Moderno</span>
-                </h1>
-                <p className="text-xl text-gray-600 leading-relaxed">
-                  Promovendo a excelência esportiva e desenvolvimento do pentatlo moderno em Pernambuco através de 
+            <div className="relative order-2 lg:order-1">
+              <div className="relative mx-auto w-80 h-80 lg:w-96 lg:h-96">
+                <img
+                  src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2Fbb91c0eedcf347ef94d319f58f5bc083?format=webp&width=800"
+                  alt="Federação Pernambucana de Pentatlo Moderno"
+                  className="w-full h-full object-contain drop-shadow-2xl"
+                />
+                <div className="absolute -top-4 -right-4 w-24 h-24 bg-pentathlon-gold/20 rounded-full blur-xl"></div>
+                <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-pentathlon-green/20 rounded-full blur-xl"></div>
+              </div>
+            </div>
+
+            <div className="space-y-8 order-1 lg:order-2">
+              <div className="space-y-6">
+                <p className="text-xl md:text-2xl text-gray-600 leading-relaxed">
+                  Promovendo a excelência esportiva e desenvolvimento do pentatlo moderno em Pernambuco através de
                   transparência, governança e apoio aos atletas.
                 </p>
               </div>
-              
+
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" className="bg-pentathlon-green hover:bg-pentathlon-green-dark text-white">
                   <Link to="/transparencia" className="flex items-center gap-2">
@@ -41,18 +46,6 @@ export default function Index() {
                     <ChevronRight size={20} />
                   </Link>
                 </Button>
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="relative mx-auto w-80 h-80 lg:w-96 lg:h-96">
-                <img 
-                  src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2Fbb91c0eedcf347ef94d319f58f5bc083?format=webp&width=800" 
-                  alt="Federação Pernambucana de Pentatlo Moderno" 
-                  className="w-full h-full object-contain drop-shadow-2xl"
-                />
-                <div className="absolute -top-4 -right-4 w-24 h-24 bg-pentathlon-gold/20 rounded-full blur-xl"></div>
-                <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-pentathlon-green/20 rounded-full blur-xl"></div>
               </div>
             </div>
           </div>
