@@ -46,22 +46,78 @@ export default function AdminEventos() {
         setEvents(response.data);
       } catch (strapiError) {
         console.warn('Strapi not available, using mock data with pending events');
-        // Add FPPM 2025 as pending event to mock data
+        // Add FPPM 2025 as pending event to mock data - detailed for public entity approval
         const mockEvents = [
           {
             id: 999,
             title: 'FPPM 2025 - Campeonato Pernambucano de Pentatlo Moderno',
-            description: 'Campeonato estadual com atletas de todo Pernambuco, incluindo as cinco modalidades do pentatlo moderno.',
+            description: 'Campeonato estadual oficial com atletas de todo Pernambuco, incluindo as cinco modalidades do pentatlo moderno (esgrima, natação, hipismo, tiro esportivo e corrida). Evento classificatório para competições nacionais e internacionais.',
             startDate: '2025-12-12',
             endDate: '2025-12-14',
-            location: 'Recife, Pernambuco',
-            organizer: 'Federação Pernambucana de Pentatlo',
+            location: 'Centro de Convenções de Pernambuco - Olinda/PE',
+            organizer: 'Federação Pernambucana de Pentatlo Moderno',
             expectedParticipants: 120,
             status: 'pending' as const,
-            budget: 85000,
-            notes: 'Evento de grande porte que requer aprovação da diretoria',
+            budget: 185000,
+            notes: 'Evento oficial da modalidade requer aprovação para utilização de recursos públicos e apoio institucional',
             createdAt: '2025-01-10',
             updatedAt: '2025-01-10',
+            // Extended mock data for public entity approval
+            additionalInfo: {
+              // Dados técnicos do evento
+              technicalDetails: {
+                venue: 'Centro de Convenções de Pernambuco',
+                capacity: 1500,
+                infrastructure: 'Completa para as 5 modalidades',
+                security: 'Segurança privada + apoio da PM',
+                medical: 'Equipe médica completa com ambulância',
+                broadcasting: 'Transmissão ao vivo'
+              },
+              // Dados financeiros detalhados
+              financialBreakdown: {
+                infrastructure: 45000,
+                personnel: 35000,
+                equipment: 28000,
+                hospitality: 22000,
+                marketing: 18000,
+                security: 15000,
+                medical: 12000,
+                other: 10000
+              },
+              // Documentação necessária
+              documents: [
+                'Projeto técnico do evento',
+                'Plano de segurança',
+                'Autorização sanitária',
+                'Seguro de responsabilidade civil',
+                'Licenças ambientais',
+                'Alvará de funcionamento'
+              ],
+              // Apoios solicitados
+              requestedSupport: [
+                'Cessão de espaço público',
+                'Apoio da Polícia Militar',
+                'Divulgação institucional',
+                'Isenção de taxas municipais',
+                'Apoio logístico da Prefeitura'
+              ],
+              // Cronograma detalhado
+              schedule: [
+                { date: '2025-12-12', activities: 'Credenciamento e cerimônia de abertura' },
+                { date: '2025-12-13', activities: 'Competições: Esgrima, Natação e Hipismo' },
+                { date: '2025-12-14', activities: 'Tiro esportivo, Corrida e premiação' }
+              ],
+              // Justificativa técnica
+              justification: 'Evento classificatório para o Campeonato Brasileiro 2026 e seletiva para equipe nacional. Promove o desenvolvimento do esporte olímpico em Pernambuco.',
+              // Impacto esperado
+              expectedImpact: {
+                participants: 120,
+                spectators: 800,
+                media: 15,
+                economicImpact: 'R$ 350.000 em movimentação local',
+                sportsDevelopment: 'Capacitação de 30 novos árbitros'
+              }
+            },
             image: {
               data: {
                 attributes: {
