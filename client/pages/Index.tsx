@@ -59,152 +59,44 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Conheça o Pentatlo Moderno */}
+      {/* Modalidades Resumo */}
       <section className="py-16 px-4 bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Conheça o Pentatlo Moderno</h2>
-            <div className="max-w-4xl mx-auto space-y-4">
-              <p className="text-xl text-gray-600 leading-relaxed">
-                É um desporto olímpico praticado por homens e por mulheres, individualmente ou em equipes.
-                Compõe-se de cinco modalidades diferentes: hipismo, esgrima, natação, tiro esportivo e corrida.
-              </p>
-              <p className="text-lg text-gray-600">
-                É proclamado vencedor aquele que obtiver o melhor desempenho geral ao somar mais pontos.
-                Por essa variedade de esportes, <strong className="text-pentathlon-green">o vencedor do pentatlo é considerado o atleta mais completo</strong>.
-              </p>
-            </div>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">As Cinco Modalidades</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              O pentatlo moderno é um esporte olímpico que combina cinco disciplinas diferentes.
+              O vencedor é considerado <strong className="text-pentathlon-green">o atleta mais completo</strong>.
+            </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Natação */}
-            <Card className="border-0 bg-white border-l-4 border-l-pentathlon-blue">
-              <CardHeader>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="text-6xl">🏊</div>
-                  <div>
-                    <CardTitle className="text-2xl text-pentathlon-blue">Natação</CardTitle>
-                    <CardDescription className="text-lg">200 metros estilo livre</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 leading-relaxed">
-                  Os atletas nadam 200 metros estilo livre contra o relógio. Quanto mais rápido o tempo, maior a pontuação obtida.
-                  O tempo de referência é <strong>2 minutos e 30 segundos, equivalente a 250 pontos</strong>.
-                  A cada 0,50 segundo abaixo ou acima desse tempo, 1 ponto é adicionado ou subtraído da pontuação total do atleta.
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Esgrima */}
-            <Card className="border-0 bg-white border-l-4 border-l-gray-600">
-              <CardHeader>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="text-6xl">🤺</div>
-                  <div>
-                    <CardTitle className="text-2xl text-gray-600">Esgrima</CardTitle>
-                    <CardDescription className="text-lg">Espada - Sistema renovado</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <p className="text-gray-600">
-                    A prova de esgrima sofreu alterações após os Jogos Olímpicos de Paris 2024 e agora é composta por dois eventos principais:
-                  </p>
-                  <div className="space-y-2">
-                    <div>
-                      <strong className="text-gray-800">Ranking Round:</strong>
-                      <span className="text-gray-600 ml-1">Sistema "todos contra todos". Cada duelo dura máximo 1 minuto ou até o primeiro toque.</span>
-                    </div>
-                    <div>
-                      <strong className="text-gray-800">Eliminação Direta:</strong>
-                      <span className="text-gray-600 ml-1">Semifinais e finais com chaveamento baseado no ranking prévio, começando com 32 atletas.</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Prova de Obstáculos */}
-            <Card className="border-0 bg-white border-l-4 border-l-pentathlon-red">
-              <CardHeader>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="text-6xl">🏃‍♂️</div>
-                  <div>
-                    <CardTitle className="text-2xl text-pentathlon-red">Prova de Obstáculos</CardTitle>
-                    <CardDescription className="text-lg">70 metros com 8 obstáculos</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <p className="text-gray-600">
-                    Percurso de 70 metros com um circuito padronizado de 8 obstáculos variados, que exigem força, agilidade,
-                    coordenação, equilíbrio e tomada rápida de decisão. A prova é disputada em duas raias simultaneamente.
-                  </p>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-sm text-gray-600">
-                      <strong>Pontuação:</strong> 250 pontos base para 65 segundos. A cada 0,33 segundo acima ou abaixo,
-                      a pontuação é ajustada para mais ou menos.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Laser Run */}
-            <Card className="border-0 bg-white border-l-4 border-l-pentathlon-yellow">
-              <CardHeader>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="text-6xl">🎯</div>
-                  <div>
-                    <CardTitle className="text-2xl text-yellow-600">Corrida e Tiro a Laser</CardTitle>
-                    <CardDescription className="text-lg">3.200m + 4 séries de tiro</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <p className="text-gray-600">
-                    Percurso de 3.200 metros com largada tipo "HANDICAP" baseada na classificação das provas anteriores.
-                    A cada 800 metros, os atletas param para o tiro.
-                  </p>
-                  <div className="space-y-2">
-                    <div className="bg-gray-50 p-3 rounded-lg text-sm">
-                      <strong className="text-gray-800">Tiro:</strong> 4 séries de 5 acertos cada, máximo 50s por série,
-                      alvo a 10m, posição de pé com uma mão, sem apoio.
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded-lg text-sm">
-                      <strong className="text-gray-800">Largada:</strong> Diferença de 20 pontos = 20 segundos de intervalo entre atletas.
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Resumo visual das 5 modalidades */}
-          <div className="mt-16">
-            <h3 className="text-2xl font-bold text-center text-gray-900 mb-8">As Cinco Modalidades em Resumo</h3>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              {[
-                { icon: "🏊", name: "Natação", detail: "200m livre" },
-                { icon: "🤺", name: "Esgrima", detail: "Espada" },
-                { icon: "🏃‍♂️", name: "Obstáculos", detail: "70m/8 obstáculos" },
-                { icon: "🎯", name: "Tiro Laser", detail: "4 séries/5 tiros" },
-                { icon: "🏃", name: "Corrida", detail: "3.200m" }
-              ].map((modalidade, index) => (
-                <Card key={index} className="text-center border-0 bg-white hover:shadow-md transition-shadow">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-8">
+            {[
+              { icon: "🏊", name: "Natação", detail: "200m livre", color: "border-t-pentathlon-blue" },
+              { icon: "🤺", name: "Esgrima", detail: "Espada", color: "border-t-gray-600" },
+              { icon: "🏃‍♂️", name: "Obstáculos", detail: "70m/8 obstáculos", color: "border-t-pentathlon-red" },
+              { icon: "🎯", name: "Tiro Laser", detail: "4 séries/5 tiros", color: "border-t-pentathlon-yellow" },
+              { icon: "🏃", name: "Corrida", detail: "3.200m", color: "border-t-pentathlon-green" }
+            ].map((modalidade, index) => (
+              <Card key={index} className={`text-center hover:shadow-lg transition-shadow border-0 bg-white border-t-4 ${modalidade.color} cursor-pointer`}>
+                <Link to="/modalidades">
                   <CardContent className="pt-6">
-                    <div className="text-3xl mb-2">{modalidade.icon}</div>
-                    <h4 className="font-semibold text-gray-900 text-sm">{modalidade.name}</h4>
-                    <p className="text-xs text-gray-600 mt-1">{modalidade.detail}</p>
+                    <div className="text-4xl mb-3">{modalidade.icon}</div>
+                    <h3 className="font-semibold text-gray-900 mb-1">{modalidade.name}</h3>
+                    <p className="text-sm text-gray-600">{modalidade.detail}</p>
                   </CardContent>
-                </Card>
-              ))}
-            </div>
+                </Link>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Link to="/modalidades">
+              <Button size="lg" variant="outline" className="border-pentathlon-green text-pentathlon-green hover:bg-pentathlon-green hover:text-white">
+                Saiba Mais Sobre as Modalidades
+                <ChevronRight size={20} className="ml-2" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
