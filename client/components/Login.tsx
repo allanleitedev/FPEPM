@@ -23,8 +23,6 @@ export default function Login({ onSuccess }: LoginProps) {
     e.preventDefault();
     setError('');
 
-    console.log('Login attempt:', { email, password: '***', isSignUp });
-
     if (!email || !password) {
       setError('Por favor, preencha todos os campos obrigatórios');
       return;
@@ -40,13 +38,9 @@ export default function Login({ onSuccess }: LoginProps) {
         ? await signUp(email, password, name)
         : await signIn(email, password);
 
-      console.log('Login result:', result);
-
       if (result.success) {
-        console.log('Login successful, calling onSuccess');
         onSuccess?.();
       } else {
-        console.log('Login failed:', result.error);
         setError(result.error || 'Erro durante a autenticação');
       }
     } catch (err: any) {

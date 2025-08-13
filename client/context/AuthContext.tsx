@@ -126,7 +126,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
-      console.log('AuthContext signIn called with:', email);
       setIsLoading(true);
 
       // Check if it's a demo credential first
@@ -138,7 +137,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const demoUser = demoCredentials.find(cred => cred.email === email && cred.password === password);
 
       if (demoUser) {
-        console.log('Demo user found:', demoUser.email, demoUser.role);
         // Use mock authentication for demo users
         const mockUser: AdminUser = {
           id: `demo-${demoUser.role}`,
@@ -150,10 +148,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           updated_at: new Date().toISOString()
         };
 
-        console.log('Setting user in context:', mockUser);
         setUser(mockUser);
         localStorage.setItem('fppm_auth_demo', JSON.stringify({ user: mockUser }));
-        console.log('Demo login successful');
         return { success: true };
       }
 
@@ -178,7 +174,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Unexpected error in signIn:', error);
       return { success: false, error: 'Erro inesperado durante o login' };
     } finally {
-      console.log('Setting isLoading to false');
       setIsLoading(false);
     }
   };
