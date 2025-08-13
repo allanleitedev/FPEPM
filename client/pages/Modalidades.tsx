@@ -65,17 +65,20 @@ export default function Modalidades() {
           </Card>
 
           {/* Esgrima */}
-          <Card className="border-0 bg-white/80 backdrop-blur-sm border-l-4 border-l-gray-600 hover:shadow-xl hover:-translate-y-2 hover:bg-gray-50/50 transition-all duration-300 group animate-in slide-in-from-right duration-700 delay-500">
-            <CardHeader>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="text-6xl group-hover:scale-125 group-hover:-rotate-12 transition-all duration-300">🤺</div>
-                <div>
-                  <CardTitle className="text-2xl text-gray-600 group-hover:text-gray-800">Esgrima</CardTitle>
-                  <CardDescription className="text-lg group-hover:text-gray-700">Espada - Sistema renovado</CardDescription>
-                </div>
+          <Card className="border-0 bg-white/80 backdrop-blur-sm border-l-4 border-l-gray-600 hover:shadow-xl hover:-translate-y-2 hover:bg-gray-50/50 transition-all duration-300 group animate-in slide-in-from-right duration-700 delay-500 overflow-hidden">
+            <div className="relative h-48 w-full overflow-hidden">
+              <img
+                src="https://images.pexels.com/photos/6539009/pexels-photo-6539009.jpeg"
+                alt="Atleta de esgrima"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+              <div className="absolute bottom-4 left-4 text-white">
+                <CardTitle className="text-2xl text-white drop-shadow-lg">Esgrima</CardTitle>
+                <CardDescription className="text-lg text-gray-200">Espada - Sistema renovado</CardDescription>
               </div>
-            </CardHeader>
-            <CardContent>
+            </div>
+            <CardContent className="p-6">
               <div className="space-y-3">
                 <p className="text-gray-600 group-hover:text-gray-700">
                   A prova de esgrima sofreu alterações após os Jogos Olímpicos de Paris 2024 e agora é composta por dois eventos principais:
@@ -95,17 +98,20 @@ export default function Modalidades() {
           </Card>
 
           {/* Prova de Obstáculos */}
-          <Card className="border-0 bg-white/80 backdrop-blur-sm border-l-4 border-l-pentathlon-red hover:shadow-xl hover:-translate-y-2 hover:bg-red-50/30 transition-all duration-300 group animate-in slide-in-from-left duration-700 delay-700">
-            <CardHeader>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="text-6xl group-hover:scale-125 group-hover:rotate-6 transition-all duration-300">🏃‍♂️</div>
-                <div>
-                  <CardTitle className="text-2xl text-pentathlon-red group-hover:text-red-600">Prova de Obstáculos</CardTitle>
-                  <CardDescription className="text-lg group-hover:text-gray-700">70 metros com 8 obstáculos</CardDescription>
-                </div>
+          <Card className="border-0 bg-white/80 backdrop-blur-sm border-l-4 border-l-pentathlon-red hover:shadow-xl hover:-translate-y-2 hover:bg-red-50/30 transition-all duration-300 group animate-in slide-in-from-left duration-700 delay-700 overflow-hidden">
+            <div className="relative h-48 w-full overflow-hidden">
+              <img
+                src="https://images.pexels.com/photos/3763879/pexels-photo-3763879.jpeg"
+                alt="Atleta saltando obstáculo"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+              <div className="absolute bottom-4 left-4 text-white">
+                <CardTitle className="text-2xl text-white drop-shadow-lg">Prova de Obstáculos</CardTitle>
+                <CardDescription className="text-lg text-gray-200">70 metros com 8 obstáculos</CardDescription>
               </div>
-            </CardHeader>
-            <CardContent>
+            </div>
+            <CardContent className="p-6">
               <div className="space-y-3">
                 <p className="text-gray-600 group-hover:text-gray-700">
                   Percurso de 70 metros com um circuito padronizado de 8 obstáculos variados, que exigem força, agilidade,
@@ -122,17 +128,20 @@ export default function Modalidades() {
           </Card>
 
           {/* Laser Run */}
-          <Card className="border-0 bg-white/80 backdrop-blur-sm border-l-4 border-l-pentathlon-yellow hover:shadow-xl hover:-translate-y-2 hover:bg-yellow-50/30 transition-all duration-300 group animate-in slide-in-from-right duration-700 delay-900">
-            <CardHeader>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="text-6xl group-hover:scale-125 group-hover:-rotate-6 transition-all duration-300">🎯</div>
-                <div>
-                  <CardTitle className="text-2xl text-yellow-600 group-hover:text-yellow-700">Corrida e Tiro a Laser</CardTitle>
-                  <CardDescription className="text-lg group-hover:text-gray-700">3.200m + 4 séries de tiro</CardDescription>
-                </div>
+          <Card className="border-0 bg-white/80 backdrop-blur-sm border-l-4 border-l-pentathlon-yellow hover:shadow-xl hover:-translate-y-2 hover:bg-yellow-50/30 transition-all duration-300 group animate-in slide-in-from-right duration-700 delay-900 overflow-hidden">
+            <div className="relative h-48 w-full overflow-hidden">
+              <img
+                src="https://images.pexels.com/photos/6091867/pexels-photo-6091867.jpeg"
+                alt="Tiro esportivo"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+              <div className="absolute bottom-4 left-4 text-white">
+                <CardTitle className="text-2xl text-white drop-shadow-lg">Corrida e Tiro a Laser</CardTitle>
+                <CardDescription className="text-lg text-gray-200">3.200m + 4 séries de tiro</CardDescription>
               </div>
-            </CardHeader>
-            <CardContent>
+            </div>
+            <CardContent className="p-6">
               <div className="space-y-3">
                 <p className="text-gray-600 group-hover:text-gray-700">
                   Percurso de 3.200 metros com largada tipo "HANDICAP" baseada na classificação das provas anteriores.
