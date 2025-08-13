@@ -1,17 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: 'admin' | 'moderator';
-}
+import { supabase, AdminUser } from '@/lib/supabase';
+import { User, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
-  user: User | null;
+  user: AdminUser | null;
+  session: Session | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  signUp: (email: string, password: string, name: string, role?: 'admin' | 'moderator') => Promise<{ success: boolean; error?: string }>;
+  signOut: () => Promise<void>;
   isLoading: boolean;
 }
 
@@ -26,72 +23,152 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AdminUser | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored authentication on mount
-    const storedAuth = localStorage.getItem('fppm_auth');
-    if (storedAuth) {
-      try {
-        const authData = JSON.parse(storedAuth);
-        setUser(authData.user);
-      } catch (error) {
-        localStorage.removeItem('fppm_auth');
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session?.user) {
+        loadAdminUser(session.user);
+      } else {
+        setIsLoading(false);
       }
-    }
-    setIsLoading(false);
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setSession(session);
+      if (session?.user) {
+        await loadAdminUser(session.user);
+      } else {
+        setUser(null);
+        setIsLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
-    setIsLoading(true);
-    
+  const loadAdminUser = async (authUser: User) => {
     try {
-      // Simulate API call with demo credentials
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Demo credentials for testing
-      const validCredentials = [
-        { email: 'admin@fppm.com.br', password: 'admin123', role: 'admin' as const },
-        { email: 'moderator@fppm.com.br', password: 'mod123', role: 'moderator' as const }
-      ];
-      
-      const credential = validCredentials.find(
-        cred => cred.email === email && cred.password === password
-      );
-      
-      if (credential) {
-        const userData: User = {
-          id: Math.random().toString(36).substr(2, 9),
-          email: credential.email,
-          name: credential.role === 'admin' ? 'Administrador FPPM' : 'Moderador FPPM',
-          role: credential.role
-        };
-        
-        setUser(userData);
-        localStorage.setItem('fppm_auth', JSON.stringify({ user: userData }));
-        setIsLoading(false);
-        return true;
+      const { data: adminUser, error } = await supabase
+        .from('admin_users')
+        .select('*')
+        .eq('auth_user_id', authUser.id)
+        .single();
+
+      if (error) {
+        console.error('Error loading admin user:', error);
+        // If admin user doesn't exist, create one for demo
+        if (error.code === 'PGRST116') {
+          await createAdminUser(authUser);
+        }
+      } else {
+        setUser(adminUser);
       }
-      
-      setIsLoading(false);
-      return false;
     } catch (error) {
+      console.error('Error in loadAdminUser:', error);
+    } finally {
       setIsLoading(false);
-      return false;
     }
   };
 
-  const logout = () => {
+  const createAdminUser = async (authUser: User) => {
+    try {
+      const adminUserData = {
+        auth_user_id: authUser.id,
+        email: authUser.email!,
+        name: authUser.user_metadata?.name || authUser.email!.split('@')[0],
+        role: authUser.email === 'admin@fppm.com.br' ? 'admin' : 'moderator'
+      };
+
+      const { data: newAdminUser, error } = await supabase
+        .from('admin_users')
+        .insert(adminUserData)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating admin user:', error);
+      } else {
+        setUser(newAdminUser);
+      }
+    } catch (error) {
+      console.error('Error in createAdminUser:', error);
+    }
+  };
+
+  const signIn = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      setIsLoading(true);
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: 'Erro inesperado durante o login' };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const signUp = async (
+    email: string, 
+    password: string, 
+    name: string, 
+    role: 'admin' | 'moderator' = 'moderator'
+  ): Promise<{ success: boolean; error?: string }> => {
+    try {
+      setIsLoading(true);
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name,
+            role
+          }
+        }
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: 'Erro inesperado durante o cadastro' };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const signOut = async () => {
+    setIsLoading(true);
+    await supabase.auth.signOut();
     setUser(null);
-    localStorage.removeItem('fppm_auth');
+    setSession(null);
+    setIsLoading(false);
   };
 
   const value = {
     user,
-    isAuthenticated: !!user,
-    login,
-    logout,
+    session,
+    isAuthenticated: !!session && !!user,
+    signIn,
+    signUp,
+    signOut,
     isLoading
   };
 
