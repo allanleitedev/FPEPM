@@ -119,40 +119,40 @@ export default function Index() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-8">
             {[
               {
-                image: "https://images.pexels.com/photos/6011899/pexels-photo-6011899.jpeg",
-                alt: "Atleta de natação",
+                image: "https://images.pexels.com/photos/8028676/pexels-photo-8028676.jpeg",
+                alt: "Nadadores competindo em piscina",
                 name: "Natação",
                 detail: "200m livre",
                 color: "border-t-pentathlon-blue",
                 bg: "bg-blue-50/80 hover:bg-blue-100/90 border-blue-200"
               },
               {
-                image: "https://images.pexels.com/photos/6539009/pexels-photo-6539009.jpeg",
-                alt: "Atleta de esgrima",
+                image: "https://images.pexels.com/photos/5942027/pexels-photo-5942027.jpeg",
+                alt: "Esgrimistas em competição",
                 name: "Esgrima",
                 detail: "Espada",
                 color: "border-t-gray-600",
                 bg: "bg-gray-50/80 hover:bg-gray-100/90 border-gray-200"
               },
               {
-                image: "https://images.pexels.com/photos/3763879/pexels-photo-3763879.jpeg",
-                alt: "Atleta saltando obstáculo",
+                image: "https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F56e0d16e18784bd9ada52cb61f7ee084?format=webp&width=800",
+                alt: "Atleta em prova de obstáculos",
                 name: "Obstáculos",
                 detail: "70m/8 obstáculos",
                 color: "border-t-pentathlon-red",
                 bg: "bg-red-50/80 hover:bg-red-100/90 border-red-200"
               },
               {
-                image: "https://images.pexels.com/photos/6091867/pexels-photo-6091867.jpeg",
-                alt: "Tiro esportivo",
+                image: "https://images.pexels.com/photos/6620423/pexels-photo-6620423.jpeg",
+                alt: "Atleta em competição de tiro",
                 name: "Tiro Laser",
                 detail: "4 séries/5 tiros",
                 color: "border-t-pentathlon-yellow",
                 bg: "bg-yellow-50/80 hover:bg-yellow-100/90 border-yellow-200"
               },
               {
-                image: "https://images.pexels.com/photos/5843529/pexels-photo-5843529.jpeg",
-                alt: "Atleta correndo",
+                image: "https://images.pexels.com/photos/34514/spot-runs-start-la.jpg",
+                alt: "Atletas correndo em competição",
                 name: "Corrida",
                 detail: "3.200m",
                 color: "border-t-pentathlon-green",

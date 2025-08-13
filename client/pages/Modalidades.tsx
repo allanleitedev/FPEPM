@@ -45,8 +45,8 @@ export default function Modalidades() {
           <Card className="border-0 bg-white/80 backdrop-blur-sm border-l-4 border-l-pentathlon-blue hover:shadow-xl hover:-translate-y-2 hover:bg-blue-50/30 transition-all duration-300 group animate-in slide-in-from-left duration-700 delay-300 overflow-hidden">
             <div className="relative h-48 w-full overflow-hidden">
               <img
-                src="https://images.pexels.com/photos/6011899/pexels-photo-6011899.jpeg"
-                alt="Atleta de natação"
+                src="https://images.pexels.com/photos/8028676/pexels-photo-8028676.jpeg"
+                alt="Nadadores competindo em piscina"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
@@ -68,8 +68,8 @@ export default function Modalidades() {
           <Card className="border-0 bg-white/80 backdrop-blur-sm border-l-4 border-l-gray-600 hover:shadow-xl hover:-translate-y-2 hover:bg-gray-50/50 transition-all duration-300 group animate-in slide-in-from-right duration-700 delay-500 overflow-hidden">
             <div className="relative h-48 w-full overflow-hidden">
               <img
-                src="https://images.pexels.com/photos/6539009/pexels-photo-6539009.jpeg"
-                alt="Atleta de esgrima"
+                src="https://images.pexels.com/photos/5942027/pexels-photo-5942027.jpeg"
+                alt="Esgrimistas em competição"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
@@ -101,8 +101,8 @@ export default function Modalidades() {
           <Card className="border-0 bg-white/80 backdrop-blur-sm border-l-4 border-l-pentathlon-red hover:shadow-xl hover:-translate-y-2 hover:bg-red-50/30 transition-all duration-300 group animate-in slide-in-from-left duration-700 delay-700 overflow-hidden">
             <div className="relative h-48 w-full overflow-hidden">
               <img
-                src="https://images.pexels.com/photos/3763879/pexels-photo-3763879.jpeg"
-                alt="Atleta saltando obstáculo"
+                src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F56e0d16e18784bd9ada52cb61f7ee084?format=webp&width=800"
+                alt="Atleta em prova de obstáculos"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
@@ -131,8 +131,8 @@ export default function Modalidades() {
           <Card className="border-0 bg-white/80 backdrop-blur-sm border-l-4 border-l-pentathlon-yellow hover:shadow-xl hover:-translate-y-2 hover:bg-yellow-50/30 transition-all duration-300 group animate-in slide-in-from-right duration-700 delay-900 overflow-hidden">
             <div className="relative h-48 w-full overflow-hidden">
               <img
-                src="https://images.pexels.com/photos/6091867/pexels-photo-6091867.jpeg"
-                alt="Tiro esportivo"
+                src="https://images.pexels.com/photos/6620423/pexels-photo-6620423.jpeg"
+                alt="Atleta em competição de tiro"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
@@ -167,40 +167,40 @@ export default function Modalidades() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {[
               {
-                image: "https://images.pexels.com/photos/6011899/pexels-photo-6011899.jpeg",
-                alt: "Atleta de natação",
+                image: "https://images.pexels.com/photos/8028676/pexels-photo-8028676.jpeg",
+                alt: "Nadadores competindo em piscina",
                 name: "Natação",
                 detail: "200m livre",
                 points: "250 pts base (2:30)",
                 color: "hover:bg-blue-50"
               },
               {
-                image: "https://images.pexels.com/photos/6539009/pexels-photo-6539009.jpeg",
-                alt: "Atleta de esgrima",
+                image: "https://images.pexels.com/photos/5942027/pexels-photo-5942027.jpeg",
+                alt: "Esgrimistas em competição",
                 name: "Esgrima",
                 detail: "Espada",
                 points: "Ranking + Eliminação",
                 color: "hover:bg-gray-50"
               },
               {
-                image: "https://images.pexels.com/photos/3763879/pexels-photo-3763879.jpeg",
-                alt: "Atleta saltando obstáculo",
+                image: "https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F56e0d16e18784bd9ada52cb61f7ee084?format=webp&width=800",
+                alt: "Atleta em prova de obstáculos",
                 name: "Obstáculos",
                 detail: "70m/8 obstáculos",
                 points: "250 pts base (65s)",
                 color: "hover:bg-red-50"
               },
               {
-                image: "https://images.pexels.com/photos/6091867/pexels-photo-6091867.jpeg",
-                alt: "Tiro esportivo",
+                image: "https://images.pexels.com/photos/6620423/pexels-photo-6620423.jpeg",
+                alt: "Atleta em competição de tiro",
                 name: "Tiro Laser",
                 detail: "4 séries/5 tiros",
                 points: "Max 50s/série",
                 color: "hover:bg-yellow-50"
               },
               {
-                image: "https://images.pexels.com/photos/5843529/pexels-photo-5843529.jpeg",
-                alt: "Atleta correndo",
+                image: "https://images.pexels.com/photos/34514/spot-runs-start-la.jpg",
+                alt: "Atletas correndo em competição",
                 name: "Corrida",
                 detail: "3.200m",
                 points: "Largada handicap",
