@@ -234,9 +234,11 @@ export default function Transparencia() {
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Transparência</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            A Federação Pernambucana de Pentatlo Moderno está comprometida com a transparência e prestação de contas. 
+          <h1 className="text-4xl font-bold text-gray-900 mb-4 animate-in slide-in-from-top duration-1000 bg-gradient-to-r from-pentathlon-green to-pentathlon-blue bg-clip-text text-transparent">
+            Transparência
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto animate-in slide-in-from-bottom duration-1000 delay-300">
+            A Federação Pernambucana de Pentatlo Moderno está comprometida com a transparência e prestação de contas.
             Aqui você encontra todas as informações sobre nossa gestão, processos e documentos institucionais.
           </p>
         </div>
