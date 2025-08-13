@@ -92,28 +92,119 @@ export const EVENT_STATUSES = [
   { value: 'published', label: 'Publicado', color: 'blue' }
 ] as const;
 
-// Test Supabase connection
-export const testSupabaseConnection = async (): Promise<{ connected: boolean; error?: string }> => {
+// Test Supabase connection with detailed diagnostics
+export const testSupabaseConnection = async (): Promise<{
+  connected: boolean;
+  error?: string;
+  details?: string[]
+}> => {
+  const details: string[] = [];
+
   try {
-    // Try to get the current session
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    details.push('🔍 Testando conexão com Supabase...');
 
-    if (sessionError) {
-      return { connected: false, error: sessionError.message };
+    // Test 1: Basic URL connectivity
+    try {
+      const response = await fetch(supabaseUrl + '/rest/v1/', {
+        method: 'HEAD',
+        headers: {
+          'apikey': supabaseAnonKey,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        details.push('✅ URL do Supabase está acessível');
+      } else {
+        details.push(`❌ URL do Supabase retornou: ${response.status}`);
+        return { connected: false, error: `HTTP ${response.status}`, details };
+      }
+    } catch (urlError: any) {
+      details.push('❌ Falha ao conectar na URL do Supabase');
+      return { connected: false, error: urlError.message, details };
     }
 
-    // Try a simple query to test database connection
-    const { error: queryError } = await supabase
-      .from('admin_users')
-      .select('count')
-      .limit(1);
+    // Test 2: Auth status
+    try {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
-    if (queryError) {
-      return { connected: false, error: queryError.message };
+      if (sessionError) {
+        details.push(`⚠️ Erro na sessão: ${sessionError.message}`);
+      } else {
+        details.push(`ℹ️ Sessão: ${session ? 'Logado' : 'Anônimo'}`);
+      }
+    } catch (authError: any) {
+      details.push(`❌ Erro no auth: ${authError.message}`);
     }
 
-    return { connected: true };
+    // Test 3: Check if tables exist
+    const tables = ['admin_users', 'documents', 'events'];
+
+    for (const table of tables) {
+      try {
+        const { data, error } = await supabase
+          .from(table)
+          .select('*', { count: 'exact', head: true })
+          .limit(1);
+
+        if (error) {
+          details.push(`❌ Tabela '${table}': ${error.message}`);
+          if (error.message.includes('permission denied') || error.message.includes('RLS')) {
+            details.push(`   💡 Problema de RLS/Permissões na tabela ${table}`);
+          }
+        } else {
+          details.push(`✅ Tabela '${table}': OK`);
+        }
+      } catch (tableError: any) {
+        details.push(`❌ Erro na tabela '${table}': ${tableError.message}`);
+      }
+    }
+
+    // Test 4: Try to insert a test admin user (if authenticated)
+    try {
+      const testUser = {
+        email: 'test@example.com',
+        name: 'Test User',
+        role: 'admin'
+      };
+
+      const { error: insertError } = await supabase
+        .from('admin_users')
+        .insert(testUser)
+        .select()
+        .single();
+
+      if (insertError) {
+        details.push(`⚠️ Insert test falhou: ${insertError.message}`);
+        if (insertError.message.includes('permission') || insertError.message.includes('RLS')) {
+          details.push('   💡 Políticas RLS muito restritivas');
+        }
+      } else {
+        details.push('✅ Insert test: OK');
+        // Clean up test data
+        await supabase.from('admin_users').delete().eq('email', 'test@example.com');
+      }
+    } catch (insertError: any) {
+      details.push(`⚠️ Insert test erro: ${insertError.message}`);
+    }
+
+    // Check if any major errors occurred
+    const hasErrors = details.some(detail => detail.includes('❌'));
+    const hasRLSIssues = details.some(detail => detail.includes('RLS') || detail.includes('permission'));
+
+    if (hasErrors) {
+      return {
+        connected: false,
+        error: hasRLSIssues ? 'Problemas com pol��ticas RLS' : 'Problemas de conectividade',
+        details
+      };
+    }
+
+    details.push('🎉 Conexão com Supabase funcionando!');
+    return { connected: true, details };
+
   } catch (error: any) {
-    return { connected: false, error: error.message || 'Connection failed' };
+    details.push(`❌ Erro geral: ${error.message}`);
+    return { connected: false, error: error.message || 'Connection failed', details };
   }
 };
