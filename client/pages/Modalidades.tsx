@@ -68,7 +68,7 @@ export default function Modalidades() {
           <Card className="border-0 bg-white/80 backdrop-blur-sm border-l-4 border-l-gray-600 hover:shadow-xl hover:-translate-y-2 hover:bg-gray-50/50 transition-all duration-300 group animate-in slide-in-from-right duration-700 delay-500 overflow-hidden">
             <div className="relative h-48 w-full overflow-hidden">
               <img
-                src="https://images.pexels.com/photos/5942027/pexels-photo-5942027.jpeg"
+                src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F012611ee462247a48ebea259fbbf8e73?format=webp&width=800"
                 alt="Esgrimistas em competição"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
@@ -131,8 +131,8 @@ export default function Modalidades() {
           <Card className="border-0 bg-white/80 backdrop-blur-sm border-l-4 border-l-pentathlon-yellow hover:shadow-xl hover:-translate-y-2 hover:bg-yellow-50/30 transition-all duration-300 group animate-in slide-in-from-right duration-700 delay-900 overflow-hidden">
             <div className="relative h-48 w-full overflow-hidden">
               <img
-                src="https://images.pexels.com/photos/6620423/pexels-photo-6620423.jpeg"
-                alt="Atleta em competição de tiro"
+                src="https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2Fb1f3a3babed345f6be5ae06201ecbb90?format=webp&width=800"
+                alt="Atleta em competição de tiro laser"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
@@ -175,7 +175,7 @@ export default function Modalidades() {
                 color: "hover:bg-blue-50"
               },
               {
-                image: "https://images.pexels.com/photos/5942027/pexels-photo-5942027.jpeg",
+                image: "https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F012611ee462247a48ebea259fbbf8e73?format=webp&width=800",
                 alt: "Esgrimistas em competição",
                 name: "Esgrima",
                 detail: "Espada",
@@ -191,8 +191,8 @@ export default function Modalidades() {
                 color: "hover:bg-red-50"
               },
               {
-                image: "https://images.pexels.com/photos/6620423/pexels-photo-6620423.jpeg",
-                alt: "Atleta em competição de tiro",
+                image: "https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2Fb1f3a3babed345f6be5ae06201ecbb90?format=webp&width=800",
+                alt: "Atleta em competição de tiro laser",
                 name: "Tiro Laser",
                 detail: "4 séries/5 tiros",
                 points: "Max 50s/série",

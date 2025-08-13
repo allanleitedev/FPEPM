@@ -127,7 +127,7 @@ export default function Index() {
                 bg: "bg-blue-50/80 hover:bg-blue-100/90 border-blue-200"
               },
               {
-                image: "https://images.pexels.com/photos/5942027/pexels-photo-5942027.jpeg",
+                image: "https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2F012611ee462247a48ebea259fbbf8e73?format=webp&width=800",
                 alt: "Esgrimistas em competição",
                 name: "Esgrima",
                 detail: "Espada",
@@ -143,8 +143,8 @@ export default function Index() {
                 bg: "bg-red-50/80 hover:bg-red-100/90 border-red-200"
               },
               {
-                image: "https://images.pexels.com/photos/6620423/pexels-photo-6620423.jpeg",
-                alt: "Atleta em competição de tiro",
+                image: "https://cdn.builder.io/api/v1/image/assets%2F83197d83cffa4d76b43dffc4a37dfe2d%2Fb1f3a3babed345f6be5ae06201ecbb90?format=webp&width=800",
+                alt: "Atleta em competição de tiro laser",
                 name: "Tiro Laser",
                 detail: "4 séries/5 tiros",
                 color: "border-t-pentathlon-yellow",
