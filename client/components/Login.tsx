@@ -16,6 +16,7 @@ export default function Login({ onSuccess }: LoginProps) {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const { signIn, signUp, isLoading } = useAuth();
 
