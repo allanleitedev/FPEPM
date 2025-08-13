@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { initDemoData } from "./lib/demoData";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AdminEventos from "./pages/AdminEventos";
@@ -17,6 +18,9 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 
 const queryClient = new QueryClient();
+
+// Initialize demo data
+initDemoData();
 
 // Placeholder component for pages not yet implemented
 function PlaceholderPage({ title }: { title: string }) {
