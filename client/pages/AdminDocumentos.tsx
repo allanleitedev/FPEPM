@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { LogOut, Shield, FileText, Upload, FolderOpen, BarChart3, Settings, TrendingUp, Users, HardDrive } from 'lucide-react';
+import { LogOut, Shield, FileText, Upload, FolderOpen, BarChart3, Settings, TrendingUp, Users, HardDrive, AlertCircle } from 'lucide-react';
 import Login from '@/components/Login';
 import DocumentManager from '@/components/DocumentManager';
 
