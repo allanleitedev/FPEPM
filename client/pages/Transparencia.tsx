@@ -21,29 +21,48 @@ export default function Transparencia() {
       setLoading(true);
       setError('');
 
-      // Load only published/approved documents from Supabase
-      const { data, error } = await supabase
-        .from('documents')
-        .select(`
-          *,
-          admin_users (
-            id,
-            name,
-            email,
-            role
-          )
-        `)
-        .order('created_at', { ascending: false });
+      // Check if we're in demo mode or if Supabase is available
+      const isDemoMode = localStorage.getItem('fppm_auth_demo');
 
-      if (error) {
-        throw error;
+      if (isDemoMode) {
+        // Use demo data
+        const { demoStorage } = await import('@/lib/demoData');
+        const demoDocuments = demoStorage.getDocuments();
+        setDocuments(demoDocuments);
+      } else {
+        // Try Supabase
+        const { data, error } = await supabase
+          .from('documents')
+          .select(`
+            *,
+            admin_users (
+              id,
+              name,
+              email,
+              role
+            )
+          `)
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          throw error;
+        }
+
+        setDocuments(data || []);
       }
-
-      setDocuments(data || []);
     } catch (err: any) {
-      console.error('Error loading documents:', err);
-      setError('Erro ao carregar documentos. Tente novamente mais tarde.');
-      setDocuments([]);
+      console.warn('Failed to load documents from Supabase, falling back to demo mode:', err);
+      // Fallback to demo data
+      try {
+        const { demoStorage } = await import('@/lib/demoData');
+        const demoDocuments = demoStorage.getDocuments();
+        setDocuments(demoDocuments);
+        setError('Conectado em modo demonstração. Dados limitados.');
+      } catch (demoErr) {
+        console.error('Error loading demo documents:', demoErr);
+        setError('Erro ao carregar documentos. Tente novamente mais tarde.');
+        setDocuments([]);
+      }
     } finally {
       setLoading(false);
     }
