@@ -154,18 +154,62 @@ export default function Modalidades() {
           <h3 className="text-2xl font-bold text-center text-gray-900 mb-8">As Cinco Modalidades em Resumo</h3>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {[
-              { icon: "🏊", name: "Natação", detail: "200m livre", points: "250 pts base (2:30)", color: "hover:bg-blue-50" },
-              { icon: "🤺", name: "Esgrima", detail: "Espada", points: "Ranking + Eliminação", color: "hover:bg-gray-50" },
-              { icon: "🏃‍♂️", name: "Obstáculos", detail: "70m/8 obstáculos", points: "250 pts base (65s)", color: "hover:bg-red-50" },
-              { icon: "🎯", name: "Tiro Laser", detail: "4 séries/5 tiros", points: "Max 50s/série", color: "hover:bg-yellow-50" },
-              { icon: "🏃", name: "Corrida", detail: "3.200m", points: "Largada handicap", color: "hover:bg-green-50" }
+              {
+                image: "https://images.pexels.com/photos/6011899/pexels-photo-6011899.jpeg",
+                alt: "Atleta de natação",
+                name: "Natação",
+                detail: "200m livre",
+                points: "250 pts base (2:30)",
+                color: "hover:bg-blue-50"
+              },
+              {
+                image: "https://images.pexels.com/photos/6539009/pexels-photo-6539009.jpeg",
+                alt: "Atleta de esgrima",
+                name: "Esgrima",
+                detail: "Espada",
+                points: "Ranking + Eliminação",
+                color: "hover:bg-gray-50"
+              },
+              {
+                image: "https://images.pexels.com/photos/3763879/pexels-photo-3763879.jpeg",
+                alt: "Atleta saltando obstáculo",
+                name: "Obstáculos",
+                detail: "70m/8 obstáculos",
+                points: "250 pts base (65s)",
+                color: "hover:bg-red-50"
+              },
+              {
+                image: "https://images.pexels.com/photos/6091867/pexels-photo-6091867.jpeg",
+                alt: "Tiro esportivo",
+                name: "Tiro Laser",
+                detail: "4 séries/5 tiros",
+                points: "Max 50s/série",
+                color: "hover:bg-yellow-50"
+              },
+              {
+                image: "https://images.pexels.com/photos/5843529/pexels-photo-5843529.jpeg",
+                alt: "Atleta correndo",
+                name: "Corrida",
+                detail: "3.200m",
+                points: "Largada handicap",
+                color: "hover:bg-green-50"
+              }
             ].map((modalidade, index) => (
-              <Card key={index} className={`text-center border-0 bg-gray-50/80 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group ${modalidade.color} animate-in slide-in-from-bottom duration-700`} style={{animationDelay: `${1200 + index * 100}ms`}}>
-                <CardContent className="pt-6">
-                  <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">{modalidade.icon}</div>
-                  <h4 className="font-semibold text-gray-900 mb-1 group-hover:text-gray-800">{modalidade.name}</h4>
-                  <p className="text-sm text-gray-600 mb-2 group-hover:text-gray-700">{modalidade.detail}</p>
-                  <p className="text-xs text-gray-500 group-hover:text-gray-600">{modalidade.points}</p>
+              <Card key={index} className={`text-center border-0 bg-gray-50/80 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group ${modalidade.color} animate-in slide-in-from-bottom duration-700 overflow-hidden`} style={{animationDelay: `${1200 + index * 100}ms`}}>
+                <CardContent className="p-0">
+                  <div className="relative h-24 w-full overflow-hidden">
+                    <img
+                      src={modalidade.image}
+                      alt={modalidade.alt}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                  </div>
+                  <div className="p-4">
+                    <h4 className="font-semibold text-gray-900 mb-1 group-hover:text-gray-800">{modalidade.name}</h4>
+                    <p className="text-sm text-gray-600 mb-2 group-hover:text-gray-700">{modalidade.detail}</p>
+                    <p className="text-xs text-gray-500 group-hover:text-gray-600">{modalidade.points}</p>
+                  </div>
                 </CardContent>
               </Card>
             ))}
