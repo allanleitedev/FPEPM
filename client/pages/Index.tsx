@@ -225,10 +225,11 @@ export default function Index() {
       </section>
 
       {/* Contato e Informações */}
-      <section className="py-16 px-4 bg-gradient-to-br from-gray-50 via-green-50/20 to-blue-50/30 relative overflow-hidden">
+      <section className="py-16 px-4 bg-gradient-to-br from-pentathlon-blue/25 via-pentathlon-green/20 to-pentathlon-gold/25 relative overflow-hidden">
         {/* Background decoration */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-pentathlon-green/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-pentathlon-blue/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-pentathlon-green/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-pentathlon-blue/25 rounded-full blur-3xl"></div>
+        <div className="absolute center w-32 h-32 bg-pentathlon-red/15 rounded-full blur-2xl"></div>
 
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12 animate-in slide-in-from-top duration-1000">
