@@ -238,7 +238,7 @@ export default function Index() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center border-0 bg-white/80 backdrop-blur-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group animate-in slide-in-from-left duration-700">
+            <Card className="text-center border border-green-200 bg-green-50/90 backdrop-blur-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group animate-in slide-in-from-left duration-700 hover:bg-green-100/95">
               <CardContent className="pt-6">
                 <Building size={32} className="text-pentathlon-green mb-4 mx-auto group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-pentathlon-green">Endereço</h3>
@@ -250,7 +250,7 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            <Card className="text-center border-0 bg-white/80 backdrop-blur-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group animate-in slide-in-from-bottom duration-700 delay-200">
+            <Card className="text-center border border-blue-200 bg-blue-50/90 backdrop-blur-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group animate-in slide-in-from-bottom duration-700 delay-200 hover:bg-blue-100/95">
               <CardContent className="pt-6">
                 <Phone size={32} className="text-pentathlon-blue mb-4 mx-auto group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-pentathlon-blue">Telefone</h3>
@@ -262,7 +262,7 @@ export default function Index() {
               </CardContent>
             </Card>
 
-            <Card className="text-center border-0 bg-white/80 backdrop-blur-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group animate-in slide-in-from-right duration-700 delay-400">
+            <Card className="text-center border border-red-200 bg-red-50/90 backdrop-blur-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group animate-in slide-in-from-right duration-700 delay-400 hover:bg-red-100/95">
               <CardContent className="pt-6">
                 <FileText size={32} className="text-pentathlon-red mb-4 mx-auto group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-pentathlon-red">E-mail</h3>
