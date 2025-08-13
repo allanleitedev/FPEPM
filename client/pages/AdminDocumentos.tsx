@@ -22,6 +22,7 @@ export default function AdminDocumentos() {
   });
   const [recentDocuments, setRecentDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
+  const [testingConnection, setTestingConnection] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
