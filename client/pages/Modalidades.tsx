@@ -172,26 +172,34 @@ export default function Modalidades() {
         </div>
 
         {/* Informações Adicionais */}
-        <div className="mt-16 bg-white rounded-lg p-8 shadow-sm">
-          <h3 className="text-2xl font-bold text-center text-gray-900 mb-8">Sistema de Pontuação</h3>
+        <div className="mt-16 bg-white/80 backdrop-blur-sm rounded-lg p-8 shadow-lg animate-in slide-in-from-bottom duration-1000 delay-1500">
+          <h3 className="text-2xl font-bold text-center text-gray-900 mb-8 bg-gradient-to-r from-pentathlon-green to-pentathlon-blue bg-clip-text text-transparent">
+            Sistema de Pontuação
+          </h3>
           <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h4 className="text-lg font-semibold text-pentathlon-green mb-4">Como Funciona</h4>
+            <div className="animate-in slide-in-from-left duration-700 delay-1700">
+              <h4 className="text-lg font-semibold text-pentathlon-green mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 bg-pentathlon-green rounded-full animate-pulse"></span>
+                Como Funciona
+              </h4>
               <ul className="space-y-2 text-gray-600">
-                <li>• Cada modalidade contribui com pontos para o total</li>
-                <li>• 250 pontos é a referência base para cada prova</li>
-                <li>• O tempo/performance define pontos ganhos ou perdidos</li>
-                <li>• O atleta com maior pontuação total vence</li>
+                <li className="hover:text-gray-800 hover:translate-x-2 transition-all duration-200">• Cada modalidade contribui com pontos para o total</li>
+                <li className="hover:text-gray-800 hover:translate-x-2 transition-all duration-200">• 250 pontos é a referência base para cada prova</li>
+                <li className="hover:text-gray-800 hover:translate-x-2 transition-all duration-200">• O tempo/performance define pontos ganhos ou perdidos</li>
+                <li className="hover:text-gray-800 hover:translate-x-2 transition-all duration-200">• O atleta com maior pontuação total vence</li>
               </ul>
             </div>
-            <div>
-              <h4 className="text-lg font-semibold text-pentathlon-blue mb-4">Sequência de Provas</h4>
+            <div className="animate-in slide-in-from-right duration-700 delay-1900">
+              <h4 className="text-lg font-semibold text-pentathlon-blue mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 bg-pentathlon-blue rounded-full animate-pulse delay-500"></span>
+                Sequência de Provas
+              </h4>
               <ol className="space-y-2 text-gray-600">
-                <li>1. Esgrima (Ranking Round)</li>
-                <li>2. Natação (200m livre)</li>
-                <li>3. Prova de Obstáculos</li>
-                <li>4. Laser Run (Corrida + Tiro)</li>
-                <li>5. Esgrima (Eliminação Direta) - Finais</li>
+                <li className="hover:text-gray-800 hover:translate-x-2 transition-all duration-200">1. Esgrima (Ranking Round)</li>
+                <li className="hover:text-gray-800 hover:translate-x-2 transition-all duration-200">2. Natação (200m livre)</li>
+                <li className="hover:text-gray-800 hover:translate-x-2 transition-all duration-200">3. Prova de Obstáculos</li>
+                <li className="hover:text-gray-800 hover:translate-x-2 transition-all duration-200">4. Laser Run (Corrida + Tiro)</li>
+                <li className="hover:text-gray-800 hover:translate-x-2 transition-all duration-200">5. Esgrima (Eliminação Direta) - Finais</li>
               </ol>
             </div>
           </div>
