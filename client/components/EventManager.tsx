@@ -180,7 +180,7 @@ export default function EventManager({ onEventAdded, showOnlyPending = false }: 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.title.trim() || !formData.description.trim()) {
       setError('Por favor, preencha pelo menos o título e descrição');
       return;
@@ -195,60 +195,104 @@ export default function EventManager({ onEventAdded, showOnlyPending = false }: 
       setSubmitting(true);
       setError('');
 
-      let imagePath = editingEvent?.image_path || null;
-      
-      // Upload image if selected
-      if (selectedImage) {
-        imagePath = await uploadImage(selectedImage);
-      }
+      const isDemoMode = localStorage.getItem('fppm_auth_demo');
 
-      const eventData = {
-        title: formData.title.trim(),
-        description: formData.description.trim(),
-        event_date: formData.event_date || null,
-        location: formData.location.trim() || null,
-        category: formData.category.trim() || null,
-        budget: formData.budget ? parseFloat(formData.budget) : null,
-        participants_expected: formData.participants_expected ? parseInt(formData.participants_expected) : null,
-        technical_details: formData.technical_details.trim() ? JSON.parse(JSON.stringify({
-          details: formData.technical_details
-        })) : null,
-        impact_assessment: formData.impact_assessment.trim() || null,
-        image_path: imagePath,
-        status: 'pending' as const,
-        created_by: user.id
-      };
+      if (isDemoMode) {
+        // Demo mode - save to localStorage
+        const { demoStorage } = await import('@/lib/demoData');
 
-      let result;
-      if (editingEvent) {
-        const { data, error } = await supabase
-          .from('events')
-          .update(eventData)
-          .eq('id', editingEvent.id)
-          .select('*, admin_users(*)')
-          .single();
-        result = { data, error };
+        const eventData = {
+          id: editingEvent?.id || `demo-event-${Date.now()}`,
+          title: formData.title.trim(),
+          description: formData.description.trim(),
+          event_date: formData.event_date || null,
+          location: formData.location.trim() || null,
+          category: formData.category.trim() || null,
+          budget: formData.budget ? parseFloat(formData.budget) : null,
+          participants_expected: formData.participants_expected ? parseInt(formData.participants_expected) : null,
+          technical_details: formData.technical_details.trim() ? {
+            details: formData.technical_details
+          } : null,
+          impact_assessment: formData.impact_assessment.trim() || null,
+          image_path: null, // Demo mode doesn't support image upload
+          image_url: null,
+          status: 'pending' as const,
+          created_by: user.id,
+          approved_by: null,
+          created_at: editingEvent?.created_at || new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          admin_users: user
+        };
+
+        if (editingEvent) {
+          const updated = demoStorage.updateEvent(editingEvent.id, eventData);
+          if (updated) {
+            setEvents(prev => prev.map(event =>
+              event.id === editingEvent.id ? updated : event
+            ));
+          }
+        } else {
+          const newEvent = demoStorage.addEvent(eventData);
+          setEvents(prev => [newEvent, ...prev]);
+          onEventAdded?.(newEvent);
+        }
       } else {
-        const { data, error } = await supabase
-          .from('events')
-          .insert(eventData)
-          .select('*, admin_users(*)')
-          .single();
-        result = { data, error };
-      }
+        // Supabase mode
+        let imagePath = editingEvent?.image_path || null;
 
-      if (result.error) {
-        throw result.error;
-      }
+        // Upload image if selected
+        if (selectedImage) {
+          imagePath = await uploadImage(selectedImage);
+        }
 
-      // Update local state
-      if (editingEvent) {
-        setEvents(prev => prev.map(event => 
-          event.id === editingEvent.id ? result.data : event
-        ));
-      } else {
-        setEvents(prev => [result.data, ...prev]);
-        onEventAdded?.(result.data);
+        const eventData = {
+          title: formData.title.trim(),
+          description: formData.description.trim(),
+          event_date: formData.event_date || null,
+          location: formData.location.trim() || null,
+          category: formData.category.trim() || null,
+          budget: formData.budget ? parseFloat(formData.budget) : null,
+          participants_expected: formData.participants_expected ? parseInt(formData.participants_expected) : null,
+          technical_details: formData.technical_details.trim() ? JSON.parse(JSON.stringify({
+            details: formData.technical_details
+          })) : null,
+          impact_assessment: formData.impact_assessment.trim() || null,
+          image_path: imagePath,
+          status: 'pending' as const,
+          created_by: user.id
+        };
+
+        let result;
+        if (editingEvent) {
+          const { data, error } = await supabase
+            .from('events')
+            .update(eventData)
+            .eq('id', editingEvent.id)
+            .select('*, admin_users(*)')
+            .single();
+          result = { data, error };
+        } else {
+          const { data, error } = await supabase
+            .from('events')
+            .insert(eventData)
+            .select('*, admin_users(*)')
+            .single();
+          result = { data, error };
+        }
+
+        if (result.error) {
+          throw result.error;
+        }
+
+        // Update local state
+        if (editingEvent) {
+          setEvents(prev => prev.map(event =>
+            event.id === editingEvent.id ? result.data : event
+          ));
+        } else {
+          setEvents(prev => [result.data, ...prev]);
+          onEventAdded?.(result.data);
+        }
       }
 
       // Reset form
@@ -538,7 +582,7 @@ export default function EventManager({ onEventAdded, showOnlyPending = false }: 
                       id="technical_details"
                       value={formData.technical_details}
                       onChange={(e) => handleInputChange('technical_details', e.target.value)}
-                      placeholder="Informaç��es técnicas, equipamentos necessários, etc."
+                      placeholder="Informações técnicas, equipamentos necessários, etc."
                       rows={3}
                       disabled={submitting}
                     />
