@@ -235,7 +235,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value = {
     user,
     session,
-    isAuthenticated: !!session && !!user,
+    isAuthenticated: !!user, // In demo mode we only need user, session is optional
     signIn,
     signUp,
     signOut,
