@@ -8,6 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, user, signOut } = useAuth();
+  const isDemoMode = localStorage.getItem('fppm_auth_demo');
 
   const navigation = [
     { name: 'Início', href: '/', icon: Home },
@@ -51,6 +52,12 @@ export default function Header() {
           <div className="hidden md:flex items-center gap-3">
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
+                {isDemoMode && (
+                  <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                    <span className="mr-1">🚀</span>
+                    Demo
+                  </Badge>
+                )}
                 <Badge variant="secondary" className="bg-pentathlon-green/10 text-pentathlon-green">
                   <Shield size={12} className="mr-1" />
                   {user?.role}
