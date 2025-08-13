@@ -186,6 +186,25 @@ export default function AdminDocumentos() {
     return categories[category as keyof typeof categories] || category;
   };
 
+  const handleTestConnection = async () => {
+    setTestingConnection(true);
+    try {
+      const result = await testSupabaseConnection();
+      if (result.connected) {
+        // Se conectado, remover modo demo e recarregar
+        localStorage.removeItem('fppm_auth_demo');
+        alert('✅ Conexão com Supabase funcionando! Recarregando página para usar dados reais...');
+        window.location.reload();
+      } else {
+        alert(`❌ Falha na conexão com Supabase: ${result.error}\n\nVerifique se:\n1. As tabelas foram criadas no Supabase\n2. As credenciais estão corretas\n3. As políticas RLS estão configuradas`);
+      }
+    } catch (error: any) {
+      alert(`❌ Erro ao testar conexão: ${error.message}`);
+    } finally {
+      setTestingConnection(false);
+    }
+  };
+
   if (!isAuthenticated) {
     return <Login onSuccess={() => setActiveTab('documents')} />;
   }
