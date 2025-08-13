@@ -119,7 +119,7 @@ export default function Index() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-8">
             {[
               { icon: "🏊", name: "Natação", detail: "200m livre", color: "border-t-pentathlon-blue", bg: "bg-blue-50/80 hover:bg-blue-100/90 border-blue-200" },
-              { icon: "🤺", name: "Esgrima", detail: "Espada", color: "border-t-gray-600", bg: "bg-gray-50/80 hover:bg-gray-100/90 border-gray-200" },
+              { icon: "����", name: "Esgrima", detail: "Espada", color: "border-t-gray-600", bg: "bg-gray-50/80 hover:bg-gray-100/90 border-gray-200" },
               { icon: "🏃‍♂️", name: "Obstáculos", detail: "70m/8 obstáculos", color: "border-t-pentathlon-red", bg: "bg-red-50/80 hover:bg-red-100/90 border-red-200" },
               { icon: "🎯", name: "Tiro Laser", detail: "4 séries/5 tiros", color: "border-t-pentathlon-yellow", bg: "bg-yellow-50/80 hover:bg-yellow-100/90 border-yellow-200" },
               { icon: "🏃", name: "Corrida", detail: "3.200m", color: "border-t-pentathlon-green", bg: "bg-green-50/80 hover:bg-green-100/90 border-green-200" }
@@ -148,8 +148,9 @@ export default function Index() {
       </section>
 
       {/* Transparência e Governança */}
-      <section className="py-16 px-4 bg-gradient-to-br from-white via-green-50/10 to-blue-50/20">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-16 px-4 bg-gradient-to-br from-pentathlon-green/10 via-pentathlon-blue/15 to-pentathlon-green/20 relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-pentathlon-blue/10 via-transparent to-pentathlon-green/15"></div>
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12 animate-in slide-in-from-top duration-1000">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Transparência e Governança</h2>
             <p className="text-xl text-gray-600">Acesso completo às informações institucionais e de gestão</p>
