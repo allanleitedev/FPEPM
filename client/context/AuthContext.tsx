@@ -154,27 +154,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Try Supabase authentication for other users
+      // Wrap in a more comprehensive try-catch to handle all network errors
+      let supabaseResult;
       try {
-        // Set a timeout for the request to avoid hanging
-        const authPromise = supabase.auth.signInWithPassword({
+        supabaseResult = await supabase.auth.signInWithPassword({
           email,
           password,
         });
+      } catch (networkError: any) {
+        // Immediately catch any network/fetch errors and go to fallback
+        console.warn('Network error during Supabase authentication, using demo mode:', networkError);
+        supabaseResult = { error: { message: 'Network error: ' + (networkError.message || 'Failed to fetch') } };
+      }
 
-        // Add timeout handling
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Authentication timeout')), 10000); // 10 second timeout
-        });
-
-        const { data, error } = await Promise.race([authPromise, timeoutPromise]) as any;
-
-        if (error) {
-          throw new Error(error.message || 'Authentication failed');
-        }
-
-        // If successful, the onAuthStateChange will handle setting the user
-        return { success: true };
-      } catch (supabaseError: any) {
+      // Check for authentication errors
+      if (supabaseResult.error) {
         // Enhanced error handling for different types of failures
         console.warn('Supabase authentication failed, falling back to demo mode:', supabaseError);
 
