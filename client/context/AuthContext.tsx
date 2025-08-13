@@ -174,9 +174,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.warn('Supabase authentication failed, falling back to demo mode:', supabaseError);
         return { success: false, error: 'Erro de conectividade. Use as credenciais de demonstração.' };
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Unexpected error in signIn:', error);
       return { success: false, error: 'Erro inesperado durante o login' };
     } finally {
+      console.log('Setting isLoading to false');
       setIsLoading(false);
     }
   };
