@@ -273,8 +273,16 @@ export default function AdminDocumentos() {
             <AlertDescription className="text-yellow-800">
               <strong>⚠️ MODO DEMONSTRAÇÃO ATIVO</strong><br />
               Você está usando dados de demonstração. Os uploads e alterações não serão salvos no Supabase real.
-              Para usar dados reais, configure as credenciais do Supabase e faça login com uma conta real.
-              <div className="mt-3">
+
+              <div className="mt-3 p-3 bg-yellow-100 rounded text-sm">
+                <strong>Configuração atual:</strong><br />
+                URL: {getSupabaseConfig().url}<br />
+                API Key: {getSupabaseConfig().anonKey.substring(0, 30)}...<br />
+                {!getSupabaseConfig().hasEnvUrl && <span className="text-red-600">⚠️ VITE_SUPABASE_URL não configurada</span>}<br />
+                {!getSupabaseConfig().hasEnvKey && <span className="text-red-600">⚠️ VITE_SUPABASE_ANON_KEY não configurada</span>}
+              </div>
+
+              <div className="mt-3 flex gap-2">
                 <Button
                   size="sm"
                   variant="outline"
@@ -282,7 +290,33 @@ export default function AdminDocumentos() {
                   disabled={testingConnection}
                   className="border-yellow-400 text-yellow-700 hover:bg-yellow-100"
                 >
-                  {testingConnection ? 'Testando...' : 'Testar Conexão com Supabase'}
+                  {testingConnection ? 'Testando...' : 'Diagnosticar Conexão'}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    const instructions = `Para configurar suas credenciais do Supabase:
+
+1. Vá para: https://supabase.com/dashboard
+2. Abra seu projeto
+3. Vá em Settings > API
+4. Copie:
+   - Project URL
+   - anon/public key
+
+5. Configure as variáveis de ambiente:
+   VITE_SUPABASE_URL=sua_url_aqui
+   VITE_SUPABASE_ANON_KEY=sua_chave_aqui
+
+6. Reinicie o servidor de desenvolvimento`;
+
+                    navigator.clipboard.writeText(instructions);
+                    alert('📋 Instruções copiadas para a área de transferência!');
+                  }}
+                  className="border-blue-400 text-blue-700 hover:bg-blue-100"
+                >
+                  📋 Copiar Instruções
                 </Button>
               </div>
             </AlertDescription>
