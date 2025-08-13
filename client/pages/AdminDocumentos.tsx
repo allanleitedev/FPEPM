@@ -32,23 +32,35 @@ export default function AdminDocumentos() {
 
   const loadStats = async () => {
     try {
-      // Load document stats
-      const { data: documents, error: docsError } = await supabase
-        .from('documents')
-        .select('category, file_size, created_at');
+      // Check if we're in demo mode
+      const isDemoMode = localStorage.getItem('fppm_auth_demo');
+      let documents, users;
 
-      if (docsError) {
-        console.error('Error loading document stats:', docsError);
-        return;
-      }
+      if (isDemoMode) {
+        // Use demo data
+        const { demoStorage, demoAdminUsers } = await import('@/lib/demoData');
+        documents = demoStorage.getDocuments();
+        users = demoAdminUsers;
+      } else {
+        // Try Supabase
+        const { data: docsData, error: docsError } = await supabase
+          .from('documents')
+          .select('category, file_size, created_at');
 
-      // Load user stats
-      const { data: users, error: usersError } = await supabase
-        .from('admin_users')
-        .select('id');
+        if (docsError) {
+          throw docsError;
+        }
 
-      if (usersError) {
-        console.error('Error loading user stats:', usersError);
+        const { data: usersData, error: usersError } = await supabase
+          .from('admin_users')
+          .select('id');
+
+        if (usersError) {
+          console.warn('Error loading user stats:', usersError);
+        }
+
+        documents = docsData || [];
+        users = usersData || [];
       }
 
       // Calculate stats
@@ -61,7 +73,7 @@ export default function AdminDocumentos() {
       // Count recent uploads (last 30 days)
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      const recentUploads = documents.filter(doc => 
+      const recentUploads = documents.filter(doc =>
         new Date(doc.created_at) > thirtyDaysAgo
       ).length;
 
@@ -73,7 +85,35 @@ export default function AdminDocumentos() {
         totalUsers: users?.length || 0
       });
     } catch (error) {
-      console.error('Error in loadStats:', error);
+      console.warn('Failed to load stats from Supabase, falling back to demo mode:', error);
+      // Fallback to demo data
+      try {
+        const { demoStorage, demoAdminUsers } = await import('@/lib/demoData');
+        const documents = demoStorage.getDocuments();
+        const users = demoAdminUsers;
+
+        const totalSize = documents.reduce((sum, doc) => sum + doc.file_size, 0);
+        const categoryCounts = documents.reduce((acc, doc) => {
+          acc[doc.category] = (acc[doc.category] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
+
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const recentUploads = documents.filter(doc =>
+          new Date(doc.created_at) > thirtyDaysAgo
+        ).length;
+
+        setStats({
+          totalDocuments: documents.length,
+          totalSize,
+          categoryCounts,
+          recentUploads,
+          totalUsers: users?.length || 0
+        });
+      } catch (demoErr) {
+        console.error('Error loading document stats:', demoErr);
+      }
     } finally {
       setLoading(false);
     }
@@ -81,28 +121,48 @@ export default function AdminDocumentos() {
 
   const loadRecentDocuments = async () => {
     try {
-      const { data: documents, error } = await supabase
-        .from('documents')
-        .select(`
-          *,
-          admin_users (
-            id,
-            name,
-            email,
-            role
-          )
-        `)
-        .order('created_at', { ascending: false })
-        .limit(5);
+      // Check if we're in demo mode
+      const isDemoMode = localStorage.getItem('fppm_auth_demo');
+      let documents;
 
-      if (error) {
-        console.error('Error loading recent documents:', error);
-        return;
+      if (isDemoMode) {
+        // Use demo data
+        const { demoStorage } = await import('@/lib/demoData');
+        documents = demoStorage.getDocuments().slice(0, 5);
+      } else {
+        // Try Supabase
+        const { data, error } = await supabase
+          .from('documents')
+          .select(`
+            *,
+            admin_users (
+              id,
+              name,
+              email,
+              role
+            )
+          `)
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        if (error) {
+          throw error;
+        }
+
+        documents = data || [];
       }
 
-      setRecentDocuments(documents || []);
+      setRecentDocuments(documents);
     } catch (error) {
-      console.error('Error in loadRecentDocuments:', error);
+      console.warn('Failed to load recent documents from Supabase, falling back to demo mode:', error);
+      // Fallback to demo data
+      try {
+        const { demoStorage } = await import('@/lib/demoData');
+        const documents = demoStorage.getDocuments().slice(0, 5);
+        setRecentDocuments(documents);
+      } catch (demoErr) {
+        console.error('Error loading recent documents:', demoErr);
+      }
     }
   };
 
