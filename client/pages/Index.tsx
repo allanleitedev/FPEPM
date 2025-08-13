@@ -118,18 +118,62 @@ export default function Index() {
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-8">
             {[
-              { icon: "🏊", name: "Natação", detail: "200m livre", color: "border-t-pentathlon-blue", bg: "bg-blue-50/80 hover:bg-blue-100/90 border-blue-200" },
-              { icon: "🤺", name: "Esgrima", detail: "Espada", color: "border-t-gray-600", bg: "bg-gray-50/80 hover:bg-gray-100/90 border-gray-200" },
-              { icon: "🏃‍♂️", name: "Obstáculos", detail: "70m/8 obstáculos", color: "border-t-pentathlon-red", bg: "bg-red-50/80 hover:bg-red-100/90 border-red-200" },
-              { icon: "🎯", name: "Tiro Laser", detail: "4 séries/5 tiros", color: "border-t-pentathlon-yellow", bg: "bg-yellow-50/80 hover:bg-yellow-100/90 border-yellow-200" },
-              { icon: "🏃", name: "Corrida", detail: "3.200m", color: "border-t-pentathlon-green", bg: "bg-green-50/80 hover:bg-green-100/90 border-green-200" }
+              {
+                image: "https://images.pexels.com/photos/6011899/pexels-photo-6011899.jpeg",
+                alt: "Atleta de natação",
+                name: "Natação",
+                detail: "200m livre",
+                color: "border-t-pentathlon-blue",
+                bg: "bg-blue-50/80 hover:bg-blue-100/90 border-blue-200"
+              },
+              {
+                image: "https://images.pexels.com/photos/6539009/pexels-photo-6539009.jpeg",
+                alt: "Atleta de esgrima",
+                name: "Esgrima",
+                detail: "Espada",
+                color: "border-t-gray-600",
+                bg: "bg-gray-50/80 hover:bg-gray-100/90 border-gray-200"
+              },
+              {
+                image: "https://images.pexels.com/photos/3763879/pexels-photo-3763879.jpeg",
+                alt: "Atleta saltando obstáculo",
+                name: "Obstáculos",
+                detail: "70m/8 obstáculos",
+                color: "border-t-pentathlon-red",
+                bg: "bg-red-50/80 hover:bg-red-100/90 border-red-200"
+              },
+              {
+                image: "https://images.pexels.com/photos/6091867/pexels-photo-6091867.jpeg",
+                alt: "Tiro esportivo",
+                name: "Tiro Laser",
+                detail: "4 séries/5 tiros",
+                color: "border-t-pentathlon-yellow",
+                bg: "bg-yellow-50/80 hover:bg-yellow-100/90 border-yellow-200"
+              },
+              {
+                image: "https://images.pexels.com/photos/5843529/pexels-photo-5843529.jpeg",
+                alt: "Atleta correndo",
+                name: "Corrida",
+                detail: "3.200m",
+                color: "border-t-pentathlon-green",
+                bg: "bg-green-50/80 hover:bg-green-100/90 border-green-200"
+              }
             ].map((modalidade, index) => (
-              <Card key={index} className={`text-center hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-t-4 ${modalidade.color} ${modalidade.bg} cursor-pointer group animate-in slide-in-from-bottom duration-700`} style={{animationDelay: `${index * 100}ms`}}>
+              <Card key={index} className={`text-center hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-t-4 ${modalidade.color} ${modalidade.bg} cursor-pointer group animate-in slide-in-from-bottom duration-700 overflow-hidden`} style={{animationDelay: `${index * 100}ms`}}>
                 <Link to="/modalidades">
-                  <CardContent className="pt-6">
-                    <div className="text-4xl mb-3 group-hover:scale-125 transition-transform duration-300">{modalidade.icon}</div>
-                    <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-gray-800">{modalidade.name}</h3>
-                    <p className="text-sm text-gray-600 group-hover:text-gray-700">{modalidade.detail}</p>
+                  <CardContent className="p-0">
+                    <div className="relative h-32 w-full overflow-hidden">
+                      <img
+                        src={modalidade.image}
+                        alt={modalidade.alt}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-gray-800">{modalidade.name}</h3>
+                      <p className="text-sm text-gray-600 group-hover:text-gray-700">{modalidade.detail}</p>
+                    </div>
                   </CardContent>
                 </Link>
               </Card>
