@@ -181,12 +181,12 @@ export default function Transparencia() {
 
   function renderDocumentCard(documento: any, index: number) {
     return (
-      <Card key={index} className="hover:shadow-md transition-shadow">
+      <Card key={index} className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-white/80 backdrop-blur-sm group animate-in slide-in-from-bottom duration-700" style={{animationDelay: `${index * 100}ms`}}>
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <CardTitle className="text-base">{documento.titulo}</CardTitle>
-              <CardDescription className="mt-1">{documento.tipo}</CardDescription>
+              <CardTitle className="text-base group-hover:text-pentathlon-green transition-colors">{documento.titulo}</CardTitle>
+              <CardDescription className="mt-1 group-hover:text-gray-700">{documento.tipo}</CardDescription>
             </div>
             {documento.status && (
               <Badge className={getStatusColor(documento.status)}>{documento.status}</Badge>
@@ -195,25 +195,25 @@ export default function Transparencia() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
-              <div className="flex items-center gap-1">
-                <Calendar size={14} />
+            <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 group-hover:text-gray-700">
+              <div className="flex items-center gap-1 hover:scale-105 transition-transform">
+                <Calendar size={14} className="text-pentathlon-blue" />
                 <span>{new Date(documento.data).toLocaleDateString('pt-BR')}</span>
               </div>
-              <div className="flex items-center gap-1">
-                <FileText size={14} />
+              <div className="flex items-center gap-1 hover:scale-105 transition-transform">
+                <FileText size={14} className="text-pentathlon-green" />
                 <span>{documento.formato}</span>
               </div>
             </div>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-gray-500 group-hover:text-gray-600">
               Tamanho: {documento.tamanho}
             </div>
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" className="flex-1">
+              <Button size="sm" variant="outline" className="flex-1 hover:scale-105 transition-all duration-200 group-hover:border-pentathlon-blue group-hover:text-pentathlon-blue">
                 <Eye size={14} className="mr-1" />
                 Visualizar
               </Button>
-              <Button size="sm" className="flex-1 bg-pentathlon-green hover:bg-pentathlon-green-dark">
+              <Button size="sm" className="flex-1 bg-pentathlon-green hover:bg-pentathlon-green-dark hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg">
                 <Download size={14} className="mr-1" />
                 Download
               </Button>
