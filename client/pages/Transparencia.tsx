@@ -1,162 +1,94 @@
-import { Download, Eye, FileText, Users, Gavel, ShoppingCart, MessageSquare, Scale, Calendar, Building } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Download, Eye, FileText, Users, Gavel, ShoppingCart, MessageSquare, Scale, Calendar, Building, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { supabase, Document, CATEGORIES, formatFileSize, getFileIcon } from '@/lib/supabase';
 
 export default function Transparencia() {
-  const documentos = {
-    gestao: [
-      {
-        titulo: 'Estrutura Organizacional 2025',
-        tipo: 'Organograma',
-        data: '2025-01-01',
-        tamanho: '2.1 MB',
-        formato: 'PDF'
-      },
-      {
-        titulo: 'Relatório de Atividades 2024',
-        tipo: 'Relatório Anual',
-        data: '2024-12-31',
-        tamanho: '8.5 MB',
-        formato: 'PDF'
-      },
-      {
-        titulo: 'Diretoria Executiva - Mandato 2023-2027',
-        tipo: 'Lista de Dirigentes',
-        data: '2023-03-15',
-        tamanho: '1.2 MB',
-        formato: 'PDF'
-      },
-      {
-        titulo: 'Regimento Interno',
-        tipo: 'Documento Normativo',
-        data: '2023-01-10',
-        tamanho: '3.8 MB',
-        formato: 'PDF'
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    loadDocuments();
+  }, []);
+
+  const loadDocuments = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      // Load only published/approved documents from Supabase
+      const { data, error } = await supabase
+        .from('documents')
+        .select(`
+          *,
+          admin_users (
+            id,
+            name,
+            email,
+            role
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw error;
       }
-    ],
-    processos: [
-      {
-        titulo: 'Edital de Convocação - Eleições 2027',
-        tipo: 'Edital',
-        data: '2026-11-15',
-        tamanho: '1.8 MB',
-        formato: 'PDF',
-        status: 'Futuro'
-      },
-      {
-        titulo: 'Ata da Assembleia Eleitoral 2023',
-        tipo: 'Ata',
-        data: '2023-03-15',
-        tamanho: '4.2 MB',
-        formato: 'PDF'
-      },
-      {
-        titulo: 'Lista de Eleitores Aptos - 2023',
-        tipo: 'Lista',
-        data: '2023-02-28',
-        tamanho: '0.8 MB',
-        formato: 'PDF'
-      },
-      {
-        titulo: 'Cronograma Eleitoral 2023',
-        tipo: 'Cronograma',
-        data: '2023-01-20',
-        tamanho: '0.5 MB',
-        formato: 'PDF'
+
+      setDocuments(data || []);
+    } catch (err: any) {
+      console.error('Error loading documents:', err);
+      setError('Erro ao carregar documentos. Tente novamente mais tarde.');
+      setDocuments([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDownloadDocument = async (document: Document) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from('documents')
+        .download(document.file_path);
+
+      if (error) {
+        throw error;
       }
-    ],
-    estatuto: [
-      {
-        titulo: 'Estatuto da FPPM - Versão Atualizada',
-        tipo: 'Estatuto Social',
-        data: '2023-03-15',
-        tamanho: '5.2 MB',
-        formato: 'PDF'
-      },
-      {
-        titulo: 'Alterações Estatutárias 2023',
-        tipo: 'Emenda',
-        data: '2023-03-15',
-        tamanho: '1.1 MB',
-        formato: 'PDF'
-      },
-      {
-        titulo: 'Histórico de Alterações',
-        tipo: 'Histórico',
-        data: '2023-03-16',
-        tamanho: '2.3 MB',
-        formato: 'PDF'
+
+      // Create download link
+      const url = URL.createObjectURL(data);
+      const link = window.document.createElement('a');
+      link.href = url;
+      link.download = document.file_name;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      console.error('Error downloading file:', err);
+      alert('Erro ao baixar arquivo. Tente novamente.');
+    }
+  };
+
+  const handleViewDocument = async (document: Document) => {
+    try {
+      const { data } = supabase.storage
+        .from('documents')
+        .getPublicUrl(document.file_path);
+
+      if (data.publicUrl) {
+        window.open(data.publicUrl, '_blank');
       }
-    ],
-    compras: [
-      {
-        titulo: 'Manual de Compras e Contratações',
-        tipo: 'Manual',
-        data: '2024-01-15',
-        tamanho: '6.7 MB',
-        formato: 'PDF'
-      },
-      {
-        titulo: 'Procedimentos Licitatórios',
-        tipo: 'Norma',
-        data: '2024-01-15',
-        tamanho: '3.1 MB',
-        formato: 'PDF'
-      },
-      {
-        titulo: 'Relatório de Compras 2024',
-        tipo: 'Relatório',
-        data: '2024-12-31',
-        tamanho: '4.8 MB',
-        formato: 'PDF'
-      },
-      {
-        titulo: 'Fornecedores Cadastrados',
-        tipo: 'Lista',
-        data: '2025-01-01',
-        tamanho: '1.9 MB',
-        formato: 'PDF'
-      }
-    ],
-    documentos: [
-      {
-        titulo: 'Certidão de Utilidade Pública',
-        tipo: 'Certidão',
-        data: '2023-06-10',
-        tamanho: '0.9 MB',
-        formato: 'PDF'
-      },
-      {
-        titulo: 'CNPJ e Inscrições',
-        tipo: 'Documentação Legal',
-        data: '2024-12-15',
-        tamanho: '1.4 MB',
-        formato: 'PDF'
-      },
-      {
-        titulo: 'Demonstrações Financeiras 2024',
-        tipo: 'Financeiro',
-        data: '2024-12-31',
-        tamanho: '7.2 MB',
-        formato: 'PDF'
-      },
-      {
-        titulo: 'Parecer do Conselho Fiscal 2024',
-        tipo: 'Parecer',
-        data: '2025-01-15',
-        tamanho: '2.8 MB',
-        formato: 'PDF'
-      },
-      {
-        titulo: 'Certificado de Registro no CREF',
-        tipo: 'Certificado',
-        data: '2024-08-20',
-        tamanho: '0.7 MB',
-        formato: 'PDF'
-      }
-    ]
+    } catch (err: any) {
+      console.error('Error viewing file:', err);
+      alert('Erro ao visualizar arquivo. Tente novamente.');
+    }
+  };
+
+  const getDocumentsByCategory = (category: string) => {
+    return documents.filter(doc => doc.category === category);
   };
 
   const contatos = {
@@ -172,48 +104,58 @@ export default function Transparencia() {
     }
   };
 
-  function getStatusColor(status?: string) {
-    switch (status) {
-      case 'Futuro': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-green-100 text-green-800';
-    }
-  }
-
-  function renderDocumentCard(documento: any, index: number) {
+  function renderDocumentCard(documento: Document, index: number) {
+    const categoryData = CATEGORIES.find(cat => cat.value === documento.category);
+    
     return (
-      <Card key={index} className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-white/80 backdrop-blur-sm group animate-in slide-in-from-bottom duration-700" style={{animationDelay: `${index * 100}ms`}}>
+      <Card key={documento.id} className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-white/80 backdrop-blur-sm group animate-in slide-in-from-bottom duration-700" style={{animationDelay: `${index * 100}ms`}}>
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <CardTitle className="text-base group-hover:text-pentathlon-green transition-colors">{documento.titulo}</CardTitle>
-              <CardDescription className="mt-1 group-hover:text-gray-700">{documento.tipo}</CardDescription>
+              <CardTitle className="text-base group-hover:text-pentathlon-green transition-colors">{documento.title}</CardTitle>
+              <CardDescription className="mt-1 group-hover:text-gray-700">{categoryData?.label}</CardDescription>
             </div>
-            {documento.status && (
-              <Badge className={getStatusColor(documento.status)}>{documento.status}</Badge>
-            )}
+            <div className="text-2xl">{getFileIcon(documento.file_type)}</div>
           </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
+            {documento.description && (
+              <p className="text-sm text-gray-600 line-clamp-2">{documento.description}</p>
+            )}
             <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 group-hover:text-gray-700">
               <div className="flex items-center gap-1 hover:scale-105 transition-transform">
                 <Calendar size={14} className="text-pentathlon-blue" />
-                <span>{new Date(documento.data).toLocaleDateString('pt-BR')}</span>
+                <span>{new Date(documento.created_at).toLocaleDateString('pt-BR')}</span>
               </div>
               <div className="flex items-center gap-1 hover:scale-105 transition-transform">
                 <FileText size={14} className="text-pentathlon-green" />
-                <span>{documento.formato}</span>
+                <span>{documento.file_type.split('/')[1]?.toUpperCase()}</span>
               </div>
             </div>
             <div className="text-sm text-gray-500 group-hover:text-gray-600">
-              Tamanho: {documento.tamanho}
+              Tamanho: {formatFileSize(documento.file_size)}
             </div>
+            {documento.admin_users && (
+              <div className="text-xs text-gray-500">
+                Enviado por: {documento.admin_users.name}
+              </div>
+            )}
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" className="flex-1 hover:scale-105 transition-all duration-200 group-hover:border-pentathlon-blue group-hover:text-pentathlon-blue">
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="flex-1 hover:scale-105 transition-all duration-200 group-hover:border-pentathlon-blue group-hover:text-pentathlon-blue"
+                onClick={() => handleViewDocument(documento)}
+              >
                 <Eye size={14} className="mr-1" />
                 Visualizar
               </Button>
-              <Button size="sm" className="flex-1 bg-pentathlon-green hover:bg-pentathlon-green-dark hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg">
+              <Button 
+                size="sm" 
+                className="flex-1 bg-pentathlon-green hover:bg-pentathlon-green-dark hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg"
+                onClick={() => handleDownloadDocument(documento)}
+              >
                 <Download size={14} className="mr-1" />
                 Download
               </Button>
@@ -221,6 +163,45 @@ export default function Transparencia() {
           </div>
         </CardContent>
       </Card>
+    );
+  }
+
+  function renderCategoryContent(category: string, icon: any, title: string, description: string) {
+    const categoryDocs = getDocumentsByCategory(category);
+    
+    return (
+      <div className="mt-8">
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center gap-2">
+            {icon}
+            {title}
+          </h2>
+          <p className="text-gray-600">{description}</p>
+        </div>
+        
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-pentathlon-blue" />
+            <span className="ml-2 text-gray-600">Carregando documentos...</span>
+          </div>
+        ) : categoryDocs.length > 0 ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {categoryDocs.map((documento, index) => renderDocumentCard(documento, index))}
+          </div>
+        ) : (
+          <Card className="border-dashed border-2 border-gray-300">
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <FileText className="w-16 h-16 text-gray-400 mb-4" />
+              <h3 className="text-lg font-semibold text-gray-600 mb-2">
+                Nenhum documento disponível
+              </h3>
+              <p className="text-gray-500 text-center">
+                Não há documentos publicados nesta categoria no momento.
+              </p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     );
   }
 
@@ -243,6 +224,13 @@ export default function Transparencia() {
             Aqui você encontra todas as informações sobre nossa gestão, processos e documentos institucionais.
           </p>
         </div>
+
+        {error && (
+          <Alert variant="destructive" className="mb-8">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
         <Tabs defaultValue="gestao" className="w-full">
           {/* Mobile Tabs */}
@@ -282,83 +270,53 @@ export default function Transparencia() {
           </div>
 
           {/* Gestão */}
-          <TabsContent value="gestao" className="mt-8">
-            <div className="mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                <Users className="text-pentathlon-green" size={24} />
-                Gestão e Governança
-              </h2>
-              <p className="text-gray-600">
-                Informações sobre a estrutura organizacional, diretoria e relatórios de gestão da FPPM.
-              </p>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {documentos.gestao.map((documento, index) => renderDocumentCard(documento, index))}
-            </div>
+          <TabsContent value="gestao">
+            {renderCategoryContent(
+              'gestao',
+              <Users className="text-pentathlon-green" size={24} />,
+              'Gestão e Governança',
+              'Informações sobre a estrutura organizacional, diretoria e relatórios de gestão da FPPM.'
+            )}
           </TabsContent>
 
           {/* Processos Eleitorais */}
-          <TabsContent value="processos" className="mt-8">
-            <div className="mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                <Gavel className="text-pentathlon-blue" size={24} />
-                Processos Eleitorais
-              </h2>
-              <p className="text-gray-600">
-                Documentos relacionados aos processos eleitorais, editais e atas de assembleias.
-              </p>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {documentos.processos.map((documento, index) => renderDocumentCard(documento, index))}
-            </div>
+          <TabsContent value="processos">
+            {renderCategoryContent(
+              'processos',
+              <Gavel className="text-pentathlon-blue" size={24} />,
+              'Processos Eleitorais',
+              'Documentos relacionados aos processos eleitorais, editais e atas de assembleias.'
+            )}
           </TabsContent>
 
           {/* Estatuto */}
-          <TabsContent value="estatuto" className="mt-8">
-            <div className="mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                <Scale className="text-pentathlon-red" size={24} />
-                Estatuto Social
-              </h2>
-              <p className="text-gray-600">
-                Estatuto social da FPPM e suas alterações ao longo do tempo.
-              </p>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {documentos.estatuto.map((documento, index) => renderDocumentCard(documento, index))}
-            </div>
+          <TabsContent value="estatuto">
+            {renderCategoryContent(
+              'estatuto',
+              <Scale className="text-pentathlon-red" size={24} />,
+              'Estatuto Social',
+              'Estatuto social da FPPM e suas alterações ao longo do tempo.'
+            )}
           </TabsContent>
 
           {/* Manual de Compras */}
-          <TabsContent value="compras" className="mt-8">
-            <div className="mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                <ShoppingCart className="text-pentathlon-yellow" size={24} />
-                Manual de Compras e Contratações
-              </h2>
-              <p className="text-gray-600">
-                Procedimentos, normas e relatórios relacionados a compras e contratações da federação.
-              </p>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {documentos.compras.map((documento, index) => renderDocumentCard(documento, index))}
-            </div>
+          <TabsContent value="compras">
+            {renderCategoryContent(
+              'compras',
+              <ShoppingCart className="text-pentathlon-yellow" size={24} />,
+              'Manual de Compras e Contratações',
+              'Procedimentos, normas e relatórios relacionados a compras e contratações da federação.'
+            )}
           </TabsContent>
 
           {/* Documentos */}
-          <TabsContent value="documentos" className="mt-8">
-            <div className="mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                <FileText className="text-gray-600" size={24} />
-                Documentos Institucionais
-              </h2>
-              <p className="text-gray-600">
-                Documentos legais, certidões, demonstrações financeiras e outros documentos oficiais.
-              </p>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {documentos.documentos.map((documento, index) => renderDocumentCard(documento, index))}
-            </div>
+          <TabsContent value="documentos">
+            {renderCategoryContent(
+              'documentos',
+              <FileText className="text-gray-600" size={24} />,
+              'Documentos Institucionais',
+              'Documentos legais, certidões, demonstrações financeiras e outros documentos oficiais.'
+            )}
           </TabsContent>
 
           {/* Ouvidoria */}
