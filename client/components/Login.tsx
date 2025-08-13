@@ -135,6 +135,12 @@ export default function Login({ onSuccess }: LoginProps) {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
+
+            {successMessage && (
+              <Alert className="border-green-200 text-green-800 bg-green-50">
+                <AlertDescription>{successMessage}</AlertDescription>
+              </Alert>
+            )}
             
             <Button 
               type="submit" 
