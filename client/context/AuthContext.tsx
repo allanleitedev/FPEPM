@@ -170,13 +170,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Check for authentication errors
       if (supabaseResult.error) {
         // Enhanced error handling for different types of failures
-        console.warn('Supabase authentication failed, falling back to demo mode:', supabaseError);
+        console.warn('Supabase authentication failed, falling back to demo mode:', supabaseResult.error);
 
         // Handle network errors, timeout errors, and other connectivity issues
-        const isNetworkError = supabaseError.message?.includes('fetch') ||
-                              supabaseError.message?.includes('timeout') ||
-                              supabaseError.message?.includes('network') ||
-                              supabaseError.name === 'TypeError';
+        const errorMessage = supabaseResult.error.message || '';
+        const isNetworkError = errorMessage.includes('fetch') ||
+                              errorMessage.includes('timeout') ||
+                              errorMessage.includes('network') ||
+                              errorMessage.includes('Network error');
 
         // For any credentials (especially on network errors), fall back to demo mode
         if (email && password && email.length > 0 && password.length > 0) {
