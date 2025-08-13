@@ -241,6 +241,19 @@ export default function AdminDocumentos() {
               <strong>⚠️ MODO DEMONSTRAÇÃO ATIVO</strong><br />
               Você está usando dados de demonstração. Os uploads e alterações não serão salvos no Supabase real.
               Para usar dados reais, configure as credenciais do Supabase e faça login com uma conta real.
+              <div className="mt-3">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    localStorage.removeItem('fppm_auth_demo');
+                    window.location.reload();
+                  }}
+                  className="border-yellow-400 text-yellow-700 hover:bg-yellow-100"
+                >
+                  Tentar Conexão Real com Supabase
+                </Button>
+              </div>
             </AlertDescription>
           </Alert>
         )}
