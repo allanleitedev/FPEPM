@@ -186,6 +186,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
 
         setUser(mockUser);
+        setIsDemoMode(true);
         localStorage.setItem('fppm_auth_demo', JSON.stringify({ user: mockUser }));
 
         return {
