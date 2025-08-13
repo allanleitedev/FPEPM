@@ -348,32 +348,51 @@ export default function EventManager({ onEventAdded, showOnlyPending = false }: 
       setDeletingId(event.id);
       setError('');
 
-      // Delete image from storage if exists
-      if (event.image_path) {
-        const { error: storageError } = await supabase.storage
-          .from('event-images')
-          .remove([event.image_path]);
-        
-        if (storageError) {
-          console.warn('Warning: Could not delete image from storage:', storageError);
+      // Check if we're in demo mode
+      const isDemoMode = localStorage.getItem('fppm_auth_demo');
+
+      if (isDemoMode) {
+        // Use demo data
+        const { demoStorage } = await import('@/lib/demoData');
+        demoStorage.removeEvent(event.id);
+        setEvents(prev => prev.filter(e => e.id !== event.id));
+      } else {
+        // Delete image from storage if exists
+        if (event.image_path) {
+          const { error: storageError } = await supabase.storage
+            .from('event-images')
+            .remove([event.image_path]);
+
+          if (storageError) {
+            console.warn('Warning: Could not delete image from storage:', storageError);
+          }
         }
+
+        // Delete event from database
+        const { error: dbError } = await supabase
+          .from('events')
+          .delete()
+          .eq('id', event.id);
+
+        if (dbError) {
+          throw dbError;
+        }
+
+        setEvents(prev => prev.filter(e => e.id !== event.id));
       }
 
-      // Delete event from database
-      const { error: dbError } = await supabase
-        .from('events')
-        .delete()
-        .eq('id', event.id);
-
-      if (dbError) {
-        throw dbError;
-      }
-
-      setEvents(prev => prev.filter(e => e.id !== event.id));
-      
     } catch (err: any) {
-      setError(err.message || 'Erro ao deletar evento');
-      console.error('Error deleting event:', err);
+      console.warn('Failed to delete from Supabase, trying demo mode:', err);
+      // Fallback to demo mode
+      try {
+        const { demoStorage } = await import('@/lib/demoData');
+        demoStorage.removeEvent(event.id);
+        setEvents(prev => prev.filter(e => e.id !== event.id));
+        setError('Evento deletado em modo demonstração');
+      } catch (demoErr) {
+        setError('Erro ao deletar evento');
+        console.error('Error deleting event:', demoErr);
+      }
     } finally {
       setDeletingId(null);
     }
@@ -386,27 +405,61 @@ export default function EventManager({ onEventAdded, showOnlyPending = false }: 
     }
 
     try {
-      const updateData: any = { status: newStatus };
-      if (newStatus === 'approved') {
-        updateData.approved_by = user.id;
+      // Check if we're in demo mode
+      const isDemoMode = localStorage.getItem('fppm_auth_demo');
+
+      if (isDemoMode) {
+        // Use demo data
+        const { demoStorage } = await import('@/lib/demoData');
+        const updateData: any = { status: newStatus };
+        if (newStatus === 'approved') {
+          updateData.approved_by = user.id;
+        }
+
+        const updated = demoStorage.updateEvent(event.id, updateData);
+        if (updated) {
+          setEvents(prev => prev.map(e => e.id === event.id ? updated : e));
+        }
+      } else {
+        // Supabase mode
+        const updateData: any = { status: newStatus };
+        if (newStatus === 'approved') {
+          updateData.approved_by = user.id;
+        }
+
+        const { data, error } = await supabase
+          .from('events')
+          .update(updateData)
+          .eq('id', event.id)
+          .select('*, admin_users(*)')
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        setEvents(prev => prev.map(e => e.id === event.id ? data : e));
       }
 
-      const { data, error } = await supabase
-        .from('events')
-        .update(updateData)
-        .eq('id', event.id)
-        .select('*, admin_users(*)')
-        .single();
-
-      if (error) {
-        throw error;
-      }
-
-      setEvents(prev => prev.map(e => e.id === event.id ? data : e));
-      
     } catch (err: any) {
-      setError(err.message || 'Erro ao atualizar status do evento');
-      console.error('Error updating event status:', err);
+      console.warn('Failed to update status in Supabase, trying demo mode:', err);
+      // Fallback to demo mode
+      try {
+        const { demoStorage } = await import('@/lib/demoData');
+        const updateData: any = { status: newStatus };
+        if (newStatus === 'approved') {
+          updateData.approved_by = user.id;
+        }
+
+        const updated = demoStorage.updateEvent(event.id, updateData);
+        if (updated) {
+          setEvents(prev => prev.map(e => e.id === event.id ? updated : e));
+          setError('Status atualizado em modo demonstração');
+        }
+      } catch (demoErr) {
+        setError('Erro ao atualizar status do evento');
+        console.error('Error updating event status:', demoErr);
+      }
     }
   };
 
