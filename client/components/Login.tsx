@@ -22,7 +22,9 @@ export default function Login({ onSuccess }: LoginProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
+    console.log('Login attempt:', { email, password: '***', isSignUp });
+
     if (!email || !password) {
       setError('Por favor, preencha todos os campos obrigatórios');
       return;
@@ -32,15 +34,24 @@ export default function Login({ onSuccess }: LoginProps) {
       setError('Por favor, preencha o nome');
       return;
     }
-    
-    const result = isSignUp 
-      ? await signUp(email, password, name)
-      : await signIn(email, password);
-    
-    if (result.success) {
-      onSuccess?.();
-    } else {
-      setError(result.error || 'Erro durante a autenticação');
+
+    try {
+      const result = isSignUp
+        ? await signUp(email, password, name)
+        : await signIn(email, password);
+
+      console.log('Login result:', result);
+
+      if (result.success) {
+        console.log('Login successful, calling onSuccess');
+        onSuccess?.();
+      } else {
+        console.log('Login failed:', result.error);
+        setError(result.error || 'Erro durante a autenticação');
+      }
+    } catch (err: any) {
+      console.error('Login error:', err);
+      setError('Erro inesperado durante o login');
     }
   };
 
