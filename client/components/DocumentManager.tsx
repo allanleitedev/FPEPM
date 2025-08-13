@@ -248,7 +248,7 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
             <SelectValue placeholder="Todas as categorias" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todas as categorias</SelectItem>
+            <SelectItem value="all">Todas as categorias</SelectItem>
             {CATEGORIES.map(category => (
               <SelectItem key={category.value} value={category.value}>
                 {category.label}
