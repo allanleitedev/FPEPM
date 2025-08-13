@@ -327,7 +327,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signIn,
     signUp,
     signOut,
-    isLoading
+    isLoading,
+    isDemoMode
   };
 
   return (
