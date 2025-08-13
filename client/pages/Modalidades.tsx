@@ -61,28 +61,28 @@ export default function Modalidades() {
           </Card>
 
           {/* Esgrima */}
-          <Card className="border-0 bg-white border-l-4 border-l-gray-600">
+          <Card className="border-0 bg-white/80 backdrop-blur-sm border-l-4 border-l-gray-600 hover:shadow-xl hover:-translate-y-2 hover:bg-gray-50/50 transition-all duration-300 group animate-in slide-in-from-right duration-700 delay-500">
             <CardHeader>
               <div className="flex items-center gap-4 mb-4">
-                <div className="text-6xl">🤺</div>
+                <div className="text-6xl group-hover:scale-125 group-hover:-rotate-12 transition-all duration-300">🤺</div>
                 <div>
-                  <CardTitle className="text-2xl text-gray-600">Esgrima</CardTitle>
-                  <CardDescription className="text-lg">Espada - Sistema renovado</CardDescription>
+                  <CardTitle className="text-2xl text-gray-600 group-hover:text-gray-800">Esgrima</CardTitle>
+                  <CardDescription className="text-lg group-hover:text-gray-700">Espada - Sistema renovado</CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <p className="text-gray-600">
+                <p className="text-gray-600 group-hover:text-gray-700">
                   A prova de esgrima sofreu alterações após os Jogos Olímpicos de Paris 2024 e agora é composta por dois eventos principais:
                 </p>
                 <div className="space-y-2">
-                  <div>
-                    <strong className="text-gray-800">Ranking Round:</strong> 
+                  <div className="group-hover:bg-white/50 p-2 rounded transition-colors">
+                    <strong className="text-gray-800">Ranking Round:</strong>
                     <span className="text-gray-600 ml-1">Sistema "todos contra todos". Cada duelo dura máximo 1 minuto ou até o primeiro toque.</span>
                   </div>
-                  <div>
-                    <strong className="text-gray-800">Eliminação Direta:</strong> 
+                  <div className="group-hover:bg-white/50 p-2 rounded transition-colors">
+                    <strong className="text-gray-800">Eliminação Direta:</strong>
                     <span className="text-gray-600 ml-1">Semifinais e finais com chaveamento baseado no ranking prévio, começando com 32 atletas.</span>
                   </div>
                 </div>
@@ -91,25 +91,25 @@ export default function Modalidades() {
           </Card>
 
           {/* Prova de Obstáculos */}
-          <Card className="border-0 bg-white border-l-4 border-l-pentathlon-red">
+          <Card className="border-0 bg-white/80 backdrop-blur-sm border-l-4 border-l-pentathlon-red hover:shadow-xl hover:-translate-y-2 hover:bg-red-50/30 transition-all duration-300 group animate-in slide-in-from-left duration-700 delay-700">
             <CardHeader>
               <div className="flex items-center gap-4 mb-4">
-                <div className="text-6xl">🏃‍♂️</div>
+                <div className="text-6xl group-hover:scale-125 group-hover:rotate-6 transition-all duration-300">🏃‍♂️</div>
                 <div>
-                  <CardTitle className="text-2xl text-pentathlon-red">Prova de Obstáculos</CardTitle>
-                  <CardDescription className="text-lg">70 metros com 8 obstáculos</CardDescription>
+                  <CardTitle className="text-2xl text-pentathlon-red group-hover:text-red-600">Prova de Obstáculos</CardTitle>
+                  <CardDescription className="text-lg group-hover:text-gray-700">70 metros com 8 obstáculos</CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <p className="text-gray-600">
-                  Percurso de 70 metros com um circuito padronizado de 8 obstáculos variados, que exigem força, agilidade, 
+                <p className="text-gray-600 group-hover:text-gray-700">
+                  Percurso de 70 metros com um circuito padronizado de 8 obstáculos variados, que exigem força, agilidade,
                   coordenação, equilíbrio e tomada rápida de decisão. A prova é disputada em duas raias simultaneamente.
                 </p>
-                <div className="bg-gray-50 p-3 rounded-lg">
+                <div className="bg-gray-50 p-3 rounded-lg group-hover:bg-white/80 transition-colors">
                   <p className="text-sm text-gray-600">
-                    <strong>Pontuação:</strong> 250 pontos base para 65 segundos. A cada 0,33 segundo acima ou abaixo, 
+                    <strong className="text-pentathlon-red">Pontuação:</strong> 250 pontos base para 65 segundos. A cada 0,33 segundo acima ou abaixo,
                     a pontuação é ajustada para mais ou menos.
                   </p>
                 </div>
@@ -118,29 +118,29 @@ export default function Modalidades() {
           </Card>
 
           {/* Laser Run */}
-          <Card className="border-0 bg-white border-l-4 border-l-pentathlon-yellow">
+          <Card className="border-0 bg-white/80 backdrop-blur-sm border-l-4 border-l-pentathlon-yellow hover:shadow-xl hover:-translate-y-2 hover:bg-yellow-50/30 transition-all duration-300 group animate-in slide-in-from-right duration-700 delay-900">
             <CardHeader>
               <div className="flex items-center gap-4 mb-4">
-                <div className="text-6xl">🎯</div>
+                <div className="text-6xl group-hover:scale-125 group-hover:-rotate-6 transition-all duration-300">🎯</div>
                 <div>
-                  <CardTitle className="text-2xl text-yellow-600">Corrida e Tiro a Laser</CardTitle>
-                  <CardDescription className="text-lg">3.200m + 4 séries de tiro</CardDescription>
+                  <CardTitle className="text-2xl text-yellow-600 group-hover:text-yellow-700">Corrida e Tiro a Laser</CardTitle>
+                  <CardDescription className="text-lg group-hover:text-gray-700">3.200m + 4 séries de tiro</CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <p className="text-gray-600">
-                  Percurso de 3.200 metros com largada tipo "HANDICAP" baseada na classificação das provas anteriores. 
+                <p className="text-gray-600 group-hover:text-gray-700">
+                  Percurso de 3.200 metros com largada tipo "HANDICAP" baseada na classificação das provas anteriores.
                   A cada 800 metros, os atletas param para o tiro.
                 </p>
                 <div className="space-y-2">
-                  <div className="bg-gray-50 p-3 rounded-lg text-sm">
-                    <strong className="text-gray-800">Tiro:</strong> 4 séries de 5 acertos cada, máximo 50s por série, 
+                  <div className="bg-gray-50 p-3 rounded-lg text-sm group-hover:bg-white/80 transition-colors">
+                    <strong className="text-yellow-700">Tiro:</strong> 4 séries de 5 acertos cada, máximo 50s por série,
                     alvo a 10m, posição de pé com uma mão, sem apoio.
                   </div>
-                  <div className="bg-gray-50 p-3 rounded-lg text-sm">
-                    <strong className="text-gray-800">Largada:</strong> Diferença de 20 pontos = 20 segundos de intervalo entre atletas.
+                  <div className="bg-gray-50 p-3 rounded-lg text-sm group-hover:bg-white/80 transition-colors">
+                    <strong className="text-yellow-700">Largada:</strong> Diferença de 20 pontos = 20 segundos de intervalo entre atletas.
                   </div>
                 </div>
               </div>
