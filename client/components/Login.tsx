@@ -43,9 +43,9 @@ export default function Login({ onSuccess }: LoginProps) {
       if (result.success) {
         // Show success message if provided (e.g., demo mode notification)
         if (result.message) {
-          setError(''); // Clear any previous errors
-          // Create a temporary success state or show the message
-          console.log('Success message:', result.message);
+          setSuccessMessage(result.message);
+          // Clear success message after 3 seconds
+          setTimeout(() => setSuccessMessage(''), 3000);
         }
         onSuccess?.();
       } else {
