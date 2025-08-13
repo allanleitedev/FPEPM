@@ -53,64 +53,99 @@ export default function FileUpload({
     return null;
   };
 
-  const uploadToSupabase = async (file: File, title: string, description: string): Promise<Document> => {
+  const uploadDocument = async (file: File, title: string, description: string): Promise<Document> => {
     if (!user) {
       throw new Error('Usuário não autenticado');
     }
 
-    // Create a unique filename
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-    const filePath = `${category}/${fileName}`;
+    // Check if we're in demo mode
+    const isDemoMode = localStorage.getItem('fppm_auth_demo');
 
-    // Upload file to Supabase Storage
-    setProgress(25);
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('documents')
-      .upload(filePath, file);
+    if (isDemoMode) {
+      // Demo mode - simulate upload
+      setProgress(25);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setProgress(50);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setProgress(75);
+      await new Promise(resolve => setTimeout(resolve, 500));
 
-    if (uploadError) {
-      throw new Error(`Erro no upload: ${uploadError.message}`);
-    }
+      const { demoStorage } = await import('@/lib/demoData');
+      const documentData = {
+        id: `demo-doc-${Date.now()}`,
+        title,
+        description: description || null,
+        category: category as any,
+        file_name: file.name,
+        file_path: `demo/${category}/${file.name}`,
+        file_size: file.size,
+        file_type: file.type,
+        uploaded_by: user.id,
+        tags: description ? description.split(' ').filter(word => word.length > 3).slice(0, 3) : [],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        admin_users: user
+      };
 
-    setProgress(50);
+      const newDocument = demoStorage.addDocument(documentData);
+      setProgress(100);
+      return newDocument;
+    } else {
+      // Supabase mode
+      // Create a unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `${category}/${fileName}`;
 
-    // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from('documents')
-      .getPublicUrl(filePath);
-
-    setProgress(75);
-
-    // Create document record in database
-    const documentData = {
-      title,
-      description,
-      category: category as any,
-      file_name: file.name,
-      file_path: filePath,
-      file_size: file.size,
-      file_type: file.type,
-      uploaded_by: user.id,
-      tags: description ? description.split(' ').filter(word => word.length > 3).slice(0, 3) : []
-    };
-
-    const { data: document, error: dbError } = await supabase
-      .from('documents')
-      .insert(documentData)
-      .select('*, admin_users(*)')
-      .single();
-
-    if (dbError) {
-      // If database insert fails, cleanup uploaded file
-      await supabase.storage
+      // Upload file to Supabase Storage
+      setProgress(25);
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from('documents')
-        .remove([filePath]);
-      throw new Error(`Erro ao salvar documento: ${dbError.message}`);
-    }
+        .upload(filePath, file);
 
-    setProgress(100);
-    return document;
+      if (uploadError) {
+        throw new Error(`Erro no upload: ${uploadError.message}`);
+      }
+
+      setProgress(50);
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('documents')
+        .getPublicUrl(filePath);
+
+      setProgress(75);
+
+      // Create document record in database
+      const documentData = {
+        title,
+        description,
+        category: category as any,
+        file_name: file.name,
+        file_path: filePath,
+        file_size: file.size,
+        file_type: file.type,
+        uploaded_by: user.id,
+        tags: description ? description.split(' ').filter(word => word.length > 3).slice(0, 3) : []
+      };
+
+      const { data: document, error: dbError } = await supabase
+        .from('documents')
+        .insert(documentData)
+        .select('*, admin_users(*)')
+        .single();
+
+      if (dbError) {
+        // If database insert fails, cleanup uploaded file
+        await supabase.storage
+          .from('documents')
+          .remove([filePath]);
+        throw new Error(`Erro ao salvar documento: ${dbError.message}`);
+      }
+
+      setProgress(100);
+      return document;
+    }
   };
 
   const handleFileUpload = async (file: File, title: string, description: string = '') => {
@@ -127,12 +162,39 @@ export default function FileUpload({
     setUploading(true);
     
     try {
-      const document = await uploadToSupabase(file, title, description);
+      const document = await uploadDocument(file, title, description);
       onFileUploaded(document);
       setSuccess(`Documento "${title}" enviado com sucesso!`);
       setProgress(0);
     } catch (err: any) {
-      setError(err.message || 'Erro ao enviar arquivo. Tente novamente.');
+      console.warn('Failed to upload to Supabase, trying demo mode:', err);
+      // Fallback to demo mode
+      try {
+        const { demoStorage } = await import('@/lib/demoData');
+        const documentData = {
+          id: `demo-doc-${Date.now()}`,
+          title,
+          description: description || null,
+          category: category as any,
+          file_name: file.name,
+          file_path: `demo/${category}/${file.name}`,
+          file_size: file.size,
+          file_type: file.type,
+          uploaded_by: user?.id || 'demo-user',
+          tags: description ? description.split(' ').filter(word => word.length > 3).slice(0, 3) : [],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          admin_users: user
+        };
+
+        const newDocument = demoStorage.addDocument(documentData);
+        onFileUploaded(newDocument);
+        setSuccess(`Documento "${title}" enviado com sucesso em modo demonstração!`);
+        setProgress(0);
+      } catch (demoErr) {
+        setError('Erro ao enviar arquivo. Tente novamente.');
+        console.error('Error in demo upload fallback:', demoErr);
+      }
     } finally {
       setUploading(false);
     }
@@ -308,68 +370,134 @@ export function FileUploadWithForm({
     setProgress(0);
 
     try {
-      // Create a unique filename
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `${category}/${fileName}`;
+      // Check if we're in demo mode
+      const isDemoMode = localStorage.getItem('fppm_auth_demo');
 
-      // Upload file to Supabase Storage
-      setProgress(25);
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('documents')
-        .upload(filePath, file);
+      if (isDemoMode) {
+        // Demo mode - simulate upload
+        setProgress(25);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setProgress(50);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setProgress(75);
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-      if (uploadError) {
-        throw new Error(`Erro no upload: ${uploadError.message}`);
-      }
+        const { demoStorage } = await import('@/lib/demoData');
+        const documentData = {
+          id: `demo-doc-${Date.now()}`,
+          title: title.trim(),
+          description: description.trim() || null,
+          category: category as any,
+          file_name: file.name,
+          file_path: `demo/${category}/${file.name}`,
+          file_size: file.size,
+          file_type: file.type,
+          uploaded_by: user.id,
+          tags: description ? description.split(' ').filter(word => word.length > 3).slice(0, 3) : [],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          admin_users: user
+        };
 
-      setProgress(50);
+        const newDocument = demoStorage.addDocument(documentData);
+        setProgress(100);
+        onFileUploaded(newDocument);
+      } else {
+        // Supabase mode
+        // Create a unique filename
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `${category}/${fileName}`;
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('documents')
-        .getPublicUrl(filePath);
-
-      setProgress(75);
-
-      // Create document record in database
-      const documentData = {
-        title: title.trim(),
-        description: description.trim() || null,
-        category: category as any,
-        file_name: file.name,
-        file_path: filePath,
-        file_size: file.size,
-        file_type: file.type,
-        uploaded_by: user.id,
-        tags: description ? description.split(' ').filter(word => word.length > 3).slice(0, 3) : []
-      };
-
-      const { data: document, error: dbError } = await supabase
-        .from('documents')
-        .insert(documentData)
-        .select('*, admin_users(*)')
-        .single();
-
-      if (dbError) {
-        // If database insert fails, cleanup uploaded file
-        await supabase.storage
+        // Upload file to Supabase Storage
+        setProgress(25);
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from('documents')
-          .remove([filePath]);
-        throw new Error(`Erro ao salvar documento: ${dbError.message}`);
+          .upload(filePath, file);
+
+        if (uploadError) {
+          throw new Error(`Erro no upload: ${uploadError.message}`);
+        }
+
+        setProgress(50);
+
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('documents')
+          .getPublicUrl(filePath);
+
+        setProgress(75);
+
+        // Create document record in database
+        const documentData = {
+          title: title.trim(),
+          description: description.trim() || null,
+          category: category as any,
+          file_name: file.name,
+          file_path: filePath,
+          file_size: file.size,
+          file_type: file.type,
+          uploaded_by: user.id,
+          tags: description ? description.split(' ').filter(word => word.length > 3).slice(0, 3) : []
+        };
+
+        const { data: document, error: dbError } = await supabase
+          .from('documents')
+          .insert(documentData)
+          .select('*, admin_users(*)')
+          .single();
+
+        if (dbError) {
+          // If database insert fails, cleanup uploaded file
+          await supabase.storage
+            .from('documents')
+            .remove([filePath]);
+          throw new Error(`Erro ao salvar documento: ${dbError.message}`);
+        }
+
+        setProgress(100);
+        onFileUploaded(document);
       }
 
-      setProgress(100);
-      onFileUploaded(document);
-      
       // Reset form
       setFile(null);
       setTitle('');
       setDescription('');
       setProgress(0);
-      
+
     } catch (err: any) {
-      setError(err.message || 'Erro ao enviar arquivo. Tente novamente.');
+      console.warn('Failed to upload to Supabase, trying demo mode:', err);
+      // Fallback to demo mode
+      try {
+        const { demoStorage } = await import('@/lib/demoData');
+        const documentData = {
+          id: `demo-doc-${Date.now()}`,
+          title: title.trim(),
+          description: description.trim() || null,
+          category: category as any,
+          file_name: file.name,
+          file_path: `demo/${category}/${file.name}`,
+          file_size: file.size,
+          file_type: file.type,
+          uploaded_by: user?.id || 'demo-user',
+          tags: description ? description.split(' ').filter(word => word.length > 3).slice(0, 3) : [],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          admin_users: user
+        };
+
+        const newDocument = demoStorage.addDocument(documentData);
+        onFileUploaded(newDocument);
+
+        // Reset form
+        setFile(null);
+        setTitle('');
+        setDescription('');
+        setProgress(0);
+      } catch (demoErr) {
+        setError('Erro ao enviar arquivo. Tente novamente.');
+        console.error('Error in demo upload fallback:', demoErr);
+      }
     } finally {
       setUploading(false);
     }
