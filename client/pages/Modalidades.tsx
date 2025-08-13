@@ -5,10 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 export default function Modalidades() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/20 to-green-50/30 py-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-pentathlon-green/20 via-pentathlon-blue/15 to-pentathlon-gold/20 py-8 relative overflow-hidden">
       {/* Background decorations */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-pentathlon-green/5 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-pentathlon-blue/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div className="absolute top-0 right-0 w-96 h-96 bg-pentathlon-green/25 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-pentathlon-blue/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-pentathlon-red/15 rounded-full blur-3xl animate-pulse delay-1500"></div>
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         {/* Header */}
