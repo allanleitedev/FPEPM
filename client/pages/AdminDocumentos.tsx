@@ -265,13 +265,11 @@ export default function AdminDocumentos() {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => {
-                    localStorage.removeItem('fppm_auth_demo');
-                    window.location.reload();
-                  }}
+                  onClick={handleTestConnection}
+                  disabled={testingConnection}
                   className="border-yellow-400 text-yellow-700 hover:bg-yellow-100"
                 >
-                  Tentar Conexão Real com Supabase
+                  {testingConnection ? 'Testando...' : 'Testar Conexão com Supabase'}
                 </Button>
               </div>
             </AlertDescription>
