@@ -102,9 +102,10 @@ export default function Index() {
       </section>
 
       {/* Modalidades Resumo */}
-      <section className="py-16 px-4 bg-gradient-to-br from-gray-50 via-blue-50/20 to-green-50/30 relative">
+      <section className="py-16 px-4 bg-gradient-to-br from-pentathlon-blue/20 via-pentathlon-green/15 to-pentathlon-gold/20 relative">
         {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-r from-pentathlon-green/5 via-transparent to-pentathlon-blue/5"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-pentathlon-green/15 via-pentathlon-blue/20 to-pentathlon-red/10"></div>
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(34,197,94,0.1),transparent_50%)]"></div>
 
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12 animate-in slide-in-from-top duration-1000">
