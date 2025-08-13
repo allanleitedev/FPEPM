@@ -1,7 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Supabase configuration - Update these with your project credentials
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bwlmduvnndbsahzpmevq.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3bG1kdXZubmRic2FoenBtZXZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc0NjExODcsImV4cCI6MjA1MzAzNzE4N30.4Nm5WztZDCeY7Z8u6WrGJO7EIJ3WjUhzKJRKlpCdUh8';
+
+// Export for debugging
+export const getSupabaseConfig = () => ({
+  url: supabaseUrl,
+  anonKey: supabaseAnonKey,
+  hasEnvUrl: !!import.meta.env.VITE_SUPABASE_URL,
+  hasEnvKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY
+});
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
