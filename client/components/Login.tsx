@@ -39,6 +39,12 @@ export default function Login({ onSuccess }: LoginProps) {
         : await signIn(email, password);
 
       if (result.success) {
+        // Show success message if provided (e.g., demo mode notification)
+        if (result.message) {
+          setError(''); // Clear any previous errors
+          // Create a temporary success state or show the message
+          console.log('Success message:', result.message);
+        }
         onSuccess?.();
       } else {
         setError(result.error || 'Erro durante a autenticação');
