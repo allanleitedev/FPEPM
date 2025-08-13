@@ -104,32 +104,53 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
       setDeletingId(document.id);
       setError('');
 
-      // Delete file from storage first
-      const { error: storageError } = await supabase.storage
-        .from('documents')
-        .remove([document.file_path]);
+      // Check if we're in demo mode
+      const isDemoMode = localStorage.getItem('fppm_auth_demo');
 
-      if (storageError) {
-        console.warn('Warning: Could not delete file from storage:', storageError);
-        // Continue with database deletion even if storage deletion fails
+      if (isDemoMode) {
+        // Use demo data
+        const { demoStorage } = await import('@/lib/demoData');
+        demoStorage.removeDocument(document.id);
+        // Remove from local state
+        setDocuments(prev => prev.filter(doc => doc.id !== document.id));
+      } else {
+        // Delete file from storage first
+        const { error: storageError } = await supabase.storage
+          .from('documents')
+          .remove([document.file_path]);
+
+        if (storageError) {
+          console.warn('Warning: Could not delete file from storage:', storageError);
+          // Continue with database deletion even if storage deletion fails
+        }
+
+        // Delete document record from database
+        const { error: dbError } = await supabase
+          .from('documents')
+          .delete()
+          .eq('id', document.id);
+
+        if (dbError) {
+          throw dbError;
+        }
+
+        // Remove from local state
+        setDocuments(prev => prev.filter(doc => doc.id !== document.id));
       }
 
-      // Delete document record from database
-      const { error: dbError } = await supabase
-        .from('documents')
-        .delete()
-        .eq('id', document.id);
-
-      if (dbError) {
-        throw dbError;
-      }
-
-      // Remove from local state
-      setDocuments(prev => prev.filter(doc => doc.id !== document.id));
-      
     } catch (err: any) {
-      setError(err.message || 'Erro ao deletar documento');
-      console.error('Error deleting document:', err);
+      console.warn('Failed to delete from Supabase, trying demo mode:', err);
+      // Fallback to demo mode
+      try {
+        const { demoStorage } = await import('@/lib/demoData');
+        demoStorage.removeDocument(document.id);
+        // Remove from local state
+        setDocuments(prev => prev.filter(doc => doc.id !== document.id));
+        setError('Documento deletado em modo demonstração');
+      } catch (demoErr) {
+        setError('Erro ao deletar documento');
+        console.error('Error deleting document:', demoErr);
+      }
     } finally {
       setDeletingId(null);
     }
@@ -173,7 +194,7 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
     }
   };
 
-  const filteredDocuments = selectedCategory 
+  const filteredDocuments = selectedCategory && selectedCategory !== 'all'
     ? documents.filter(doc => doc.category === selectedCategory)
     : documents;
 
@@ -256,11 +277,11 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
             ))}
           </SelectContent>
         </Select>
-        {selectedCategory && (
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => setSelectedCategory('')}
+        {selectedCategory && selectedCategory !== 'all' && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setSelectedCategory('all')}
           >
             Limpar filtro
           </Button>
