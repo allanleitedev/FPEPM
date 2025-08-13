@@ -119,7 +119,7 @@ export default function Index() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-8">
             {[
               { icon: "🏊", name: "Natação", detail: "200m livre", color: "border-t-pentathlon-blue", bg: "bg-blue-50/80 hover:bg-blue-100/90 border-blue-200" },
-              { icon: "����", name: "Esgrima", detail: "Espada", color: "border-t-gray-600", bg: "bg-gray-50/80 hover:bg-gray-100/90 border-gray-200" },
+              { icon: "🤺", name: "Esgrima", detail: "Espada", color: "border-t-gray-600", bg: "bg-gray-50/80 hover:bg-gray-100/90 border-gray-200" },
               { icon: "🏃‍♂️", name: "Obstáculos", detail: "70m/8 obstáculos", color: "border-t-pentathlon-red", bg: "bg-red-50/80 hover:bg-red-100/90 border-red-200" },
               { icon: "🎯", name: "Tiro Laser", detail: "4 séries/5 tiros", color: "border-t-pentathlon-yellow", bg: "bg-yellow-50/80 hover:bg-yellow-100/90 border-yellow-200" },
               { icon: "🏃", name: "Corrida", detail: "3.200m", color: "border-t-pentathlon-green", bg: "bg-green-50/80 hover:bg-green-100/90 border-green-200" }
@@ -164,7 +164,7 @@ export default function Index() {
                 description: "Estrutura organizacional e relatórios",
                 link: "/transparencia",
                 tab: "gestao",
-                color: "hover:bg-blue-50"
+                color: "bg-blue-50/80 hover:bg-blue-100/90 border-blue-200"
               },
               {
                 icon: FileText,
@@ -172,7 +172,7 @@ export default function Index() {
                 description: "Editais e documentos eleitorais",
                 link: "/transparencia",
                 tab: "processos",
-                color: "hover:bg-purple-50"
+                color: "bg-purple-50/80 hover:bg-purple-100/90 border-purple-200"
               },
               {
                 icon: FileText,
@@ -180,7 +180,7 @@ export default function Index() {
                 description: "Estatuto social e alterações",
                 link: "/transparencia",
                 tab: "estatuto",
-                color: "hover:bg-green-50"
+                color: "bg-green-50/80 hover:bg-green-100/90 border-green-200"
               },
               {
                 icon: FileText,
@@ -188,7 +188,7 @@ export default function Index() {
                 description: "Procedimentos e relatórios",
                 link: "/transparencia",
                 tab: "compras",
-                color: "hover:bg-yellow-50"
+                color: "bg-yellow-50/80 hover:bg-yellow-100/90 border-yellow-200"
               },
               {
                 icon: FileText,
@@ -196,7 +196,7 @@ export default function Index() {
                 description: "Certidões e documentos legais",
                 link: "/transparencia",
                 tab: "documentos",
-                color: "hover:bg-gray-50"
+                color: "bg-gray-50/80 hover:bg-gray-100/90 border-gray-200"
               },
               {
                 icon: FileText,
@@ -204,7 +204,7 @@ export default function Index() {
                 description: "Canal de comunicação oficial",
                 link: "/transparencia",
                 tab: "ouvidoria",
-                color: "hover:bg-red-50"
+                color: "bg-red-50/80 hover:bg-red-100/90 border-red-200"
               }
             ].map((item, index) => (
               <Card key={index} className={`hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm group cursor-pointer ${item.color} animate-in slide-in-from-bottom duration-700`} style={{animationDelay: `${index * 100}ms`}}>
