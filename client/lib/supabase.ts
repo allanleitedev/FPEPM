@@ -112,6 +112,12 @@ export const testSupabaseConnection = async (): Promise<{
   try {
     details.push('🔍 Testando conexão com Supabase...');
 
+    // Show current configuration
+    const config = getSupabaseConfig();
+    details.push(`📍 URL: ${config.url}`);
+    details.push(`🔑 API Key: ${config.anonKey.substring(0, 20)}...`);
+    details.push(`⚙️ Usando env vars: URL=${config.hasEnvUrl}, KEY=${config.hasEnvKey}`);
+
     // Test 1: Basic URL connectivity
     try {
       const response = await fetch(supabaseUrl + '/rest/v1/', {
