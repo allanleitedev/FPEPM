@@ -6,8 +6,8 @@ interface AuthContextType {
   user: AdminUser | null;
   session: Session | null;
   isAuthenticated: boolean;
-  signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  signUp: (email: string, password: string, name: string, role?: 'admin' | 'moderator') => Promise<{ success: boolean; error?: string }>;
+  signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string; message?: string }>;
+  signUp: (email: string, password: string, name: string, role?: 'admin' | 'moderator') => Promise<{ success: boolean; error?: string; message?: string }>;
   signOut: () => Promise<void>;
   isLoading: boolean;
 }
