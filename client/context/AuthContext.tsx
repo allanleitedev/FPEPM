@@ -36,6 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const authData = JSON.parse(demoAuth);
         setUser(authData.user);
+        setIsDemoMode(true);
         setIsLoading(false);
         return;
       } catch (error) {
