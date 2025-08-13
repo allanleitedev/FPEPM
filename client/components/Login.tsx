@@ -160,11 +160,14 @@ export default function Login({ onSuccess }: LoginProps) {
           </div>
           
           {!isSignUp && (
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600 font-medium mb-2">Credenciais de demonstração:</p>
-              <div className="text-xs text-gray-500 space-y-1">
-                <p><strong>Email:</strong> admin@fppm.com.br</p>
-                <p><strong>Senha:</strong> admin123</p>
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-sm text-blue-800 font-medium mb-2">🚀 Modo Demonstração:</p>
+              <div className="text-xs text-blue-700 space-y-1">
+                <p><strong>Admin:</strong> admin@fppm.com.br / admin123</p>
+                <p><strong>Moderador:</strong> moderator@fppm.com.br / mod123</p>
+                <p className="text-xs text-blue-600 mt-2 italic">
+                  * Dados salvos localmente para demonstração
+                </p>
               </div>
             </div>
           )}
