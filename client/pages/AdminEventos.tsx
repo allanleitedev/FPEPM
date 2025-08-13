@@ -32,13 +32,25 @@ export default function AdminEventos() {
 
   const loadStats = async () => {
     try {
-      const { data: events, error } = await supabase
-        .from('events')
-        .select('status');
+      // Check if we're in demo mode
+      const isDemoMode = localStorage.getItem('fppm_auth_demo');
+      let events;
 
-      if (error) {
-        console.error('Error loading stats:', error);
-        return;
+      if (isDemoMode) {
+        // Use demo data
+        const { demoStorage } = await import('@/lib/demoData');
+        events = demoStorage.getEvents();
+      } else {
+        // Try Supabase
+        const { data, error } = await supabase
+          .from('events')
+          .select('status');
+
+        if (error) {
+          throw error;
+        }
+
+        events = data || [];
       }
 
       const eventStats = events.reduce((acc, event) => {
@@ -55,35 +67,76 @@ export default function AdminEventos() {
 
       setStats(eventStats);
     } catch (error) {
-      console.error('Error in loadStats:', error);
+      console.warn('Failed to load stats from Supabase, falling back to demo mode:', error);
+      // Fallback to demo data
+      try {
+        const { demoStorage } = await import('@/lib/demoData');
+        const events = demoStorage.getEvents();
+
+        const eventStats = events.reduce((acc, event) => {
+          acc.total++;
+          acc[event.status as keyof typeof acc]++;
+          return acc;
+        }, {
+          total: 0,
+          pending: 0,
+          approved: 0,
+          rejected: 0,
+          published: 0
+        });
+
+        setStats(eventStats);
+      } catch (demoErr) {
+        console.error('Error loading stats:', demoErr);
+      }
     }
   };
 
   const loadRecentEvents = async () => {
     try {
       setLoading(true);
-      const { data: events, error } = await supabase
-        .from('events')
-        .select(`
-          *,
-          admin_users (
-            id,
-            name,
-            email,
-            role
-          )
-        `)
-        .order('created_at', { ascending: false })
-        .limit(5);
+      // Check if we're in demo mode
+      const isDemoMode = localStorage.getItem('fppm_auth_demo');
+      let events;
 
-      if (error) {
-        console.error('Error loading recent events:', error);
-        return;
+      if (isDemoMode) {
+        // Use demo data
+        const { demoStorage } = await import('@/lib/demoData');
+        events = demoStorage.getEvents().slice(0, 5);
+      } else {
+        // Try Supabase
+        const { data, error } = await supabase
+          .from('events')
+          .select(`
+            *,
+            admin_users (
+              id,
+              name,
+              email,
+              role
+            )
+          `)
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        if (error) {
+          throw error;
+        }
+
+        events = data || [];
       }
 
-      setRecentEvents(events || []);
+      setRecentEvents(events);
     } catch (error) {
-      console.error('Error in loadRecentEvents:', error);
+      console.warn('Failed to load recent events from Supabase, falling back to demo mode:', error);
+      // Fallback to demo data
+      try {
+        const { demoStorage } = await import('@/lib/demoData');
+        const events = demoStorage.getEvents().slice(0, 5);
+        setRecentEvents(events);
+      } catch (demoErr) {
+        console.error('Error loading recent events:', demoErr);
+      }
     } finally {
       setLoading(false);
     }
