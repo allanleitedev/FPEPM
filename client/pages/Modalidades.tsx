@@ -41,20 +41,20 @@ export default function Modalidades() {
         {/* Modalidades Detalhadas */}
         <div className="grid lg:grid-cols-2 gap-12 mb-16">
           {/* Natação */}
-          <Card className="border-0 bg-white border-l-4 border-l-pentathlon-blue">
+          <Card className="border-0 bg-white/80 backdrop-blur-sm border-l-4 border-l-pentathlon-blue hover:shadow-xl hover:-translate-y-2 hover:bg-blue-50/30 transition-all duration-300 group animate-in slide-in-from-left duration-700 delay-300">
             <CardHeader>
               <div className="flex items-center gap-4 mb-4">
-                <div className="text-6xl">🏊</div>
+                <div className="text-6xl group-hover:scale-125 group-hover:rotate-12 transition-all duration-300">🏊</div>
                 <div>
-                  <CardTitle className="text-2xl text-pentathlon-blue">Natação</CardTitle>
-                  <CardDescription className="text-lg">200 metros estilo livre</CardDescription>
+                  <CardTitle className="text-2xl text-pentathlon-blue group-hover:text-blue-600">Natação</CardTitle>
+                  <CardDescription className="text-lg group-hover:text-gray-700">200 metros estilo livre</CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600 leading-relaxed">
-                Os atletas nadam 200 metros estilo livre contra o relógio. Quanto mais rápido o tempo, maior a pontuação obtida. 
-                O tempo de referência é <strong>2 minutos e 30 segundos, equivalente a 250 pontos</strong>. 
+              <p className="text-gray-600 leading-relaxed group-hover:text-gray-700">
+                Os atletas nadam 200 metros estilo livre contra o relógio. Quanto mais rápido o tempo, maior a pontuação obtida.
+                O tempo de referência é <strong className="text-pentathlon-blue">2 minutos e 30 segundos, equivalente a 250 pontos</strong>.
                 A cada 0,50 segundo abaixo ou acima desse tempo, 1 ponto é adicionado ou subtraído da pontuação total do atleta.
               </p>
             </CardContent>
