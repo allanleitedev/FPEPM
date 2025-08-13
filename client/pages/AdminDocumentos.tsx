@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase, Document } from '@/lib/supabase';
+import { supabase, Document, testSupabaseConnection } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
