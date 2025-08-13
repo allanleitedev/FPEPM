@@ -99,6 +99,12 @@ export default function Transparencia() {
 
   const handleViewDocument = async (document: Document) => {
     try {
+      // Check if this is a demo document
+      if (document.file_path.startsWith('demo/')) {
+        alert('Visualização não disponível em modo demonstração. Este é um documento de exemplo.');
+        return;
+      }
+
       const { data } = supabase.storage
         .from('documents')
         .getPublicUrl(document.file_path);
@@ -108,7 +114,7 @@ export default function Transparencia() {
       }
     } catch (err: any) {
       console.error('Error viewing file:', err);
-      alert('Erro ao visualizar arquivo. Tente novamente.');
+      alert('Erro ao visualizar arquivo. Documento pode não estar disponível.');
     }
   };
 
