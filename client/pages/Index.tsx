@@ -7,11 +7,12 @@ import { Badge } from '@/components/ui/badge';
 
 export default function Index() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-green-50/20 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-pentathlon-green/15 via-pentathlon-blue/10 to-pentathlon-gold/15 relative overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0 bg-gradient-to-r from-pentathlon-green/5 via-transparent to-pentathlon-blue/5 animate-pulse"></div>
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-pentathlon-gold/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-pentathlon-red/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-pentathlon-green/20 via-pentathlon-blue/15 to-pentathlon-red/15 animate-pulse"></div>
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-pentathlon-gold/25 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-pentathlon-red/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
+      <div className="absolute top-1/2 right-1/3 w-48 h-48 bg-pentathlon-blue/20 rounded-full blur-2xl animate-pulse delay-1500"></div>
 
       {/* Hero Section */}
       <section className="relative py-20 px-4 md:py-32 z-10">
