@@ -91,3 +91,29 @@ export const EVENT_STATUSES = [
   { value: 'rejected', label: 'Rejeitado', color: 'red' },
   { value: 'published', label: 'Publicado', color: 'blue' }
 ] as const;
+
+// Test Supabase connection
+export const testSupabaseConnection = async (): Promise<{ connected: boolean; error?: string }> => {
+  try {
+    // Try to get the current session
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+    if (sessionError) {
+      return { connected: false, error: sessionError.message };
+    }
+
+    // Try a simple query to test database connection
+    const { error: queryError } = await supabase
+      .from('admin_users')
+      .select('count')
+      .limit(1);
+
+    if (queryError) {
+      return { connected: false, error: queryError.message };
+    }
+
+    return { connected: true };
+  } catch (error: any) {
+    return { connected: false, error: error.message || 'Connection failed' };
+  }
+};
