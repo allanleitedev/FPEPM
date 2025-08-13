@@ -11,7 +11,7 @@ import Login from '@/components/Login';
 import DocumentManager from '@/components/DocumentManager';
 
 export default function AdminDocumentos() {
-  const { user, isAuthenticated, signOut } = useAuth();
+  const { user, isAuthenticated, signOut, isDemoMode } = useAuth();
   const [activeTab, setActiveTab] = useState('documents');
   const [stats, setStats] = useState({
     totalDocuments: 0,
