@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Trophy, FileText, Settings, Home } from 'lucide-react';
+import { Menu, X, Trophy, FileText, Settings, Home, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated, user } = useAuth();
 
   const navigation = [
     { name: 'Início', href: '/', icon: Home },
@@ -46,12 +49,33 @@ export default function Header() {
 
           {/* Admin & CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            <Link to="/admin/eventos">
-              <Button size="sm" variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50">
-                <Settings size={16} className="mr-2" />
-                Admin
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <div className="flex items-center gap-3">
+                <Badge variant="secondary" className="bg-pentathlon-green/10 text-pentathlon-green">
+                  <Shield size={12} className="mr-1" />
+                  {user?.role}
+                </Badge>
+                <Link to="/admin/documentos">
+                  <Button size="sm" variant="outline" className="border-pentathlon-green text-pentathlon-green hover:bg-pentathlon-green hover:text-white">
+                    <FileText size={16} className="mr-2" />
+                    Documentos
+                  </Button>
+                </Link>
+                <Link to="/admin/eventos">
+                  <Button size="sm" variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50">
+                    <Settings size={16} className="mr-2" />
+                    Eventos
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <Link to="/admin/documentos">
+                <Button size="sm" variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50">
+                  <Shield size={16} className="mr-2" />
+                  Admin
+                </Button>
+              </Link>
+            )}
             <Button size="sm" className="bg-pentathlon-green hover:bg-pentathlon-green-dark text-white">
               Fale Conosco
             </Button>
