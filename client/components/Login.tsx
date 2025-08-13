@@ -165,14 +165,22 @@ export default function Login({ onSuccess }: LoginProps) {
           </div>
           
           {!isSignUp && (
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-sm text-blue-800 font-medium mb-2">🚀 Modo Demonstração:</p>
-              <div className="text-xs text-blue-700 space-y-1">
-                <p><strong>Admin:</strong> admin@fppm.com.br / admin123</p>
-                <p><strong>Moderador:</strong> moderator@fppm.com.br / mod123</p>
-                <p className="text-xs text-blue-600 mt-2 italic">
-                  * Dados salvos localmente para demonstração
-                </p>
+            <div className="mt-6 space-y-3">
+              <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                <p className="text-sm text-green-800 font-medium mb-2">✅ Autenticação Real:</p>
+                <div className="text-xs text-green-700 space-y-1">
+                  <p>• Crie uma conta ou use qualquer email/senha</p>
+                  <p>• Dados sincronizados com Supabase</p>
+                  <p>• Fallback automático para modo demo</p>
+                </div>
+              </div>
+
+              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-sm text-blue-800 font-medium mb-2">🚀 Credenciais Demo:</p>
+                <div className="text-xs text-blue-700 space-y-1">
+                  <p><strong>Admin:</strong> admin@fppm.com.br / admin123</p>
+                  <p><strong>Moderador:</strong> moderator@fppm.com.br / mod123</p>
+                </div>
               </div>
             </div>
           )}
