@@ -34,28 +34,48 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
     try {
       setLoading(true);
       setError('');
-      
-      const { data, error } = await supabase
-        .from('documents')
-        .select(`
-          *,
-          admin_users (
-            id,
-            name,
-            email,
-            role
-          )
-        `)
-        .order('created_at', { ascending: false });
 
-      if (error) {
-        throw error;
+      // Check if we're in demo mode
+      const isDemoMode = localStorage.getItem('fppm_auth_demo');
+
+      if (isDemoMode) {
+        // Use demo data
+        const { demoStorage } = await import('@/lib/demoData');
+        const demoDocuments = demoStorage.getDocuments();
+        setDocuments(demoDocuments);
+      } else {
+        // Try Supabase
+        const { data, error } = await supabase
+          .from('documents')
+          .select(`
+            *,
+            admin_users (
+              id,
+              name,
+              email,
+              role
+            )
+          `)
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          throw error;
+        }
+
+        setDocuments(data || []);
       }
-
-      setDocuments(data || []);
     } catch (err: any) {
-      setError(err.message || 'Erro ao carregar documentos');
-      console.error('Error loading documents:', err);
+      console.warn('Failed to load from Supabase, falling back to demo mode:', err);
+      // Fallback to demo data
+      try {
+        const { demoStorage } = await import('@/lib/demoData');
+        const demoDocuments = demoStorage.getDocuments();
+        setDocuments(demoDocuments);
+        setError('Conectado em modo demonstração. Funcionalidades limitadas.');
+      } catch (demoErr) {
+        setError('Erro ao carregar documentos');
+        console.error('Error loading demo documents:', demoErr);
+      }
     } finally {
       setLoading(false);
     }
