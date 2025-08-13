@@ -233,6 +233,18 @@ export default function AdminDocumentos() {
           </AlertDescription>
         </Alert>
 
+        {/* Demo Mode Alert */}
+        {isDemoMode && (
+          <Alert variant="destructive" className="mb-8 border-yellow-200 bg-yellow-50">
+            <AlertCircle className="h-4 w-4 text-yellow-600" />
+            <AlertDescription className="text-yellow-800">
+              <strong>⚠️ MODO DEMONSTRAÇÃO ATIVO</strong><br />
+              Você está usando dados de demonstração. Os uploads e alterações não serão salvos no Supabase real.
+              Para usar dados reais, configure as credenciais do Supabase e faça login com uma conta real.
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
