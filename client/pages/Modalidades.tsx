@@ -149,22 +149,22 @@ export default function Modalidades() {
         </div>
 
         {/* Resumo Visual das 5 Modalidades */}
-        <div className="bg-white rounded-lg p-8 shadow-sm">
+        <div className="bg-white/80 backdrop-blur-sm rounded-lg p-8 shadow-lg animate-in slide-in-from-bottom duration-1000 delay-1000">
           <h3 className="text-2xl font-bold text-center text-gray-900 mb-8">As Cinco Modalidades em Resumo</h3>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {[
-              { icon: "🏊", name: "Natação", detail: "200m livre", points: "250 pts base (2:30)" },
-              { icon: "🤺", name: "Esgrima", detail: "Espada", points: "Ranking + Eliminação" },
-              { icon: "🏃‍♂️", name: "Obstáculos", detail: "70m/8 obstáculos", points: "250 pts base (65s)" },
-              { icon: "🎯", name: "Tiro Laser", detail: "4 séries/5 tiros", points: "Max 50s/série" },
-              { icon: "🏃", name: "Corrida", detail: "3.200m", points: "Largada handicap" }
+              { icon: "🏊", name: "Natação", detail: "200m livre", points: "250 pts base (2:30)", color: "hover:bg-blue-50" },
+              { icon: "🤺", name: "Esgrima", detail: "Espada", points: "Ranking + Eliminação", color: "hover:bg-gray-50" },
+              { icon: "🏃‍♂️", name: "Obstáculos", detail: "70m/8 obstáculos", points: "250 pts base (65s)", color: "hover:bg-red-50" },
+              { icon: "🎯", name: "Tiro Laser", detail: "4 séries/5 tiros", points: "Max 50s/série", color: "hover:bg-yellow-50" },
+              { icon: "🏃", name: "Corrida", detail: "3.200m", points: "Largada handicap", color: "hover:bg-green-50" }
             ].map((modalidade, index) => (
-              <Card key={index} className="text-center border-0 bg-gray-50 hover:shadow-md transition-shadow">
+              <Card key={index} className={`text-center border-0 bg-gray-50/80 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group ${modalidade.color} animate-in slide-in-from-bottom duration-700`} style={{animationDelay: `${1200 + index * 100}ms`}}>
                 <CardContent className="pt-6">
-                  <div className="text-4xl mb-3">{modalidade.icon}</div>
-                  <h4 className="font-semibold text-gray-900 mb-1">{modalidade.name}</h4>
-                  <p className="text-sm text-gray-600 mb-2">{modalidade.detail}</p>
-                  <p className="text-xs text-gray-500">{modalidade.points}</p>
+                  <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">{modalidade.icon}</div>
+                  <h4 className="font-semibold text-gray-900 mb-1 group-hover:text-gray-800">{modalidade.name}</h4>
+                  <p className="text-sm text-gray-600 mb-2 group-hover:text-gray-700">{modalidade.detail}</p>
+                  <p className="text-xs text-gray-500 group-hover:text-gray-600">{modalidade.points}</p>
                 </CardContent>
               </Card>
             ))}
