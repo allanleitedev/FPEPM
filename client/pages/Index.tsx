@@ -82,14 +82,14 @@ export default function Index() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-pentathlon-green hover:bg-pentathlon-green-dark text-white transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl group">
+                <Button size="lg" className="bg-gradient-to-r from-pentathlon-green to-pentathlon-green-dark hover:from-pentathlon-green-dark hover:to-pentathlon-green text-white transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl group">
                   <Link to="/transparencia" className="flex items-center gap-2">
                     <FileText size={20} />
                     Transparência
                     <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="border-pentathlon-blue text-pentathlon-blue hover:bg-pentathlon-blue hover:text-white transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg group">
+                <Button size="lg" className="bg-gradient-to-r from-pentathlon-blue to-pentathlon-blue-dark hover:from-pentathlon-blue-dark hover:to-pentathlon-blue text-white transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg group">
                   <Link to="/modalidades" className="flex items-center gap-2">
                     Conheça o Esporte
                     <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
