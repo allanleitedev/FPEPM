@@ -23,6 +23,7 @@ export default function Login({ onSuccess }: LoginProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
 
     if (!email || !password) {
       setError('Por favor, preencha todos os campos obrigatórios');
