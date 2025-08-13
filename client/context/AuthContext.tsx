@@ -212,6 +212,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             : 'Credenciais inválidas'
         };
       }
+
+      // If we get here, Supabase authentication was successful
+      return { success: true };
     } catch (error: any) {
       console.error('Unexpected error in signIn:', error);
       return { success: false, error: 'Erro inesperado durante o login' };
