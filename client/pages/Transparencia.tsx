@@ -70,6 +70,12 @@ export default function Transparencia() {
 
   const handleDownloadDocument = async (document: Document) => {
     try {
+      // Check if this is a demo document
+      if (document.file_path.startsWith('demo/')) {
+        alert('Download não disponível em modo demonstração. Este é um documento de exemplo.');
+        return;
+      }
+
       const { data, error } = await supabase.storage
         .from('documents')
         .download(document.file_path);
@@ -87,7 +93,7 @@ export default function Transparencia() {
       URL.revokeObjectURL(url);
     } catch (err: any) {
       console.error('Error downloading file:', err);
-      alert('Erro ao baixar arquivo. Tente novamente.');
+      alert('Erro ao baixar arquivo. Documento pode não estar disponível.');
     }
   };
 
