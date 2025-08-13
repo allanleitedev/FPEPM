@@ -28,7 +28,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
+    // Check for demo authentication first
+    const demoAuth = localStorage.getItem('fppm_auth_demo');
+    if (demoAuth) {
+      try {
+        const authData = JSON.parse(demoAuth);
+        setUser(authData.user);
+        setIsLoading(false);
+        return;
+      } catch (error) {
+        localStorage.removeItem('fppm_auth_demo');
+      }
+    }
+
+    // Get initial session from Supabase
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session?.user) {
@@ -36,22 +49,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setIsLoading(false);
       }
+    }).catch((error) => {
+      console.warn('Failed to get Supabase session, using demo mode only:', error);
+      setIsLoading(false);
     });
 
     // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session);
-      if (session?.user) {
-        await loadAdminUser(session.user);
-      } else {
-        setUser(null);
-        setIsLoading(false);
-      }
-    });
+    try {
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        setSession(session);
+        if (session?.user) {
+          await loadAdminUser(session.user);
+        } else {
+          setUser(null);
+          setIsLoading(false);
+        }
+      });
 
-    return () => subscription.unsubscribe();
+      return () => subscription.unsubscribe();
+    } catch (error) {
+      console.warn('Failed to set up Supabase auth listener, using demo mode only:', error);
+      setIsLoading(false);
+    }
   }, []);
 
   const loadAdminUser = async (authUser: User) => {
@@ -189,7 +210,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     setIsLoading(true);
-    await supabase.auth.signOut();
+
+    // Clear demo auth
+    localStorage.removeItem('fppm_auth_demo');
+
+    // Try to sign out from Supabase (ignore errors)
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.warn('Failed to sign out from Supabase:', error);
+    }
+
     setUser(null);
     setSession(null);
     setIsLoading(false);
