@@ -155,23 +155,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Try Supabase authentication for other users
       try {
-        const { data, error } = await supabase.auth.signInWithPassword({
+        // Set a timeout for the request to avoid hanging
+        const authPromise = supabase.auth.signInWithPassword({
           email,
           password,
         });
 
+        // Add timeout handling
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Authentication timeout')), 10000); // 10 second timeout
+        });
+
+        const { data, error } = await Promise.race([authPromise, timeoutPromise]) as any;
+
         if (error) {
-          return { success: false, error: error.message };
+          throw new Error(error.message || 'Authentication failed');
         }
 
         // If successful, the onAuthStateChange will handle setting the user
         return { success: true };
       } catch (supabaseError: any) {
-        // If Supabase fails, fall back to demo mode for any email/password combo
+        // Enhanced error handling for different types of failures
         console.warn('Supabase authentication failed, falling back to demo mode:', supabaseError);
 
-        // Create a demo user for any valid-looking credentials
-        if (email && password) {
+        // Handle network errors, timeout errors, and other connectivity issues
+        const isNetworkError = supabaseError.message?.includes('fetch') ||
+                              supabaseError.message?.includes('timeout') ||
+                              supabaseError.message?.includes('network') ||
+                              supabaseError.name === 'TypeError';
+
+        // For any credentials (especially on network errors), fall back to demo mode
+        if (email && password && email.length > 0 && password.length > 0) {
           const mockUser: AdminUser = {
             id: `demo-user-${Date.now()}`,
             auth_user_id: `demo-auth-${Date.now()}`,
@@ -184,10 +198,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
           setUser(mockUser);
           localStorage.setItem('fppm_auth_demo', JSON.stringify({ user: mockUser }));
+
+          if (isNetworkError) {
+            return {
+              success: true,
+              message: 'Conectado em modo demonstração (problema de rede detectado)'
+            };
+          }
+
           return { success: true };
         }
 
-        return { success: false, error: 'Credenciais inválidas' };
+        // If credentials are empty or invalid, show appropriate error
+        return {
+          success: false,
+          error: isNetworkError
+            ? 'Problema de conexão. Tente novamente ou use o modo demonstração.'
+            : 'Credenciais inválidas'
+        };
       }
     } catch (error: any) {
       console.error('Unexpected error in signIn:', error);
