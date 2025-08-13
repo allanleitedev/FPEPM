@@ -106,16 +106,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setIsLoading(true);
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
 
-      if (error) {
-        return { success: false, error: error.message };
+      // Check if it's a demo credential first
+      const demoCredentials = [
+        { email: 'admin@fppm.com.br', password: 'admin123', role: 'admin' as const },
+        { email: 'moderator@fppm.com.br', password: 'mod123', role: 'moderator' as const }
+      ];
+
+      const demoUser = demoCredentials.find(cred => cred.email === email && cred.password === password);
+
+      if (demoUser) {
+        // Use mock authentication for demo users
+        const mockUser: AdminUser = {
+          id: `demo-${demoUser.role}`,
+          auth_user_id: `demo-auth-${demoUser.role}`,
+          email: demoUser.email,
+          name: demoUser.role === 'admin' ? 'Administrador FPPM' : 'Moderador FPPM',
+          role: demoUser.role,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+
+        setUser(mockUser);
+        localStorage.setItem('fppm_auth_demo', JSON.stringify({ user: mockUser }));
+        return { success: true };
       }
 
-      return { success: true };
+      // Try Supabase authentication for real users
+      try {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          return { success: false, error: error.message };
+        }
+
+        return { success: true };
+      } catch (supabaseError: any) {
+        // If Supabase fails, fall back to demo mode
+        console.warn('Supabase authentication failed, falling back to demo mode:', supabaseError);
+        return { success: false, error: 'Erro de conectividade. Use as credenciais de demonstração.' };
+      }
     } catch (error) {
       return { success: false, error: 'Erro inesperado durante o login' };
     } finally {
