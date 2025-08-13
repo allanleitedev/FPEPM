@@ -190,13 +190,26 @@ export default function AdminDocumentos() {
     setTestingConnection(true);
     try {
       const result = await testSupabaseConnection();
+
+      const detailsText = result.details ? '\n\nDetalhes:\n' + result.details.join('\n') : '';
+
       if (result.connected) {
         // Se conectado, remover modo demo e recarregar
         localStorage.removeItem('fppm_auth_demo');
-        alert('✅ Conexão com Supabase funcionando! Recarregando página para usar dados reais...');
+        alert(`✅ Conexão com Supabase funcionando!${detailsText}\n\nRecarregando página para usar dados reais...`);
         window.location.reload();
       } else {
-        alert(`❌ Falha na conexão com Supabase: ${result.error}\n\nVerifique se:\n1. As tabelas foram criadas no Supabase\n2. As credenciais estão corretas\n3. As políticas RLS estão configuradas`);
+        let instructions = '';
+
+        if (result.error?.includes('RLS') || result.details?.some(d => d.includes('RLS'))) {
+          instructions = `\n\n🔧 SOLUÇÃO PARA PROBLEMAS DE RLS:\n\n1. Vá para Supabase SQL Editor\n2. Copie e execute o arquivo "fix_rls_policies.sql"\n3. Isso criará políticas mais permissivas\n4. Teste a conexão novamente`;
+        } else if (result.details?.some(d => d.includes('Tabela'))) {
+          instructions = `\n\n🔧 SOLUÇÃO PARA TABELAS:\n\n1. Vá para Supabase SQL Editor\n2. Execute o arquivo "supabase_setup.sql"\n3. Isso criará todas as tabelas necessárias`;
+        } else {
+          instructions = `\n\n🔧 VERIFIQUE:\n\n1. URL do Supabase está correta\n2. API Key está correta\n3. Projeto está ativo no Supabase`;
+        }
+
+        alert(`❌ Falha na conexão: ${result.error}${detailsText}${instructions}`);
       }
     } catch (error: any) {
       alert(`❌ Erro ao testar conexão: ${error.message}`);
