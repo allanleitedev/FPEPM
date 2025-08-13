@@ -207,7 +207,7 @@ export default function Index() {
                 color: "bg-red-50/80 hover:bg-red-100/90 border-red-200"
               }
             ].map((item, index) => (
-              <Card key={index} className={`hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm group cursor-pointer ${item.color} animate-in slide-in-from-bottom duration-700`} style={{animationDelay: `${index * 100}ms`}}>
+              <Card key={index} className={`hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border ${item.color} backdrop-blur-sm group cursor-pointer animate-in slide-in-from-bottom duration-700`} style={{animationDelay: `${index * 100}ms`}}>
                 <CardHeader className="text-center">
                   <item.icon size={32} className="text-pentathlon-green mb-2 mx-auto group-hover:scale-110 group-hover:text-pentathlon-green-dark transition-all duration-300" />
                   <CardTitle className="text-base group-hover:text-gray-800">{item.title}</CardTitle>
