@@ -3,8 +3,13 @@ import { Mail, Phone, MapPin, Facebook, Instagram, Youtube } from 'lucide-react'
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 py-12">
+    <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-pentathlon-green/10 via-transparent to-pentathlon-blue/10"></div>
+      <div className="absolute top-0 right-0 w-64 h-64 bg-pentathlon-green/5 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 w-48 h-48 bg-pentathlon-blue/5 rounded-full blur-3xl"></div>
+
+      <div className="max-w-7xl mx-auto px-4 py-12 relative z-10">
         <div className="grid md:grid-cols-4 gap-8">
           {/* Logo e Descrição */}
           <div className="space-y-4">
