@@ -13,22 +13,26 @@ export default function Modalidades() {
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         {/* Header */}
         <div className="mb-8">
-          <Link to="/">
-            <Button variant="outline" className="mb-4">
-              <ChevronLeft size={16} className="mr-2" />
-              Voltar ao Início
-            </Button>
-          </Link>
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Conheça o Pentatlo Moderno</h1>
+          <div className="animate-in slide-in-from-left duration-700">
+            <Link to="/">
+              <Button variant="outline" className="mb-4 hover:scale-105 transition-all duration-200 group">
+                <ChevronLeft size={16} className="mr-2 group-hover:-translate-x-1 transition-transform" />
+                Voltar ao Início
+              </Button>
+            </Link>
+          </div>
+          <div className="text-center animate-in slide-in-from-top duration-1000 delay-300">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 bg-gradient-to-r from-pentathlon-green to-pentathlon-blue bg-clip-text text-transparent">
+              Conheça o Pentatlo Moderno
+            </h1>
             <div className="max-w-4xl mx-auto space-y-4">
-              <p className="text-xl text-gray-600 leading-relaxed">
-                É um desporto olímpico praticado por homens e por mulheres, individualmente ou em equipes. 
+              <p className="text-xl text-gray-600 leading-relaxed animate-in slide-in-from-bottom duration-700 delay-500">
+                É um desporto olímpico praticado por homens e por mulheres, individualmente ou em equipes.
                 Compõe-se de cinco modalidades diferentes: hipismo, esgrima, natação, tiro esportivo e corrida.
               </p>
-              <p className="text-lg text-gray-600">
-                É proclamado vencedor aquele que obtiver o melhor desempenho geral ao somar mais pontos. 
-                Por essa variedade de esportes, <strong className="text-pentathlon-green">o vencedor do pentatlo é considerado o atleta mais completo</strong>.
+              <p className="text-lg text-gray-600 animate-in slide-in-from-bottom duration-700 delay-700">
+                É proclamado vencedor aquele que obtiver o melhor desempenho geral ao somar mais pontos.
+                Por essa variedade de esportes, <strong className="text-pentathlon-green animate-pulse">o vencedor do pentatlo é considerado o atleta mais completo</strong>.
               </p>
             </div>
           </div>
