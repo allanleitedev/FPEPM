@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase, Document, CATEGORIES, formatFileSize, getFileIcon } from '@/lib/supabase';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,93 +10,167 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { FileText, Download, Eye, Trash2, Plus, Calendar, FileType, HardDrive } from 'lucide-react';
-import FileUpload from './FileUpload';
-
-interface DocumentFile {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  category: string;
-  url: string;
-  uploadDate: string;
-  title?: string;
-  description?: string;
-  tags?: string[];
-}
-
-const CATEGORIES = [
-  { value: 'gestao', label: 'Gestão' },
-  { value: 'processos', label: 'Processos Eleitorais' },
-  { value: 'estatuto', label: 'Estatuto' },
-  { value: 'compras', label: 'Manual de Compras' },
-  { value: 'documentos', label: 'Documentos Gerais' },
-  { value: 'ouvidoria', label: 'Ouvidoria' }
-];
+import { FileText, Download, Eye, Trash2, Plus, Calendar, FileType, HardDrive, Loader2, AlertCircle } from 'lucide-react';
+import { FileUploadWithForm } from './FileUpload';
 
 interface DocumentManagerProps {
-  onDocumentAdded?: (document: DocumentFile) => void;
+  onDocumentAdded?: (document: Document) => void;
 }
 
 export default function DocumentManager({ onDocumentAdded }: DocumentManagerProps) {
-  const [documents, setDocuments] = useState<DocumentFile[]>([]);
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [isAddingDocument, setIsAddingDocument] = useState(false);
-  const [currentFile, setCurrentFile] = useState<DocumentFile | null>(null);
-  const [documentTitle, setDocumentTitle] = useState('');
-  const [documentDescription, setDocumentDescription] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const { user } = useAuth();
 
-  const handleFileUploaded = (uploadedFile: any) => {
-    setCurrentFile(uploadedFile);
+  useEffect(() => {
+    loadDocuments();
+  }, []);
+
+  const loadDocuments = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const { data, error } = await supabase
+        .from('documents')
+        .select(`
+          *,
+          admin_users (
+            id,
+            name,
+            email,
+            role
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      setDocuments(data || []);
+    } catch (err: any) {
+      setError(err.message || 'Erro ao carregar documentos');
+      console.error('Error loading documents:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSaveDocument = () => {
-    if (!currentFile || !documentTitle || !selectedCategory) {
-      return;
-    }
-
-    const document: DocumentFile = {
-      ...currentFile,
-      title: documentTitle,
-      description: documentDescription,
-      category: selectedCategory,
-      tags: documentDescription.split(' ').filter(word => word.length > 3).slice(0, 3)
-    };
-
-    setDocuments(prev => [...prev, document]);
+  const handleFileUploaded = (document: Document) => {
+    setDocuments(prev => [document, ...prev]);
     onDocumentAdded?.(document);
-    
-    // Reset form
-    setCurrentFile(null);
-    setDocumentTitle('');
-    setDocumentDescription('');
     setSelectedCategory('');
     setIsAddingDocument(false);
   };
 
-  const handleDeleteDocument = (id: string) => {
-    setDocuments(prev => prev.filter(doc => doc.id !== id));
+  const handleDeleteDocument = async (document: Document) => {
+    if (!user || (user.role !== 'admin' && document.uploaded_by !== user.id)) {
+      setError('Você não tem permissão para deletar este documento');
+      return;
+    }
+
+    const confirmDelete = window.confirm(
+      `Tem certeza que deseja deletar "${document.title}"? Esta ação não pode ser desfeita.`
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      setDeletingId(document.id);
+      setError('');
+
+      // Delete file from storage first
+      const { error: storageError } = await supabase.storage
+        .from('documents')
+        .remove([document.file_path]);
+
+      if (storageError) {
+        console.warn('Warning: Could not delete file from storage:', storageError);
+        // Continue with database deletion even if storage deletion fails
+      }
+
+      // Delete document record from database
+      const { error: dbError } = await supabase
+        .from('documents')
+        .delete()
+        .eq('id', document.id);
+
+      if (dbError) {
+        throw dbError;
+      }
+
+      // Remove from local state
+      setDocuments(prev => prev.filter(doc => doc.id !== document.id));
+      
+    } catch (err: any) {
+      setError(err.message || 'Erro ao deletar documento');
+      console.error('Error deleting document:', err);
+    } finally {
+      setDeletingId(null);
+    }
   };
 
-  const formatFileSize = (bytes: number): string => {
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    if (bytes === 0) return '0 Bytes';
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+  const handleDownloadDocument = async (document: Document) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from('documents')
+        .download(document.file_path);
+
+      if (error) {
+        throw error;
+      }
+
+      // Create download link
+      const url = URL.createObjectURL(data);
+      const link = window.document.createElement('a');
+      link.href = url;
+      link.download = document.file_name;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      setError(err.message || 'Erro ao baixar arquivo');
+      console.error('Error downloading file:', err);
+    }
   };
 
-  const getFileIcon = (type: string) => {
-    if (type.includes('pdf')) return '📄';
-    if (type.includes('word')) return '📝';
-    if (type.includes('sheet') || type.includes('excel')) return '📊';
-    if (type.includes('image')) return '🖼️';
-    return '📁';
+  const handleViewDocument = async (document: Document) => {
+    try {
+      const { data } = supabase.storage
+        .from('documents')
+        .getPublicUrl(document.file_path);
+
+      if (data.publicUrl) {
+        window.open(data.publicUrl, '_blank');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Erro ao visualizar arquivo');
+      console.error('Error viewing file:', err);
+    }
   };
+
+  const filteredDocuments = selectedCategory 
+    ? documents.filter(doc => doc.category === selectedCategory)
+    : documents;
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-center items-center py-12">
+          <Loader2 className="w-8 h-8 animate-spin text-pentathlon-blue" />
+          <span className="ml-2 text-gray-600">Carregando documentos...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-start gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Gerenciamento de Documentos</h2>
           <p className="text-gray-600">Adicione, organize e gerencie documentos de transparência</p>
@@ -112,7 +188,7 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
             <DialogHeader>
               <DialogTitle>Adicionar Novo Documento</DialogTitle>
               <DialogDescription>
-                Faça upload de um documento e preencha as informações necessárias
+                Selecione uma categoria e faça upload de um documento
               </DialogDescription>
             </DialogHeader>
             
@@ -134,76 +210,62 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
               </div>
               
               {selectedCategory && (
-                <FileUpload
+                <FileUploadWithForm
                   onFileUploaded={handleFileUploaded}
                   category={selectedCategory}
                 />
-              )}
-              
-              {currentFile && (
-                <div className="space-y-4">
-                  <Alert className="border-green-200 bg-green-50">
-                    <FileText className="h-4 w-4 text-green-600" />
-                    <AlertDescription className="text-green-800">
-                      Arquivo "{currentFile.name}" carregado com sucesso!
-                    </AlertDescription>
-                  </Alert>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Título do Documento*</Label>
-                    <Input
-                      id="title"
-                      value={documentTitle}
-                      onChange={(e) => setDocumentTitle(e.target.value)}
-                      placeholder="Ex: Relatório de Atividades 2024"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Descrição</Label>
-                    <Textarea
-                      id="description"
-                      value={documentDescription}
-                      onChange={(e) => setDocumentDescription(e.target.value)}
-                      placeholder="Descrição detalhada do documento..."
-                      rows={3}
-                    />
-                  </div>
-                  
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setCurrentFile(null);
-                        setDocumentTitle('');
-                        setDocumentDescription('');
-                        setIsAddingDocument(false);
-                      }}
-                    >
-                      Cancelar
-                    </Button>
-                    <Button
-                      onClick={handleSaveDocument}
-                      disabled={!documentTitle || !selectedCategory}
-                      className="bg-gradient-to-r from-pentathlon-green to-pentathlon-green-dark hover:from-pentathlon-green-dark hover:to-pentathlon-green"
-                    >
-                      Salvar Documento
-                    </Button>
-                  </div>
-                </div>
               )}
             </div>
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Filter by Category */}
+      <div className="flex items-center gap-4">
+        <Label>Filtrar por categoria:</Label>
+        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Todas as categorias" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Todas as categorias</SelectItem>
+            {CATEGORIES.map(category => (
+              <SelectItem key={category.value} value={category.value}>
+                {category.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {selectedCategory && (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setSelectedCategory('')}
+          >
+            Limpar filtro
+          </Button>
+        )}
+      </div>
+
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
       
-      {documents.length === 0 ? (
+      {filteredDocuments.length === 0 && !loading ? (
         <Card className="border-dashed border-2 border-gray-300">
           <CardContent className="flex flex-col items-center justify-center py-12">
             <FileText className="w-16 h-16 text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">Nenhum documento adicionado</h3>
+            <h3 className="text-lg font-semibold text-gray-600 mb-2">
+              {selectedCategory ? 'Nenhum documento nesta categoria' : 'Nenhum documento adicionado'}
+            </h3>
             <p className="text-gray-500 text-center mb-4">
-              Comece adicionando documentos para organizar a transparência da federação
+              {selectedCategory 
+                ? `Não há documentos na categoria "${CATEGORIES.find(c => c.value === selectedCategory)?.label}"`
+                : 'Comece adicionando documentos para organizar a transparência da federação'
+              }
             </p>
             <Button
               onClick={() => setIsAddingDocument(true)}
@@ -211,22 +273,22 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
               className="border-pentathlon-green text-pentathlon-green hover:bg-pentathlon-green hover:text-white"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Adicionar Primeiro Documento
+              Adicionar Documento
             </Button>
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-4">
-          {documents.map(document => (
+          {filteredDocuments.map(document => (
             <Card key={document.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4 flex-1">
-                    <div className="text-3xl">{getFileIcon(document.type)}</div>
+                    <div className="text-3xl">{getFileIcon(document.file_type)}</div>
                     
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-gray-900 mb-1">
-                        {document.title || document.name}
+                        {document.title}
                       </h3>
                       
                       {document.description && (
@@ -249,35 +311,58 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
                       <div className="flex items-center gap-4 text-xs text-gray-500">
                         <span className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
-                          {new Date(document.uploadDate).toLocaleDateString('pt-BR')}
+                          {new Date(document.created_at).toLocaleDateString('pt-BR')}
                         </span>
                         <span className="flex items-center gap-1">
                           <HardDrive className="w-3 h-3" />
-                          {formatFileSize(document.size)}
+                          {formatFileSize(document.file_size)}
                         </span>
                         <span className="flex items-center gap-1">
                           <FileType className="w-3 h-3" />
-                          {document.type.split('/')[1]?.toUpperCase()}
+                          {document.file_type.split('/')[1]?.toUpperCase()}
                         </span>
+                        {document.admin_users && (
+                          <span className="text-gray-600">
+                            por {document.admin_users.name}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
                   
                   <div className="flex items-center gap-2 ml-4">
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleViewDocument(document)}
+                      title="Visualizar"
+                    >
                       <Eye className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Download className="w-4 h-4" />
                     </Button>
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={() => handleDeleteDocument(document.id)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      onClick={() => handleDownloadDocument(document)}
+                      title="Baixar"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Download className="w-4 h-4" />
                     </Button>
+                    {(user?.role === 'admin' || document.uploaded_by === user?.id) && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleDeleteDocument(document)}
+                        disabled={deletingId === document.id}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        title="Deletar"
+                      >
+                        {deletingId === document.id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
+                      </Button>
+                    )}
                   </div>
                 </div>
               </CardContent>
