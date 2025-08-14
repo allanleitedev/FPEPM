@@ -67,6 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           await loadAdminUser(session.user);
         } else {
           setUser(null);
+          setIsDemoMode(false);
           setIsLoading(false);
         }
       });
