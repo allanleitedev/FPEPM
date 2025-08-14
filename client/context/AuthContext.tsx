@@ -124,12 +124,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .single();
 
       if (error) {
-        console.error('Error creating admin user:', error);
+        console.warn('Error creating admin user in Supabase:', error);
+        // Fall back to demo mode
+        await createDemoAdminUser(authUser);
       } else {
         setUser(newAdminUser);
+        setIsDemoMode(false);
       }
     } catch (error) {
-      console.error('Error in createAdminUser:', error);
+      console.warn('Failed to create admin user in Supabase, falling back to demo mode:', error);
+      await createDemoAdminUser(authUser);
+    }
+  };
+
+  const createDemoAdminUser = async (authUser: User) => {
+    try {
+      const demoAdminUser: AdminUser = {
+        id: `demo-${authUser.id}`,
+        auth_user_id: authUser.id,
+        email: authUser.email!,
+        name: authUser.user_metadata?.name || authUser.email!.split('@')[0],
+        role: authUser.email === 'admin@fppm.com.br' ? 'admin' : 'moderator',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      setUser(demoAdminUser);
+      setIsDemoMode(true);
+      localStorage.setItem('fppm_auth_demo', JSON.stringify({ user: demoAdminUser }));
+    } catch (error) {
+      console.error('Error creating demo admin user:', error);
     }
   };
 
