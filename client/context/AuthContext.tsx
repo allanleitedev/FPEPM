@@ -87,16 +87,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .single();
 
       if (error) {
-        console.error('Error loading admin user:', error);
-        // If admin user doesn't exist, create one for demo
+        console.warn('Error loading admin user from Supabase:', error);
+        // If admin user doesn't exist, create one
         if (error.code === 'PGRST116') {
           await createAdminUser(authUser);
+        } else {
+          // For other errors (like RLS issues), fall back to demo mode
+          await createDemoAdminUser(authUser);
         }
       } else {
         setUser(adminUser);
+        setIsDemoMode(false);
       }
     } catch (error) {
-      console.error('Error in loadAdminUser:', error);
+      console.warn('Failed to load admin user from Supabase, falling back to demo mode:', error);
+      // Complete fallback to demo mode
+      await createDemoAdminUser(authUser);
     } finally {
       setIsLoading(false);
     }
