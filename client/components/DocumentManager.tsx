@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase, Document, CATEGORIES, formatFileSize, getFileIcon } from '@/lib/supabase';
+import { supabase, Document, formatFileSize, getFileIcon, withTimeout, DocCategory, CATEGORIES } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,12 +22,18 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [categories, setCategories] = useState<DocCategory[]>([]);
   const [isAddingDocument, setIsAddingDocument] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
     loadDocuments();
+    // load categories visible
+    (async () => {
+      const { data } = await supabase.from('doc_categories').select('*').eq('visible', true).order('sort_order', { ascending: true });
+      setCategories(data || []);
+    })();
   }, []);
 
   const loadDocuments = async () => {
@@ -35,17 +41,9 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
       setLoading(true);
       setError('');
 
-      // Check if we're in demo mode
-      const isDemoMode = localStorage.getItem('fppm_auth_demo');
-
-      if (isDemoMode) {
-        // Use demo data
-        const { demoStorage } = await import('@/lib/demoData');
-        const demoDocuments = demoStorage.getDocuments();
-        setDocuments(demoDocuments);
-      } else {
-        // Try Supabase
-        const { data, error } = await supabase
+      // Supabase
+        const { data, error } = await withTimeout(
+          supabase
           .from('documents')
           .select(`
             *,
@@ -56,26 +54,17 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
               role
             )
           `)
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: false }),
+        6000);
 
         if (error) {
           throw error;
         }
 
         setDocuments(data || []);
-      }
     } catch (err: any) {
-      console.warn('Failed to load from Supabase, falling back to demo mode:', err);
-      // Fallback to demo data
-      try {
-        const { demoStorage } = await import('@/lib/demoData');
-        const demoDocuments = demoStorage.getDocuments();
-        setDocuments(demoDocuments);
-        setError('Conectado em modo demonstração. Funcionalidades limitadas.');
-      } catch (demoErr) {
-        setError('Erro ao carregar documentos');
-        console.error('Error loading demo documents:', demoErr);
-      }
+      console.warn('Failed to load documents from Supabase:', err);
+      setError('Erro ao carregar documentos');
     } finally {
       setLoading(false);
     }
@@ -203,7 +192,7 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
       <div className="space-y-6">
         <div className="flex justify-center items-center py-12">
           <Loader2 className="w-8 h-8 animate-spin text-pentathlon-blue" />
-          <span className="ml-2 text-gray-600">Carregando documentos...</span>
+          <span className="ml-2 text-gray-600">Buscando documentos...</span>
         </div>
       </div>
     );
@@ -241,9 +230,9 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
                     <SelectValue placeholder="Selecione uma categoria" />
                   </SelectTrigger>
                   <SelectContent>
-                    {CATEGORIES.map(category => (
-                      <SelectItem key={category.value} value={category.value}>
-                        {category.label}
+                    {categories.map(category => (
+                      <SelectItem key={category.id} value={category.slug}>
+                        {category.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -270,9 +259,9 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas as categorias</SelectItem>
-            {CATEGORIES.map(category => (
-              <SelectItem key={category.value} value={category.value}>
-                {category.label}
+            {categories.map(category => (
+              <SelectItem key={category.id} value={category.slug}>
+                {category.name}
               </SelectItem>
             ))}
           </SelectContent>
@@ -304,7 +293,7 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
             </h3>
             <p className="text-gray-500 text-center mb-4">
               {selectedCategory 
-                ? `Não há documentos na categoria "${CATEGORIES.find(c => c.value === selectedCategory)?.label}"`
+                ? `Não há documentos na categoria "${categories.find(c => c.slug === selectedCategory)?.name}"`
                 : 'Comece adicionando documentos para organizar a transparência da federação'
               }
             </p>
@@ -340,7 +329,9 @@ export default function DocumentManager({ onDocumentAdded }: DocumentManagerProp
                       
                       <div className="flex flex-wrap gap-2 mb-3">
                         <Badge variant="secondary">
-                          {CATEGORIES.find(cat => cat.value === document.category)?.label}
+                          {categories.find(cat => cat.slug === document.category)?.name || 
+                           CATEGORIES.find(cat => cat.value === document.category)?.label ||
+                           document.category}
                         </Badge>
                         {document.tags?.map(tag => (
                           <Badge key={tag} variant="outline" className="text-xs">

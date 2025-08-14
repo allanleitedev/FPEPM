@@ -52,10 +52,30 @@ CREATE TABLE IF NOT EXISTS events (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Create doc_categories table (dynamic categories for documents)
+CREATE TABLE IF NOT EXISTS doc_categories (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL UNIQUE,
+  slug TEXT NOT NULL UNIQUE,
+  visible BOOLEAN NOT NULL DEFAULT TRUE,
+  sort_order INT NOT NULL DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Optional: settings key/value store
+CREATE TABLE IF NOT EXISTS app_settings (
+  key TEXT PRIMARY KEY,
+  value TEXT,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Enable Row Level Security
 ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE doc_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE app_settings ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for admin_users
 CREATE POLICY "Allow authenticated users to read admin_users" 
@@ -105,6 +125,24 @@ CREATE POLICY "Allow event creators to delete their events"
 ON events FOR DELETE 
 USING (created_by IN (SELECT id FROM admin_users WHERE auth_user_id = auth.uid()));
 
+-- Categories policies
+CREATE POLICY "Public read visible categories" 
+ON doc_categories FOR SELECT 
+USING (visible = TRUE OR auth.uid() IS NOT NULL);
+
+CREATE POLICY "Authenticated manage categories" 
+ON doc_categories FOR ALL 
+USING (auth.uid() IS NOT NULL) WITH CHECK (auth.uid() IS NOT NULL);
+
+-- Settings policies (only authenticated can read/write)
+CREATE POLICY "Authenticated read settings" 
+ON app_settings FOR SELECT 
+USING (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Authenticated upsert settings" 
+ON app_settings FOR ALL 
+USING (auth.uid() IS NOT NULL) WITH CHECK (auth.uid() IS NOT NULL);
+
 -- Create function to update updated_at column
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -125,6 +163,10 @@ FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_events_updated_at 
 BEFORE UPDATE ON events 
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_doc_categories_updated_at 
+BEFORE UPDATE ON doc_categories 
 FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Create storage buckets

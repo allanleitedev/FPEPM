@@ -1,18 +1,22 @@
 import { useState, useEffect } from 'react';
-import { supabase, Document, testSupabaseConnection, getSupabaseConfig } from '@/lib/supabase';
+import { supabase, Document, testSupabaseConnection, getSupabaseConfig, DocCategory } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { LogOut, Shield, FileText, Upload, FolderOpen, BarChart3, Settings, TrendingUp, Users, HardDrive, AlertCircle } from 'lucide-react';
+import { LogOut, Shield, FileText, FolderOpen, BarChart3, Settings, TrendingUp, Users, HardDrive, AlertCircle, Eye, EyeOff, Trash2 } from 'lucide-react';
 import Login from '@/components/Login';
 import DocumentManager from '@/components/DocumentManager';
 
 export default function AdminDocumentos() {
   const { user, isAuthenticated, signOut, isDemoMode } = useAuth();
   const [activeTab, setActiveTab] = useState('documents');
+  const [categories, setCategories] = useState<DocCategory[]>([]);
+  const [newCategory, setNewCategory] = useState({ name: '', slug: '', visible: true });
+  const [catSaving, setCatSaving] = useState(false);
+  const [catError, setCatError] = useState<string>('');
   const [stats, setStats] = useState({
     totalDocuments: 0,
     totalSize: 0,
@@ -23,13 +27,79 @@ export default function AdminDocumentos() {
   const [recentDocuments, setRecentDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [testingConnection, setTestingConnection] = useState(false);
+  const [maxUploadMB, setMaxUploadMB] = useState(10);
 
   useEffect(() => {
     if (isAuthenticated) {
       loadStats();
       loadRecentDocuments();
+      loadCategories();
+      loadMaxUploadSize();
     }
   }, [isAuthenticated]);
+
+  const loadMaxUploadSize = async () => {
+    try {
+      const { data } = await supabase.from('app_settings').select('value').eq('key','max_upload_mb').single();
+      const mb = data?.value ? parseInt(data.value, 10) : 10;
+      if (!isNaN(mb)) {
+        setMaxUploadMB(mb);
+      }
+    } catch {
+      // Se não conseguir carregar, mantém o padrão
+      setMaxUploadMB(10);
+    }
+  };
+  const loadCategories = async () => {
+    const { data, error } = await supabase
+      .from('doc_categories')
+      .select('*')
+      .order('sort_order', { ascending: true });
+    if (!error) setCategories(data || []);
+  };
+
+  const slugify = (s: string) => s
+    .normalize('NFD').replace(/\p{Diacritic}/gu, '')
+    .toLowerCase().trim()
+    .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+  const addCategory = async () => {
+    try {
+      setCatError('');
+      setCatSaving(true);
+      const name = newCategory.name.trim();
+      const slug = (newCategory.slug.trim() || slugify(newCategory.name));
+      if (!name || !slug) {
+        setCatError('Preencha nome e/ou slug');
+        return;
+      }
+      const { error } = await supabase
+        .from('doc_categories')
+        .insert({ name, slug, visible: newCategory.visible })
+        .select()
+        .single();
+      if (error) {
+        setCatError(error.message || 'Erro ao salvar categoria');
+        return;
+      }
+      setNewCategory({ name: '', slug: '', visible: true });
+      await loadCategories();
+    } catch (e: any) {
+      setCatError(e.message || 'Erro ao salvar categoria');
+    } finally {
+      setCatSaving(false);
+    }
+  };
+
+  const toggleCategoryVisibility = async (cat: DocCategory) => {
+    await supabase.from('doc_categories').update({ visible: !cat.visible }).eq('id', cat.id);
+    loadCategories();
+  };
+
+  const removeCategory = async (cat: DocCategory) => {
+    await supabase.from('doc_categories').delete().eq('id', cat.id);
+    loadCategories();
+  };
 
   const loadStats = async () => {
     try {
@@ -38,12 +108,11 @@ export default function AdminDocumentos() {
       let documents, users;
 
       if (isDemoMode) {
-        // Use demo data
-        const { demoStorage, demoAdminUsers } = await import('@/lib/demoData');
-        documents = demoStorage.getDocuments();
-        users = demoAdminUsers;
+        // Produção: ignorar modo demo
+        documents = [];
+        users = [];
       } else {
-        // Try Supabase
+        // Supabase
         const { data: docsData, error: docsError } = await supabase
           .from('documents')
           .select('category, file_size, created_at');
@@ -122,17 +191,8 @@ export default function AdminDocumentos() {
 
   const loadRecentDocuments = async () => {
     try {
-      // Check if we're in demo mode
-      const isDemoMode = localStorage.getItem('fppm_auth_demo');
-      let documents;
-
-      if (isDemoMode) {
-        // Use demo data
-        const { demoStorage } = await import('@/lib/demoData');
-        documents = demoStorage.getDocuments().slice(0, 5);
-      } else {
-        // Try Supabase
-        const { data, error } = await supabase
+      // Supabase
+      const { data, error } = await supabase
           .from('documents')
           .select(`
             *,
@@ -150,20 +210,10 @@ export default function AdminDocumentos() {
           throw error;
         }
 
-        documents = data || [];
-      }
-
-      setRecentDocuments(documents);
-    } catch (error) {
-      console.warn('Failed to load recent documents from Supabase, falling back to demo mode:', error);
-      // Fallback to demo data
-      try {
-        const { demoStorage } = await import('@/lib/demoData');
-        const documents = demoStorage.getDocuments().slice(0, 5);
+        const documents = data || [];
         setRecentDocuments(documents);
-      } catch (demoErr) {
-        console.error('Error loading recent documents:', demoErr);
-      }
+    } catch (error) {
+      console.warn('Failed to load recent documents from Supabase:', error);
     }
   };
 
@@ -238,20 +288,9 @@ export default function AdminDocumentos() {
               </div>
             </div>
             
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-                <p className="text-xs text-gray-600 capitalize">{user?.role}</p>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={signOut}
-                className="text-gray-600 hover:text-gray-900"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Sair
-              </Button>
+            <div className="text-right">
+              <p className="text-sm font-medium text-gray-900">{user?.name}</p>
+              <p className="text-xs text-gray-600 capitalize">{user?.role}</p>
             </div>
           </div>
         </div>
@@ -266,62 +305,6 @@ export default function AdminDocumentos() {
           </AlertDescription>
         </Alert>
 
-        {/* Demo Mode Alert */}
-        {isDemoMode && (
-          <Alert variant="destructive" className="mb-8 border-yellow-200 bg-yellow-50">
-            <AlertCircle className="h-4 w-4 text-yellow-600" />
-            <AlertDescription className="text-yellow-800">
-              <strong>⚠️ MODO DEMONSTRAÇÃO ATIVO</strong><br />
-              Você está usando dados de demonstração. Os uploads e alterações não serão salvos no Supabase real.
-
-              <div className="mt-3 p-3 bg-yellow-100 rounded text-sm">
-                <strong>Configuração atual:</strong><br />
-                URL: {getSupabaseConfig().url}<br />
-                API Key: {getSupabaseConfig().anonKey.substring(0, 30)}...<br />
-                {!getSupabaseConfig().hasEnvUrl && <span className="text-red-600">⚠️ VITE_SUPABASE_URL não configurada</span>}<br />
-                {!getSupabaseConfig().hasEnvKey && <span className="text-red-600">⚠️ VITE_SUPABASE_ANON_KEY não configurada</span>}
-              </div>
-
-              <div className="mt-3 flex gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleTestConnection}
-                  disabled={testingConnection}
-                  className="border-yellow-400 text-yellow-700 hover:bg-yellow-100"
-                >
-                  {testingConnection ? 'Testando...' : 'Diagnosticar Conexão'}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    const instructions = `Para configurar suas credenciais do Supabase:
-
-1. Vá para: https://supabase.com/dashboard
-2. Abra seu projeto
-3. Vá em Settings > API
-4. Copie:
-   - Project URL
-   - anon/public key
-
-5. Configure as variáveis de ambiente:
-   VITE_SUPABASE_URL=sua_url_aqui
-   VITE_SUPABASE_ANON_KEY=sua_chave_aqui
-
-6. Reinicie o servidor de desenvolvimento`;
-
-                    navigator.clipboard.writeText(instructions);
-                    alert('📋 Instruções copiadas para a área de transferência!');
-                  }}
-                  className="border-blue-400 text-blue-700 hover:bg-blue-100"
-                >
-                  📋 Copiar Instruções
-                </Button>
-              </div>
-            </AlertDescription>
-          </Alert>
-        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -376,14 +359,10 @@ export default function AdminDocumentos() {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="documents" className="flex items-center gap-2">
               <FileText className="w-4 h-4" />
               Documentos
-            </TabsTrigger>
-            <TabsTrigger value="upload" className="flex items-center gap-2">
-              <Upload className="w-4 h-4" />
-              Upload
             </TabsTrigger>
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <BarChart3 className="w-4 h-4" />
@@ -393,7 +372,96 @@ export default function AdminDocumentos() {
               <Settings className="w-4 h-4" />
               Configurações
             </TabsTrigger>
+            <TabsTrigger value="categories" className="flex items-center gap-2">
+              <FolderOpen className="w-4 h-4" />
+              Categorias
+            </TabsTrigger>
           </TabsList>
+          <TabsContent value="categories" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Gerenciar Categorias</CardTitle>
+                <CardDescription>Crie, oculte ou remova categorias de documentos</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                  <input className="px-3 py-2 border rounded" placeholder="Nome" value={newCategory.name} onChange={e=>setNewCategory(v=>({...v,name:e.target.value}))} />
+                  <input className="px-3 py-2 border rounded" placeholder="slug (opcional)" value={newCategory.slug} onChange={e=>setNewCategory(v=>({...v,slug:e.target.value}))} />
+                  <label className="flex items-center gap-2 text-sm">
+                    <input type="checkbox" checked={newCategory.visible} onChange={e=>setNewCategory(v=>({...v,visible:e.target.checked}))} />
+                    Visível
+                  </label>
+                  <Button onClick={addCategory} disabled={catSaving}>
+                    {catSaving ? 'Salvando...' : 'Adicionar'}
+                  </Button>
+                </div>
+                {catError && (
+                  <div className="text-sm text-red-600">{catError}</div>
+                )}
+
+                <div className="space-y-3">
+                  {categories.map(cat => (
+                    <div key={cat.id} className={`flex items-center justify-between border-2 p-4 rounded-lg transition-all ${
+                      cat.visible 
+                        ? 'border-green-200 bg-green-50/30' 
+                        : 'border-gray-200 bg-gray-50/30'
+                    }`}>
+                      <div className="flex items-center gap-3">
+                        <div className={`w-3 h-3 rounded-full ${
+                          cat.visible ? 'bg-green-500' : 'bg-gray-400'
+                        }`} />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <div className="font-medium text-gray-900">{cat.name}</div>
+                            <Badge variant={cat.visible ? "default" : "secondary"} className="text-xs">
+                              {cat.visible ? 'Visível' : 'Oculta'}
+                            </Badge>
+                          </div>
+                          <div className="text-sm text-gray-500 mt-1">slug: {cat.slug}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => toggleCategoryVisibility(cat)}
+                          className={cat.visible 
+                            ? "border-orange-300 text-orange-700 hover:bg-orange-50" 
+                            : "border-green-300 text-green-700 hover:bg-green-50"
+                          }
+                        >
+                          {cat.visible ? (
+                            <>
+                              <EyeOff className="w-4 h-4 mr-1" />
+                              Ocultar
+                            </>
+                          ) : (
+                            <>
+                              <Eye className="w-4 h-4 mr-1" />
+                              Mostrar
+                            </>
+                          )}
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="border-red-300 text-red-700 hover:bg-red-50" 
+                          onClick={() => {
+                            if (window.confirm(`Tem certeza que deseja excluir a categoria "${cat.name}"?`)) {
+                              removeCategory(cat);
+                            }
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4 mr-1" />
+                          Excluir
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="documents" className="space-y-6">
             <DocumentManager onDocumentAdded={() => {
@@ -402,12 +470,6 @@ export default function AdminDocumentos() {
             }} />
           </TabsContent>
 
-          <TabsContent value="upload" className="space-y-6">
-            <DocumentManager onDocumentAdded={() => {
-              loadStats();
-              loadRecentDocuments();
-            }} />
-          </TabsContent>
 
           <TabsContent value="dashboard" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -541,10 +603,10 @@ export default function AdminDocumentos() {
                   <div className="space-y-3">
                     <Button
                       className="w-full justify-start bg-gradient-to-r from-pentathlon-green to-pentathlon-green-dark hover:from-pentathlon-green-dark hover:to-pentathlon-green"
-                      onClick={() => setActiveTab('upload')}
+                      onClick={() => setActiveTab('documents')}
                     >
-                      <Upload className="w-4 h-4 mr-2" />
-                      Fazer Upload de Documento
+                      <FileText className="w-4 h-4 mr-2" />
+                      Gerenciar Documentos
                     </Button>
                     
                     <Button
@@ -589,9 +651,29 @@ export default function AdminDocumentos() {
                       <div className="flex items-center gap-2">
                         <input 
                           type="number" 
-                          defaultValue="10"
+                          min="1"
+                          max="100"
+                          value={maxUploadMB}
                           className="w-20 px-3 py-2 border border-gray-300 rounded-md text-sm"
-                          disabled
+                          onChange={(e) => {
+                            const mb = Math.max(1, Math.min(100, parseInt(e.target.value||'10',10)));
+                            setMaxUploadMB(mb);
+                          }}
+                          onBlur={async (e)=>{
+                            const mb = Math.max(1, parseInt(e.target.value||'10',10));
+                            try {
+                              const { error } = await supabase.from('app_settings').upsert({ key:'max_upload_mb', value: String(mb) });
+                              if (!error) {
+                                // Feedback visual rápido
+                                e.target.style.borderColor = 'green';
+                                setTimeout(() => { e.target.style.borderColor = ''; }, 1000);
+                              }
+                            } catch (err) {
+                              console.warn('Erro ao salvar configuração:', err);
+                              e.target.style.borderColor = 'red';
+                              setTimeout(() => { e.target.style.borderColor = ''; }, 1000);
+                            }
+                          }}
                         />
                         <span className="text-sm text-gray-600">MB</span>
                       </div>

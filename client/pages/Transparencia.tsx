@@ -5,15 +5,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { supabase, Document, CATEGORIES, formatFileSize, getFileIcon } from '@/lib/supabase';
+import { supabase, Document, formatFileSize, getFileIcon, withTimeout, DocCategory } from '@/lib/supabase';
 
 export default function Transparencia() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [categories, setCategories] = useState<DocCategory[]>([]);
 
   useEffect(() => {
     loadDocuments();
+    (async ()=>{
+      const { data } = await supabase.from('doc_categories').select('*').eq('visible', true).order('sort_order', { ascending: true });
+      setCategories(data || []);
+    })();
   }, []);
 
   const loadDocuments = async () => {
@@ -21,48 +26,40 @@ export default function Transparencia() {
       setLoading(true);
       setError('');
 
-      // Check if we're in demo mode or if Supabase is available
-      const isDemoMode = localStorage.getItem('fppm_auth_demo');
+      // Get visible categories first
+      const { data: visibleCategories } = await supabase
+        .from('doc_categories')
+        .select('slug')
+        .eq('visible', true);
 
-      if (isDemoMode) {
-        // Use demo data
-        const { demoStorage } = await import('@/lib/demoData');
-        const demoDocuments = demoStorage.getDocuments();
-        setDocuments(demoDocuments);
-      } else {
-        // Try Supabase
-        const { data, error } = await supabase
-          .from('documents')
-          .select(`
-            *,
-            admin_users (
-              id,
-              name,
-              email,
-              role
-            )
-          `)
-          .order('created_at', { ascending: false });
+      const visibleSlugs = visibleCategories?.map(cat => cat.slug) || [];
 
-        if (error) {
-          throw error;
-        }
+      // Supabase - filter documents by visible categories
+      const { data, error } = await withTimeout(
+        supabase
+        .from('documents')
+        .select(`
+          *,
+          admin_users (
+            id,
+            name,
+            email,
+            role
+          )
+        `)
+        .in('category', visibleSlugs.length > 0 ? visibleSlugs : [''])
+        .order('created_at', { ascending: false }),
+      6000);
 
-        setDocuments(data || []);
+      if (error) {
+        throw error;
       }
+
+      setDocuments(data || []);
     } catch (err: any) {
-      console.warn('Failed to load documents from Supabase, falling back to demo mode:', err);
-      // Fallback to demo data
-      try {
-        const { demoStorage } = await import('@/lib/demoData');
-        const demoDocuments = demoStorage.getDocuments();
-        setDocuments(demoDocuments);
-        setError('Conectado em modo demonstração. Dados limitados.');
-      } catch (demoErr) {
-        console.error('Error loading demo documents:', demoErr);
-        setError('Erro ao carregar documentos. Tente novamente mais tarde.');
-        setDocuments([]);
-      }
+      console.warn('Failed to load documents from Supabase:', err);
+      setError('Erro ao carregar documentos.');
+      setDocuments([]);
     } finally {
       setLoading(false);
     }
@@ -136,7 +133,7 @@ export default function Transparencia() {
   };
 
   function renderDocumentCard(documento: Document, index: number) {
-    const categoryData = CATEGORIES.find(cat => cat.value === documento.category);
+    const categoryData = categories.find(cat => cat.slug === documento.category);
     
     return (
       <Card key={documento.id} className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-white/80 backdrop-blur-sm group animate-in slide-in-from-bottom duration-700" style={{animationDelay: `${index * 100}ms`}}>
@@ -144,7 +141,7 @@ export default function Transparencia() {
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <CardTitle className="text-base group-hover:text-pentathlon-green transition-colors">{documento.title}</CardTitle>
-              <CardDescription className="mt-1 group-hover:text-gray-700">{categoryData?.label}</CardDescription>
+               <CardDescription className="mt-1 group-hover:text-gray-700">{categoryData?.name}</CardDescription>
             </div>
             <div className="text-2xl">{getFileIcon(documento.file_type)}</div>
           </div>
@@ -254,6 +251,12 @@ export default function Transparencia() {
             A Federação Pernambucana de Pentatlo Moderno está comprometida com a transparência e prestação de contas.
             Aqui você encontra todas as informações sobre nossa gestão, processos e documentos institucionais.
           </p>
+          {loading && (
+            <div className="mt-4 inline-flex items-center gap-2 text-sm text-gray-600">
+              <Loader2 className="h-4 w-4 animate-spin text-pentathlon-blue" />
+              Buscando documentos...
+            </div>
+          )}
         </div>
 
         {error && (
@@ -263,15 +266,15 @@ export default function Transparencia() {
           </Alert>
         )}
 
-        <Tabs defaultValue="gestao" className="w-full">
+        <Tabs defaultValue={categories.length > 0 ? categories[0].slug : "gestao"} className="w-full">
           {/* Mobile Tabs */}
           <div className="block md:hidden">
             <TabsList className="grid w-full grid-cols-2 gap-1 h-auto p-1">
-              <TabsTrigger value="gestao" className="text-xs py-2">Gestão</TabsTrigger>
-              <TabsTrigger value="processos" className="text-xs py-2">Processos</TabsTrigger>
-              <TabsTrigger value="estatuto" className="text-xs py-2">Estatuto</TabsTrigger>
-              <TabsTrigger value="compras" className="text-xs py-2">Compras</TabsTrigger>
-              <TabsTrigger value="documentos" className="text-xs py-2">Documentos</TabsTrigger>
+              {categories.map(cat => (
+                <TabsTrigger key={cat.id} value={cat.slug} className="text-xs py-2">
+                  {cat.name}
+                </TabsTrigger>
+              ))}
               <TabsTrigger value="ouvidoria" className="text-xs py-2">Ouvidoria</TabsTrigger>
             </TabsList>
           </div>
@@ -279,76 +282,38 @@ export default function Transparencia() {
           {/* Tablet Tabs */}
           <div className="hidden md:block lg:hidden">
             <TabsList className="grid w-full grid-cols-3 gap-1 h-auto p-1">
-              <TabsTrigger value="gestao" className="text-sm py-2">Gestão</TabsTrigger>
-              <TabsTrigger value="processos" className="text-sm py-2">Processos</TabsTrigger>
-              <TabsTrigger value="estatuto" className="text-sm py-2">Estatuto</TabsTrigger>
-              <TabsTrigger value="compras" className="text-sm py-2">Compras</TabsTrigger>
-              <TabsTrigger value="documentos" className="text-sm py-2">Documentos</TabsTrigger>
+              {categories.map(cat => (
+                <TabsTrigger key={cat.id} value={cat.slug} className="text-sm py-2">
+                  {cat.name}
+                </TabsTrigger>
+              ))}
               <TabsTrigger value="ouvidoria" className="text-sm py-2">Ouvidoria</TabsTrigger>
             </TabsList>
           </div>
 
           {/* Desktop Tabs */}
           <div className="hidden lg:block">
-            <TabsList className="grid w-full grid-cols-6">
-              <TabsTrigger value="gestao">Gestão</TabsTrigger>
-              <TabsTrigger value="processos">Processos Eleitorais</TabsTrigger>
-              <TabsTrigger value="estatuto">Estatuto</TabsTrigger>
-              <TabsTrigger value="compras">Manual de Compras</TabsTrigger>
-              <TabsTrigger value="documentos">Documentos</TabsTrigger>
+            <TabsList className="grid w-full" style={{gridTemplateColumns: `repeat(${categories.length + 1}, minmax(0, 1fr))`}}>
+              {categories.map(cat => (
+                <TabsTrigger key={cat.id} value={cat.slug}>
+                  {cat.name}
+                </TabsTrigger>
+              ))}
               <TabsTrigger value="ouvidoria">Ouvidoria</TabsTrigger>
             </TabsList>
           </div>
 
-          {/* Gestão */}
-          <TabsContent value="gestao">
-            {renderCategoryContent(
-              'gestao',
-              <Users className="text-pentathlon-green" size={24} />,
-              'Gestão e Governança',
-              'Informações sobre a estrutura organizacional, diretoria e relatórios de gestão da FPPM.'
-            )}
-          </TabsContent>
-
-          {/* Processos Eleitorais */}
-          <TabsContent value="processos">
-            {renderCategoryContent(
-              'processos',
-              <Gavel className="text-pentathlon-blue" size={24} />,
-              'Processos Eleitorais',
-              'Documentos relacionados aos processos eleitorais, editais e atas de assembleias.'
-            )}
-          </TabsContent>
-
-          {/* Estatuto */}
-          <TabsContent value="estatuto">
-            {renderCategoryContent(
-              'estatuto',
-              <Scale className="text-pentathlon-red" size={24} />,
-              'Estatuto Social',
-              'Estatuto social da FPPM e suas alterações ao longo do tempo.'
-            )}
-          </TabsContent>
-
-          {/* Manual de Compras */}
-          <TabsContent value="compras">
-            {renderCategoryContent(
-              'compras',
-              <ShoppingCart className="text-pentathlon-yellow" size={24} />,
-              'Manual de Compras e Contratações',
-              'Procedimentos, normas e relatórios relacionados a compras e contratações da federação.'
-            )}
-          </TabsContent>
-
-          {/* Documentos */}
-          <TabsContent value="documentos">
-            {renderCategoryContent(
-              'documentos',
-              <FileText className="text-gray-600" size={24} />,
-              'Documentos Institucionais',
-              'Documentos legais, certidões, demonstrações financeiras e outros documentos oficiais.'
-            )}
-          </TabsContent>
+          {/* Dynamic Category Content */}
+          {categories.map(category => (
+            <TabsContent key={category.id} value={category.slug}>
+              {renderCategoryContent(
+                category.slug,
+                <FileText className="text-pentathlon-blue" size={24} />,
+                category.name,
+                category.description || `Documentos da categoria ${category.name}.`
+              )}
+            </TabsContent>
+          ))}
 
           {/* Ouvidoria */}
           <TabsContent value="ouvidoria" className="mt-8">

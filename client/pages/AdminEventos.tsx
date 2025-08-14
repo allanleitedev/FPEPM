@@ -32,26 +32,17 @@ export default function AdminEventos() {
 
   const loadStats = async () => {
     try {
-      // Check if we're in demo mode
-      const isDemoMode = localStorage.getItem('fppm_auth_demo');
+      // Supabase
       let events;
+      const { data, error } = await supabase
+        .from('events')
+        .select('status');
 
-      if (isDemoMode) {
-        // Use demo data
-        const { demoStorage } = await import('@/lib/demoData');
-        events = demoStorage.getEvents();
-      } else {
-        // Try Supabase
-        const { data, error } = await supabase
-          .from('events')
-          .select('status');
-
-        if (error) {
-          throw error;
-        }
-
-        events = data || [];
+      if (error) {
+        throw error;
       }
+
+      events = data || [];
 
       const eventStats = events.reduce((acc, event) => {
         acc.total++;
@@ -67,76 +58,38 @@ export default function AdminEventos() {
 
       setStats(eventStats);
     } catch (error) {
-      console.warn('Failed to load stats from Supabase, falling back to demo mode:', error);
-      // Fallback to demo data
-      try {
-        const { demoStorage } = await import('@/lib/demoData');
-        const events = demoStorage.getEvents();
-
-        const eventStats = events.reduce((acc, event) => {
-          acc.total++;
-          acc[event.status as keyof typeof acc]++;
-          return acc;
-        }, {
-          total: 0,
-          pending: 0,
-          approved: 0,
-          rejected: 0,
-          published: 0
-        });
-
-        setStats(eventStats);
-      } catch (demoErr) {
-        console.error('Error loading stats:', demoErr);
-      }
+      console.warn('Failed to load stats from Supabase:', error);
     }
   };
 
   const loadRecentEvents = async () => {
     try {
       setLoading(true);
-      // Check if we're in demo mode
-      const isDemoMode = localStorage.getItem('fppm_auth_demo');
+      // Supabase
       let events;
+      const { data, error } = await supabase
+        .from('events')
+        .select(`
+          *,
+          admin_users (
+            id,
+            name,
+            email,
+            role
+          )
+        `)
+        .order('created_at', { ascending: false })
+        .limit(5);
 
-      if (isDemoMode) {
-        // Use demo data
-        const { demoStorage } = await import('@/lib/demoData');
-        events = demoStorage.getEvents().slice(0, 5);
-      } else {
-        // Try Supabase
-        const { data, error } = await supabase
-          .from('events')
-          .select(`
-            *,
-            admin_users (
-              id,
-              name,
-              email,
-              role
-            )
-          `)
-          .order('created_at', { ascending: false })
-          .limit(5);
-
-        if (error) {
-          throw error;
-        }
-
-        events = data || [];
+      if (error) {
+        throw error;
       }
+
+      events = data || [];
 
       setRecentEvents(events);
     } catch (error) {
-      console.warn('Failed to load recent events from Supabase, falling back to demo mode:', error);
-      // Fallback to demo data
-      try {
-        const { demoStorage } = await import('@/lib/demoData');
-        const events = demoStorage.getEvents().slice(0, 5);
-        setRecentEvents(events);
-      } catch (demoErr) {
-        console.error('Error loading recent events:', demoErr);
-      }
+      console.warn('Failed to load recent events from Supabase:', error);
     } finally {
       setLoading(false);
     }
@@ -318,9 +271,10 @@ export default function AdminEventos() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {loading ? (
+                   {loading ? (
                     <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pentathlon-blue"></div>
+                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pentathlon-blue"></div>
+                       <span className="ml-2 text-gray-600">Buscando eventos...</span>
                     </div>
                   ) : recentEvents.length > 0 ? (
                     <div className="space-y-4">

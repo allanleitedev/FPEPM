@@ -1,8 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Supabase configuration - Update these with your project credentials
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bwlmduvnndbsahzpmevq.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3bG1kdXZubmRic2FoenBtZXZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc0NjExODcsImV4cCI6MjA1MzAzNzE4N30.4Nm5WztZDCeY7Z8u6WrGJO7EIJ3WjUhzKJRKlpCdUh8';
+// Configuração Supabase para produção: exige variáveis VITE_ válidas
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  // Falha de configuração clara no console
+  console.error('[Supabase] Variáveis de ambiente ausentes. Defina VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY no .env');
+}
 
 // Export for debugging
 export const getSupabaseConfig = () => ({
@@ -20,6 +25,20 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 });
 
+// Utility: wrap any async call with a timeout to avoid UI travar por fetch indefinido
+export async function withTimeout<T>(promise: Promise<T>, ms: number = 15000): Promise<T> {
+  let timeoutId: any;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error("timeout")), ms);
+  });
+  try {
+    const result = await Promise.race([promise, timeoutPromise]);
+    return result as T;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 // Database types
 export interface AdminUser {
   id: string;
@@ -35,7 +54,7 @@ export interface Document {
   id: string;
   title: string;
   description?: string;
-  category: 'gestao' | 'processos' | 'estatuto' | 'compras' | 'documentos' | 'ouvidoria';
+  category: string;
   file_name: string;
   file_path: string;
   file_size: number;
@@ -92,6 +111,14 @@ export const CATEGORIES = [
   { value: 'documentos', label: 'Documentos Gerais' },
   { value: 'ouvidoria', label: 'Ouvidoria' }
 ] as const;
+
+export interface DocCategory {
+  id: string;
+  name: string;
+  slug: string;
+  visible: boolean;
+  sort_order: number;
+}
 
 export const EVENT_STATUSES = [
   { value: 'draft', label: 'Rascunho', color: 'gray' },

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sed:*)",
+      "Bash(npm run build:*)"
+    ],
+    "deny": []
+  }
+}

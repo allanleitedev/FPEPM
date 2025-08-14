@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { supabase, Event, EVENT_STATUSES } from '@/lib/supabase';
+import { supabase, Event, EVENT_STATUSES, withTimeout } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -64,26 +64,18 @@ export default function EventManager({ onEventAdded, showOnlyPending = false }: 
       setLoading(true);
       setError('');
 
-      // Check if we're in demo mode
-      const isDemoMode = localStorage.getItem('fppm_auth_demo');
-
-      if (isDemoMode) {
-        // Use demo data
-        const { demoStorage } = await import('@/lib/demoData');
-        let demoEvents = demoStorage.getEvents();
-
-        if (showOnlyPending) {
-          demoEvents = demoEvents.filter(event => event.status === 'pending');
-        }
-
-        setEvents(demoEvents);
-      } else {
-        // Try Supabase
+      // Supabase
         let query = supabase
           .from('events')
           .select(`
             *,
-            admin_users (
+            created_by_admin:admin_users!created_by (
+              id,
+              name,
+              email,
+              role
+            ),
+            approved_by_admin:admin_users!approved_by (
               id,
               name,
               email,
@@ -96,31 +88,16 @@ export default function EventManager({ onEventAdded, showOnlyPending = false }: 
           query = query.eq('status', 'pending');
         }
 
-        const { data, error } = await query;
+        const { data, error } = await withTimeout(query, 6000);
 
         if (error) {
           throw error;
         }
 
         setEvents(data || []);
-      }
     } catch (err: any) {
-      console.warn('Failed to load from Supabase, falling back to demo mode:', err);
-      // Fallback to demo data
-      try {
-        const { demoStorage } = await import('@/lib/demoData');
-        let demoEvents = demoStorage.getEvents();
-
-        if (showOnlyPending) {
-          demoEvents = demoEvents.filter(event => event.status === 'pending');
-        }
-
-        setEvents(demoEvents);
-        setError('Conectado em modo demonstração. Funcionalidades limitadas.');
-      } catch (demoErr) {
-        setError('Erro ao carregar eventos');
-        console.error('Error loading demo events:', demoErr);
-      }
+      console.warn('Failed to load events from Supabase:', err);
+      setError('Erro ao carregar eventos');
     } finally {
       setLoading(false);
     }
@@ -188,6 +165,8 @@ export default function EventManager({ onEventAdded, showOnlyPending = false }: 
 
     if (!user) {
       setError('Usuário não autenticado');
+      // Evita ficar em estado de carregamento caso este retorno aconteça após iniciar submissão
+      setSubmitting(false);
       return;
     }
 
@@ -195,49 +174,7 @@ export default function EventManager({ onEventAdded, showOnlyPending = false }: 
       setSubmitting(true);
       setError('');
 
-      const isDemoMode = localStorage.getItem('fppm_auth_demo');
-
-      if (isDemoMode) {
-        // Demo mode - save to localStorage
-        const { demoStorage } = await import('@/lib/demoData');
-
-        const eventData = {
-          id: editingEvent?.id || `demo-event-${Date.now()}`,
-          title: formData.title.trim(),
-          description: formData.description.trim(),
-          event_date: formData.event_date || null,
-          location: formData.location.trim() || null,
-          category: formData.category.trim() || null,
-          budget: formData.budget ? parseFloat(formData.budget) : null,
-          participants_expected: formData.participants_expected ? parseInt(formData.participants_expected) : null,
-          technical_details: formData.technical_details.trim() ? {
-            details: formData.technical_details
-          } : null,
-          impact_assessment: formData.impact_assessment.trim() || null,
-          image_path: null, // Demo mode doesn't support image upload
-          image_url: null,
-          status: 'pending' as const,
-          created_by: user.id,
-          approved_by: null,
-          created_at: editingEvent?.created_at || new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          admin_users: user
-        };
-
-        if (editingEvent) {
-          const updated = demoStorage.updateEvent(editingEvent.id, eventData);
-          if (updated) {
-            setEvents(prev => prev.map(event =>
-              event.id === editingEvent.id ? updated : event
-            ));
-          }
-        } else {
-          const newEvent = demoStorage.addEvent(eventData);
-          setEvents(prev => [newEvent, ...prev]);
-          onEventAdded?.(newEvent);
-        }
-      } else {
-        // Supabase mode
+      // Supabase mode
         let imagePath = editingEvent?.image_path || null;
 
         // Upload image if selected
@@ -264,19 +201,51 @@ export default function EventManager({ onEventAdded, showOnlyPending = false }: 
 
         let result;
         if (editingEvent) {
-          const { data, error } = await supabase
+          const { data, error } = await withTimeout(
+            supabase
             .from('events')
             .update(eventData)
             .eq('id', editingEvent.id)
-            .select('*, admin_users(*)')
-            .single();
+            .select(`
+              *,
+              created_by_admin:admin_users!created_by (
+                id,
+                name,
+                email,
+                role
+              ),
+              approved_by_admin:admin_users!approved_by (
+                id,
+                name,
+                email,
+                role
+              )
+            `)
+            .single(),
+          8000);
           result = { data, error };
         } else {
-          const { data, error } = await supabase
+          const { data, error } = await withTimeout(
+            supabase
             .from('events')
             .insert(eventData)
-            .select('*, admin_users(*)')
-            .single();
+            .select(`
+              *,
+              created_by_admin:admin_users!created_by (
+                id,
+                name,
+                email,
+                role
+              ),
+              approved_by_admin:admin_users!approved_by (
+                id,
+                name,
+                email,
+                role
+              )
+            `)
+            .single(),
+          8000);
           result = { data, error };
         }
 
@@ -293,8 +262,7 @@ export default function EventManager({ onEventAdded, showOnlyPending = false }: 
           setEvents(prev => [result.data, ...prev]);
           onEventAdded?.(result.data);
         }
-      }
-
+      
       // Reset form
       resetForm();
       setIsAddingEvent(false);
@@ -348,16 +316,7 @@ export default function EventManager({ onEventAdded, showOnlyPending = false }: 
       setDeletingId(event.id);
       setError('');
 
-      // Check if we're in demo mode
-      const isDemoMode = localStorage.getItem('fppm_auth_demo');
-
-      if (isDemoMode) {
-        // Use demo data
-        const { demoStorage } = await import('@/lib/demoData');
-        demoStorage.removeEvent(event.id);
-        setEvents(prev => prev.filter(e => e.id !== event.id));
-      } else {
-        // Delete image from storage if exists
+      // Delete image from storage if exists
         if (event.image_path) {
           const { error: storageError } = await supabase.storage
             .from('event-images')
@@ -379,20 +338,10 @@ export default function EventManager({ onEventAdded, showOnlyPending = false }: 
         }
 
         setEvents(prev => prev.filter(e => e.id !== event.id));
-      }
 
     } catch (err: any) {
-      console.warn('Failed to delete from Supabase, trying demo mode:', err);
-      // Fallback to demo mode
-      try {
-        const { demoStorage } = await import('@/lib/demoData');
-        demoStorage.removeEvent(event.id);
-        setEvents(prev => prev.filter(e => e.id !== event.id));
-        setError('Evento deletado em modo demonstração');
-      } catch (demoErr) {
-        setError('Erro ao deletar evento');
-        console.error('Error deleting event:', demoErr);
-      }
+      console.warn('Failed to delete event from Supabase:', err);
+      setError('Erro ao deletar evento');
     } finally {
       setDeletingId(null);
     }
@@ -405,61 +354,44 @@ export default function EventManager({ onEventAdded, showOnlyPending = false }: 
     }
 
     try {
-      // Check if we're in demo mode
-      const isDemoMode = localStorage.getItem('fppm_auth_demo');
-
-      if (isDemoMode) {
-        // Use demo data
-        const { demoStorage } = await import('@/lib/demoData');
+      // Supabase mode
         const updateData: any = { status: newStatus };
         if (newStatus === 'approved') {
           updateData.approved_by = user.id;
         }
 
-        const updated = demoStorage.updateEvent(event.id, updateData);
-        if (updated) {
-          setEvents(prev => prev.map(e => e.id === event.id ? updated : e));
-        }
-      } else {
-        // Supabase mode
-        const updateData: any = { status: newStatus };
-        if (newStatus === 'approved') {
-          updateData.approved_by = user.id;
-        }
-
-        const { data, error } = await supabase
+        const { data, error } = await withTimeout(
+          supabase
           .from('events')
           .update(updateData)
           .eq('id', event.id)
-          .select('*, admin_users(*)')
-          .single();
+          .select(`
+            *,
+            created_by_admin:admin_users!created_by (
+              id,
+              name,
+              email,
+              role
+            ),
+            approved_by_admin:admin_users!approved_by (
+              id,
+              name,
+              email,
+              role
+            )
+          `)
+          .single(),
+        6000);
 
         if (error) {
           throw error;
         }
 
         setEvents(prev => prev.map(e => e.id === event.id ? data : e));
-      }
 
     } catch (err: any) {
-      console.warn('Failed to update status in Supabase, trying demo mode:', err);
-      // Fallback to demo mode
-      try {
-        const { demoStorage } = await import('@/lib/demoData');
-        const updateData: any = { status: newStatus };
-        if (newStatus === 'approved') {
-          updateData.approved_by = user.id;
-        }
-
-        const updated = demoStorage.updateEvent(event.id, updateData);
-        if (updated) {
-          setEvents(prev => prev.map(e => e.id === event.id ? updated : e));
-          setError('Status atualizado em modo demonstração');
-        }
-      } catch (demoErr) {
-        setError('Erro ao atualizar status do evento');
-        console.error('Error updating event status:', demoErr);
-      }
+      console.warn('Failed to update event status in Supabase:', err);
+      setError('Erro ao atualizar status do evento');
     }
   };
 
@@ -502,7 +434,7 @@ export default function EventManager({ onEventAdded, showOnlyPending = false }: 
     return (
       <div className="flex justify-center items-center py-12">
         <Loader2 className="w-8 h-8 animate-spin text-pentathlon-blue" />
-        <span className="ml-2 text-gray-600">Carregando eventos...</span>
+        <span className="ml-2 text-gray-600">Buscando eventos...</span>
       </div>
     );
   }
@@ -831,7 +763,12 @@ export default function EventManager({ onEventAdded, showOnlyPending = false }: 
                     
                     <div className="flex items-center justify-between">
                       <div className="text-sm text-gray-500">
-                        Criado por {event.admin_users?.name} em {new Date(event.created_at).toLocaleDateString('pt-BR')}
+                        Criado por {event.created_by_admin?.name || 'N/A'} em {new Date(event.created_at).toLocaleDateString('pt-BR')}
+                        {event.approved_by_admin && (
+                          <span className="ml-2 text-green-600">
+                            • Aprovado por {event.approved_by_admin.name}
+                          </span>
+                        )}
                       </div>
                       
                       <div className="flex items-center gap-2">

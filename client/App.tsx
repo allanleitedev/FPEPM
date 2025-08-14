@@ -7,7 +7,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import { initDemoData } from "./lib/demoData";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AdminEventos from "./pages/AdminEventos";
@@ -19,8 +18,6 @@ import Footer from "./components/Footer";
 
 const queryClient = new QueryClient();
 
-// Initialize demo data
-initDemoData();
 
 // Placeholder component for pages not yet implemented
 function PlaceholderPage({ title }: { title: string }) {
@@ -47,7 +44,10 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
+        <BrowserRouter future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}>
           <div className="flex flex-col min-h-screen">
             <Header />
             <main className="flex-1">

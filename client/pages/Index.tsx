@@ -4,8 +4,28 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { supabase, DocCategory } from '@/lib/supabase';
 
 export default function Index() {
+  const [categories, setCategories] = useState<DocCategory[]>([]);
+  
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const { data } = await supabase
+          .from('doc_categories')
+          .select('*')
+          .eq('visible', true)
+          .order('sort_order', { ascending: true });
+        setCategories(data || []);
+      } catch (error) {
+        console.warn('Failed to load categories:', error);
+      }
+    };
+    
+    loadCategories();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-pentathlon-green/15 via-pentathlon-blue/10 to-pentathlon-gold/15 relative overflow-hidden">
       {/* Background Pattern */}
@@ -200,70 +220,48 @@ export default function Index() {
             <p className="text-xl text-gray-600">Acesso completo às informações institucionais e de gestão</p>
           </div>
 
-          <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {[
-              {
-                icon: Building,
-                title: "Gestão",
-                description: "Estrutura organizacional e relatórios",
-                link: "/transparencia",
-                tab: "gestao",
-                color: "bg-blue-50/80 hover:bg-blue-100/90 border-blue-200"
-              },
-              {
-                icon: FileText,
-                title: "Processos Eleitorais",
-                description: "Editais e documentos eleitorais",
-                link: "/transparencia",
-                tab: "processos",
-                color: "bg-purple-50/80 hover:bg-purple-100/90 border-purple-200"
-              },
-              {
-                icon: FileText,
-                title: "Estatuto",
-                description: "Estatuto social e alterações",
-                link: "/transparencia",
-                tab: "estatuto",
-                color: "bg-green-50/80 hover:bg-green-100/90 border-green-200"
-              },
-              {
-                icon: FileText,
-                title: "Manual de Compras",
-                description: "Procedimentos e relatórios",
-                link: "/transparencia",
-                tab: "compras",
-                color: "bg-yellow-50/80 hover:bg-yellow-100/90 border-yellow-200"
-              },
-              {
-                icon: FileText,
-                title: "Documentos",
-                description: "Certidões e documentos legais",
-                link: "/transparencia",
-                tab: "documentos",
-                color: "bg-gray-50/80 hover:bg-gray-100/90 border-gray-200"
-              },
-              {
-                icon: FileText,
-                title: "Ouvidoria",
-                description: "Canal de comunicação oficial",
-                link: "/transparencia",
-                tab: "ouvidoria",
-                color: "bg-red-50/80 hover:bg-red-100/90 border-red-200"
-              }
-            ].map((item, index) => (
-              <Card key={index} className={`hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border ${item.color} backdrop-blur-sm group cursor-pointer animate-in slide-in-from-bottom duration-700`} style={{animationDelay: `${index * 100}ms`}}>
-                <CardHeader className="text-center">
-                  <item.icon size={32} className="text-pentathlon-green mb-2 mx-auto group-hover:scale-110 group-hover:text-pentathlon-green-dark transition-all duration-300" />
-                  <CardTitle className="text-base group-hover:text-gray-800">{item.title}</CardTitle>
-                  <CardDescription className="text-sm group-hover:text-gray-700">{item.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button variant="outline" size="sm" className="w-full group-hover:border-pentathlon-green group-hover:text-pentathlon-green transition-colors">
-                    <Link to={item.link}>Acessar</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+          <div className={`grid gap-6 ${categories.length <= 3 ? 'md:grid-cols-3 justify-center' : categories.length <= 6 ? 'md:grid-cols-3 lg:grid-cols-6' : 'md:grid-cols-2 lg:grid-cols-4'}`}>
+            {categories.map((category, index) => {
+              const colorOptions = [
+                "bg-blue-50/80 hover:bg-blue-100/90 border-blue-200",
+                "bg-green-50/80 hover:bg-green-100/90 border-green-200", 
+                "bg-purple-50/80 hover:bg-purple-100/90 border-purple-200",
+                "bg-yellow-50/80 hover:bg-yellow-100/90 border-yellow-200",
+                "bg-red-50/80 hover:bg-red-100/90 border-red-200",
+                "bg-gray-50/80 hover:bg-gray-100/90 border-gray-200"
+              ];
+              const color = colorOptions[index % colorOptions.length];
+              
+              return (
+                <Card key={category.id} className={`hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border ${color} backdrop-blur-sm group cursor-pointer animate-in slide-in-from-bottom duration-700`} style={{animationDelay: `${index * 100}ms`}}>
+                  <CardHeader className="text-center">
+                    <FileText size={32} className="text-pentathlon-green mb-2 mx-auto group-hover:scale-110 group-hover:text-pentathlon-green-dark transition-all duration-300" />
+                    <CardTitle className="text-base group-hover:text-gray-800">{category.name}</CardTitle>
+                    <CardDescription className="text-sm group-hover:text-gray-700">
+                      {category.description || `Documentos da categoria ${category.name}`}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button variant="outline" size="sm" className="w-full group-hover:border-pentathlon-green group-hover:text-pentathlon-green transition-colors">
+                      <Link to="/transparencia">Acessar</Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
+            {/* Always show Ouvidoria */}
+            <Card className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border bg-red-50/80 hover:bg-red-100/90 border-red-200 backdrop-blur-sm group cursor-pointer animate-in slide-in-from-bottom duration-700" style={{animationDelay: `${categories.length * 100}ms`}}>
+              <CardHeader className="text-center">
+                <FileText size={32} className="text-pentathlon-green mb-2 mx-auto group-hover:scale-110 group-hover:text-pentathlon-green-dark transition-all duration-300" />
+                <CardTitle className="text-base group-hover:text-gray-800">Ouvidoria</CardTitle>
+                <CardDescription className="text-sm group-hover:text-gray-700">Canal de comunicação oficial</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" size="sm" className="w-full group-hover:border-pentathlon-green group-hover:text-pentathlon-green transition-colors">
+                  <Link to="/transparencia">Acessar</Link>
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
