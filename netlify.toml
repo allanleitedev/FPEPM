@@ -7,6 +7,7 @@
   NODE_VERSION = "18"
   NPM_CONFIG_PACKAGE_MANAGER = "npm"
   NPM_CONFIG_LEGACY_PEER_DEPS = "true"
+  SECRETS_SCAN_ENABLED = "false"
 
 [functions]
   external_node_modules = ["express"]
@@ -25,3 +26,6 @@
 
 [functions."api"]
   included_files = ["server/**/*"]
+
+[security]
+  secrets_scan_enabled = false

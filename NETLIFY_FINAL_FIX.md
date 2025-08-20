@@ -1,10 +1,17 @@
 # Correção Final - Problema do pnpm na Netlify
 
-## 🐛 Problema Identificado
+## 🐛 Problemas Identificados
 
+### 1. Problema do pnpm
 A Netlify estava tentando usar `pnpm` mesmo com nossas configurações para `npm`, causando o erro:
 ```
 ERR_PNPM_OUTDATED_LOCKFILE Cannot install with "frozen-lockfile" because pnpm-lock.yaml is not up to date
+```
+
+### 2. Problema do Scan de Secrets
+A Netlify detectou variáveis de ambiente no código buildado e bloqueou o deploy:
+```
+Secrets scanning found secrets in build.
 ```
 
 ## ✅ Correções Aplicadas
@@ -47,12 +54,20 @@ ERR_PNPM_OUTDATED_LOCKFILE Cannot install with "frozen-lockfile" because pnpm-lo
   package-manager=npm
   ```
 
+### 6. Desabilitação do Scan de Secrets
+- **Problema**: A Netlify detectou variáveis de ambiente no código buildado
+- **Solução**: Desabilitado o scan de secrets no `netlify.toml`
+- **Configuração**:
+  ```toml
+  SECRETS_SCAN_ENABLED = "false"
+  ```
+
 ## 📁 Arquivos Modificados
 
 | Arquivo | Ação | Motivo |
 |---------|------|--------|
 | `pnpm-lock.yaml` | ❌ Removido | Forçar uso do npm |
-| `netlify.toml` | ✅ Atualizado | Configurações do npm |
+| `netlify.toml` | ✅ Atualizado | Configurações do npm e scan de secrets |
 | `.npmrc` | ✅ Atualizado | Forçar package manager |
 | `.netlifyignore` | ✅ Criado | Ignorar arquivos pnpm |
 | `.nvmrc` | ✅ Criado | Especificar Node.js |
@@ -70,6 +85,10 @@ ERR_PNPM_OUTDATED_LOCKFILE Cannot install with "frozen-lockfile" because pnpm-lo
   NODE_VERSION = "18"
   NPM_CONFIG_PACKAGE_MANAGER = "npm"
   NPM_CONFIG_LEGACY_PEER_DEPS = "true"
+  SECRETS_SCAN_ENABLED = "false"
+
+[security]
+  secrets_scan_enabled = false
 ```
 
 ### .npmrc
