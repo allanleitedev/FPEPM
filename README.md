@@ -1,4 +1,4 @@
-# Fusion Starter - Sistema de Gestão de Documentos
+# FPEPM - Sistema de Gestão de Documentos
 
 Sistema completo de gestão de documentos e eventos com autenticação, upload de arquivos e interface administrativa.
 
