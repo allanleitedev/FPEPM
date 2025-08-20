@@ -4,18 +4,21 @@ Sistema completo de gestão de documentos e eventos com autenticação, upload d
 
 ## 🚀 Deploy
 
-### Vercel (Recomendado)
+### Netlify (Recomendado)
 
-Este projeto está configurado para deploy na Vercel. Veja o guia completo em [VERCEL_DEPLOY.md](./VERCEL_DEPLOY.md).
+Este projeto está configurado para deploy na Netlify. Veja o guia completo em [NETLIFY_DEPLOY.md](./NETLIFY_DEPLOY.md).
 
 **Deploy rápido:**
-1. Conecte seu repositório à Vercel
+1. Conecte seu repositório à Netlify
 2. Configure as variáveis de ambiente (Supabase)
 3. Deploy automático!
 
+### Vercel
+
+Este projeto também está configurado para deploy na Vercel. Veja o guia completo em [VERCEL_DEPLOY.md](./VERCEL_DEPLOY.md).
+
 ### Outras Plataformas
 
-- **Netlify**: Configurado com `netlify.toml`
 - **GitHub Pages**: Configurado com workflows
 
 ## 🛠️ Tecnologias
@@ -80,6 +83,7 @@ Execute os scripts SQL em `supabase_setup.sql` para configurar o banco de dados.
 
 ## 📚 Documentação
 
+- [Guia de Deploy Netlify](./NETLIFY_DEPLOY.md)
 - [Guia de Deploy Vercel](./VERCEL_DEPLOY.md)
 - [Sistema de Documentos](./SISTEMA_DOCUMENTOS.md)
 - [Agentes AI](./AGENTS.md)
