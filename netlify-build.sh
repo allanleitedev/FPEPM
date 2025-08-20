@@ -3,6 +3,10 @@
 # Script de build personalizado para Netlify
 echo "🚀 Iniciando build na Netlify..."
 
+# Forçar uso do npm
+export NPM_CONFIG_PACKAGE_MANAGER=npm
+export NPM_CONFIG_LEGACY_PEER_DEPS=true
+
 # Limpar cache do npm
 npm cache clean --force
 

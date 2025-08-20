@@ -16,8 +16,11 @@ Failed during stage 'Install dependencies': dependency_installation script retur
 
 ### 2. Conflito de Package Manager
 - **Problema**: Projeto configurado para `pnpm`, mas Netlify usa `npm`
-- **Solução**: Removida a linha `"packageManager": "pnpm@..."` do package.json
-- **Arquivo**: `package.json`
+- **Solução**: 
+  - Removida a linha `"packageManager": "pnpm@..."` do package.json
+  - Removido arquivo `pnpm-lock.yaml`
+  - Criado arquivo `.netlifyignore` para ignorar arquivos do pnpm
+- **Arquivos**: `package.json`, `pnpm-lock.yaml`, `.netlifyignore`
 
 ### 3. Dependências com Conflitos
 - **Problema**: Conflitos de peer dependencies
@@ -39,8 +42,11 @@ Failed during stage 'Install dependencies': dependency_installation script retur
 | Arquivo | Modificação |
 |---------|-------------|
 | `package.json` | Removida vírgula extra e configuração pnpm |
-| `netlify.toml` | Atualizado comando de build |
+| `pnpm-lock.yaml` | Removido para forçar uso do npm |
+| `netlify.toml` | Atualizado comando de build e variáveis de ambiente |
 | `.npmrc` | Criado com configurações do npm |
+| `.netlifyignore` | Criado para ignorar arquivos do pnpm |
+| `.nvmrc` | Criado para especificar versão do Node.js |
 | `NETLIFY_DEPLOY.md` | Atualizada documentação |
 
 ## 🔧 Configuração Final
