@@ -50,7 +50,7 @@ Este projeto está configurado para ser deployado na Netlify com suporte a Serve
 
 ```toml
 [build]
-  command = "npm run build:client"
+  command = "npm install --legacy-peer-deps && npm run build:client"
   functions = "netlify/functions"
   publish = "dist/spa"
 
@@ -71,6 +71,9 @@ Este projeto está configurado para ser deployado na Netlify com suporte a Serve
   from = "/*"
   to = "/index.html"
   status = 200
+
+[functions."api"]
+  included_files = ["server/**/*"]
 ```
 
 ## 🌐 Endpoints Disponíveis
@@ -116,10 +119,16 @@ netlify logs
 
 ## 🔍 Troubleshooting
 
+### Erro de Instalação de Dependências
+- **Problema**: `dependency_installation script returned non-zero exit code: 1`
+- **Solução**: O projeto usa `--legacy-peer-deps` para resolver conflitos de dependências
+- **Verificar**: Confirme que o `netlify.toml` tem o comando correto de build
+
 ### Erro de Build
 - Verifique se o Node.js 18+ está sendo usado
 - Confirme que todas as dependências estão instaladas
 - Verifique os logs de build na Netlify
+- Execute `npm install --legacy-peer-deps` localmente para testar
 
 ### Erro de API
 - Confirme que as funções estão na pasta `netlify/functions/`
@@ -129,6 +138,11 @@ netlify logs
 ### Erro de SPA
 - Confirme que o build está gerando arquivos em `dist/spa/`
 - Verifique se o redirect para `index.html` está funcionando
+
+### Problemas Comuns
+- **Erro de JSON**: Verifique se o `package.json` não tem vírgulas extras
+- **Erro de pnpm**: O projeto foi configurado para usar npm na Netlify
+- **Erro de cache**: Use `npm cache clean --force` se necessário
 
 ## 📊 Monitoramento
 
